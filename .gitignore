@@ -2,9 +2,14 @@
 *.class
 
 # Package Files #
-#*.jar
+*.jar  #Bei Libgdx Update auskommentieren
 *.war
 *.ear
+
+#C++ Natives#
+*.so    #Bei Libgdx Update auskommentieren
+*.a     #Bei Libgdx Update auskommentieren
+
 
 
 ##### Eclipse ignore aus einem anderen Projekt uebernommen ######
