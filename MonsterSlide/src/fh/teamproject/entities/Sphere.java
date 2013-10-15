@@ -1,5 +1,6 @@
 package fh.teamproject.entities;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
@@ -13,22 +14,22 @@ import com.badlogic.gdx.math.Vector3;
 
 public class Sphere implements InputProcessor {
 
-	public Vector3 position;
+	public Vector3 position = new Vector3();
 	public ModelInstance instance;
-	public float radius;
+	public float radius = 1f;
 	public Vector3 direction;
 	public float velocity;
+	boolean isGrounded = false;
 
 	public Sphere() {
-		this.radius = 1f;
-		this.position = new Vector3(0f, 3f, 0f);
 		this.direction = new Vector3(0f, -1f, 0f);
 		this.velocity = 0.5f;
 
 		ModelBuilder builder = new ModelBuilder();
 		Material material = new Material(ColorAttribute.createDiffuse(Color.GREEN));
-		Model m = builder.createSphere(2f, 2f, 2f, 10, 10, material, Usage.Position);
-		this.instance = new ModelInstance(m);
+		Model m = builder.createSphere(this.radius * 2f, this.radius * 2f,
+				this.radius * 2f, 16, 16, material, Usage.Position | Usage.Normal);
+		this.instance = new ModelInstance(m, new Vector3(0f, 3f, 0f));
 	}
 
 	@Override
@@ -41,6 +42,9 @@ public class Sphere implements InputProcessor {
 					.scl(-1 * this.velocity));
 
 		}
+		this.instance.transform.getTranslation(this.position);
+		Gdx.app.log("Sphere", "Sphere position: " + this.position);
+
 		return false;
 	}
 

@@ -47,7 +47,7 @@ public class GameScreen implements Screen {
 				1f));
 		this.lights.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, 0f, 0f, 10f));
 
-		collision = new Collision();
+		this.collision = new Collision();
 
 		InputMultiplexer inputMul = new InputMultiplexer();
 		inputMul.addProcessor(this.sphere);
@@ -62,9 +62,8 @@ public class GameScreen implements Screen {
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
 		/* UPDATE */
-		collision.intersectSphereToPlane(sphere, plane);
-
 		this.camera.update();
+		this.collision.intersectSphereToPlane(this.sphere, this.plane);
 		/* RENDER */
 		this.batch.begin(this.camera);
 		// this.batch.render(this.skybox.box, this.lights);

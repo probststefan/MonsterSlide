@@ -17,14 +17,12 @@ public class Plane {
 	public Plane() {
 		ModelBuilder builder = new ModelBuilder();
 		Material material = new Material(ColorAttribute.createDiffuse(Color.BLUE));
-		// Model m = builder.createRect(-1, 0, -1, 1, 0, -1, 1, 0, 1, -1, 0, 1,
-		// 0, 1, 0,
 		Model m = builder.createRect(-1, 0, -1, -1, 0, 1, 1, 0, 1, 1, 0, -1, 0, 1, 0,
 				material, Usage.Position | Usage.Normal);
 		this.instance = new ModelInstance(m);
 
 		this.instance.transform.scl(4);
-		this.instance.transform.translate(0, -1f, 0);
+		// this.instance.transform.translate(0, -1f, 0);
 
 		this.normal = new Vector3(0, 1f, 0);
 	}

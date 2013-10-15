@@ -1,5 +1,6 @@
 package fh.teamproject.physics;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector3;
 
 import fh.teamproject.entities.Plane;
@@ -12,18 +13,20 @@ public class Collision {
 	}
 
 	public boolean intersectSphereToPlane(Sphere sphere, Plane plane) {
-		Vector3 tmpVector = plane.normal.cpy();
+		Vector3 circleBorderPoint = plane.normal.cpy();
 		// Vektor wird umgedreht.
-		tmpVector.scl(sphere.radius).scl(-1);
+		circleBorderPoint.scl(-1).scl(sphere.radius);
 
-		Vector3 sumVec = sphere.direction.cpy().scl(sphere.velocity);
-		Vector3 pos = new Vector3();
-		sphere.instance.transform.getTranslation(pos);
-		System.out.println(pos.cpy().add(sumVec));
-		if (pos.len() < 0.01) {
+		Vector3 moveDistance = sphere.direction.cpy().scl(sphere.velocity);
+		Vector3 intersectPoint = new Vector3();
+		sphere.instance.transform.getTranslation(intersectPoint);
+
+		intersectPoint.add(circleBorderPoint);
+
+		if (intersectPoint.len() < 0.01) {
+			Gdx.app.log("Sphere", "intersecting at Point: " + intersectPoint);
 			return true;
 		} else {
-
 			return false;
 		}
 	}
