@@ -35,12 +35,14 @@ public class Sphere implements InputProcessor {
 	@Override
 	public boolean keyDown(int keycode) {
 		if (keycode == Keys.DOWN) {
-
-			this.position.add(this.direction.cpy().scl(this.velocity));
+			this.instance.transform.translate(this.direction.cpy().scl(
+this.velocity));
 		}
 		if (keycode == Keys.UP) {
+			this.instance.transform.translate(this.direction.cpy()
+.scl(
+-1 * this.velocity));
 
-			this.position.add(this.direction.cpy().scl(-1 * this.velocity));
 		}
 		return false;
 	}
