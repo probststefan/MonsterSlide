@@ -1,2 +1,0 @@
-Das ist ein Dummyfile, da git keine leeren Ordner committet.
-Diese Datei soll gelöscht werden sobald eine neue Datei hier erstellt wurde.
