@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 
+import fh.teamproject.entities.Sphere;
 import fh.teamproject.utils.Skybox;
 
 public class GameScreen implements Screen {
@@ -21,6 +22,8 @@ public class GameScreen implements Screen {
 	ModelBatch batch;
 	Environment lights;
 
+	Sphere sphere;
+
 	public GameScreen() {
 
 		this.camera = new PerspectiveCamera(67, Gdx.graphics.getWidth(),
@@ -28,8 +31,9 @@ public class GameScreen implements Screen {
 		this.camera.translate(0f, 0f, 10f);
 		this.camera.lookAt(0, 0, 0);
 		this.controller = new CameraInputController(this.camera);
+		this.sphere = new Sphere();
 
-		Gdx.input.setInputProcessor(this.controller);
+
 		this.skybox = new Skybox();
 		this.batch = new ModelBatch();
 
@@ -37,6 +41,9 @@ public class GameScreen implements Screen {
 		this.lights.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f,
 				1f));
 		this.lights.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, 0f, 0f, 10f));
+
+		Gdx.input.setInputProcessor(this.controller);
+		Gdx.input.setInputProcessor(this.sphere);
 	}
 
 	@Override
@@ -50,6 +57,7 @@ public class GameScreen implements Screen {
 		/* RENDER */
 		this.batch.begin(this.camera);
 		this.batch.render(this.skybox.box, this.lights);
+		this.batch.render(this.sphere.instance);
 		this.batch.end();
 	}
 
