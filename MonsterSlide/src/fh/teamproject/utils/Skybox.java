@@ -21,7 +21,7 @@ public class Skybox {
 		model = builder.createBox(1, 1, 1, material, Usage.Position | Usage.Normal);
 		this.box = new ModelInstance(model);
 		this.box.transform.setToTranslation(0f, 0f, 0f);
-		this.box.transform.scl(20f);
+		//this.box.transform.scl(20f);
 	}
 
 }
