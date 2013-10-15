@@ -1,6 +1,7 @@
 package fh.teamproject.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
@@ -10,6 +11,9 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 
+import fh.teamproject.entities.Plane;
+import fh.teamproject.entities.Sphere;
+import fh.teamproject.physics.Collision;
 import fh.teamproject.utils.Skybox;
 
 public class GameScreen implements Screen {
@@ -21,6 +25,10 @@ public class GameScreen implements Screen {
 	ModelBatch batch;
 	Environment lights;
 
+	Sphere sphere;
+	Plane plane;
+	Collision collision;
+
 	public GameScreen() {
 
 		this.camera = new PerspectiveCamera(67, Gdx.graphics.getWidth(),
@@ -28,8 +36,9 @@ public class GameScreen implements Screen {
 		this.camera.translate(0f, 0f, 10f);
 		this.camera.lookAt(0, 0, 0);
 		this.controller = new CameraInputController(this.camera);
+		this.sphere = new Sphere();
+		this.plane = new Plane();
 
-		Gdx.input.setInputProcessor(this.controller);
 		this.skybox = new Skybox();
 		this.batch = new ModelBatch();
 
@@ -37,6 +46,14 @@ public class GameScreen implements Screen {
 		this.lights.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f,
 				1f));
 		this.lights.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, 0f, 0f, 10f));
+
+		collision = new Collision();
+
+		InputMultiplexer inputMul = new InputMultiplexer();
+		inputMul.addProcessor(this.sphere);
+		inputMul.addProcessor(this.controller);
+
+		Gdx.input.setInputProcessor(inputMul);
 	}
 
 	@Override
@@ -45,11 +62,14 @@ public class GameScreen implements Screen {
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
 		/* UPDATE */
+		collision.intersectSphereToPlane(sphere, plane);
 
 		this.camera.update();
 		/* RENDER */
 		this.batch.begin(this.camera);
-		this.batch.render(this.skybox.box, this.lights);
+		// this.batch.render(this.skybox.box, this.lights);
+		this.batch.render(this.sphere.instance);
+		this.batch.render(this.plane.instance);
 		this.batch.end();
 	}
 
