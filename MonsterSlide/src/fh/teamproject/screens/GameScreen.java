@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 
+import fh.teamproject.entities.Plane;
 import fh.teamproject.entities.Sphere;
 import fh.teamproject.utils.Skybox;
 
@@ -23,6 +24,7 @@ public class GameScreen implements Screen {
 	Environment lights;
 
 	Sphere sphere;
+	Plane plane;
 
 	public GameScreen() {
 
@@ -32,7 +34,7 @@ public class GameScreen implements Screen {
 		this.camera.lookAt(0, 0, 0);
 		this.controller = new CameraInputController(this.camera);
 		this.sphere = new Sphere();
-
+		this.plane = new Plane();
 
 		this.skybox = new Skybox();
 		this.batch = new ModelBatch();
@@ -58,6 +60,7 @@ public class GameScreen implements Screen {
 		this.batch.begin(this.camera);
 		this.batch.render(this.skybox.box, this.lights);
 		this.batch.render(this.sphere.instance);
+		this.batch.render(this.plane.instance);
 		this.batch.end();
 	}
 
