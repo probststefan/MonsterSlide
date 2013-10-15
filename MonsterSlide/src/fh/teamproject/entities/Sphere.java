@@ -13,15 +13,14 @@ import com.badlogic.gdx.math.Vector3;
 
 public class Sphere implements InputProcessor {
 
-	Vector3 position;
+	public Vector3 position;
 	public ModelInstance instance;
-	float radius;
-	Vector3 direction;
-	float velocity;
-
+	public float radius;
+	public Vector3 direction;
+	public float velocity;
 
 	public Sphere() {
-		this.radius = 2f;
+		this.radius = 1f;
 		this.position = new Vector3(0f, 3f, 0f);
 		this.direction = new Vector3(0f, -1f, 0f);
 		this.velocity = 0.5f;
@@ -35,13 +34,11 @@ public class Sphere implements InputProcessor {
 	@Override
 	public boolean keyDown(int keycode) {
 		if (keycode == Keys.DOWN) {
-			this.instance.transform.translate(this.direction.cpy().scl(
-this.velocity));
+			this.instance.transform.translate(this.direction.cpy().scl(this.velocity));
 		}
 		if (keycode == Keys.UP) {
 			this.instance.transform.translate(this.direction.cpy()
-.scl(
--1 * this.velocity));
+					.scl(-1 * this.velocity));
 
 		}
 		return false;

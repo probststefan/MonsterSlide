@@ -1,6 +1,7 @@
 package fh.teamproject.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
@@ -12,6 +13,7 @@ import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 
 import fh.teamproject.entities.Plane;
 import fh.teamproject.entities.Sphere;
+import fh.teamproject.physics.Collision;
 import fh.teamproject.utils.Skybox;
 
 public class GameScreen implements Screen {
@@ -25,6 +27,7 @@ public class GameScreen implements Screen {
 
 	Sphere sphere;
 	Plane plane;
+	Collision collision;
 
 	public GameScreen() {
 
@@ -44,8 +47,13 @@ public class GameScreen implements Screen {
 				1f));
 		this.lights.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, 0f, 0f, 10f));
 
-		Gdx.input.setInputProcessor(this.controller);
-		Gdx.input.setInputProcessor(this.sphere);
+		collision = new Collision();
+
+		InputMultiplexer inputMul = new InputMultiplexer();
+		inputMul.addProcessor(this.sphere);
+		inputMul.addProcessor(this.controller);
+
+		Gdx.input.setInputProcessor(inputMul);
 	}
 
 	@Override
@@ -54,11 +62,12 @@ public class GameScreen implements Screen {
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
 		/* UPDATE */
+		collision.intersectSphereToPlane(sphere, plane);
 
 		this.camera.update();
 		/* RENDER */
 		this.batch.begin(this.camera);
-		this.batch.render(this.skybox.box, this.lights);
+		// this.batch.render(this.skybox.box, this.lights);
 		this.batch.render(this.sphere.instance);
 		this.batch.render(this.plane.instance);
 		this.batch.end();

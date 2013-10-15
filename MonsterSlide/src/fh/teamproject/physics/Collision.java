@@ -2,26 +2,29 @@ package fh.teamproject.physics;
 
 import com.badlogic.gdx.math.Vector3;
 
+import fh.teamproject.entities.Plane;
+import fh.teamproject.entities.Sphere;
+
 public class Collision {
 
-	boolean intersectSphereToPlane(Vector3 sphereCenter, int sphereRadius,
-			Vector3 pointOnPlane, Vector3 planeNormal) {
-		// Calculate a vector from the point on the plane to the center of the
-		// sphere
-		Vector3 vecTemp = sphereCenter;
-		vecTemp.sub(pointOnPlane);
+	public Collision() {
+		// TODO Auto-generated constructor stub
+	}
 
-		// Calculate the distance: dot product of the new vector with the
-		// plane's normal
-		float distance = Vector3.dot(vecTemp.x, vecTemp.y, vecTemp.z, planeNormal.x,
-				planeNormal.y, planeNormal.z);
+	public boolean intersectSphereToPlane(Sphere sphere, Plane plane) {
+		Vector3 tmpVector = plane.normal.cpy();
+		// Vektor wird umgedreht.
+		tmpVector.scl(sphere.radius).scl(-1);
 
-		if (distance > sphereRadius) {
-			// The sphere is not touching the plane.
+		Vector3 sumVec = sphere.direction.cpy().scl(sphere.velocity);
+		Vector3 pos = new Vector3();
+		sphere.instance.transform.getTranslation(pos);
+		System.out.println(pos.cpy().add(sumVec));
+		if (pos.len() < 0.01) {
+			return true;
+		} else {
+
 			return false;
 		}
-
-		// The sphere is colliding with the plane
-		return true;
 	}
 }
