@@ -45,7 +45,11 @@ public class GameScreen implements Screen {
 		this.lights = new Environment();
 		this.lights.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f,
 				1f));
-		this.lights.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, 0f, 0f, 10f));
+
+		this.lights.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
+
+		// this.lights.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, 0f, 0f,
+		// 10f));
 
 		this.collision = new Collision();
 
@@ -67,8 +71,8 @@ public class GameScreen implements Screen {
 		/* RENDER */
 		this.batch.begin(this.camera);
 		// this.batch.render(this.skybox.box, this.lights);
-		this.batch.render(this.sphere.instance);
-		this.batch.render(this.plane.instance);
+		this.batch.render(this.sphere.instance, this.lights);
+		this.batch.render(this.plane.instance, this.lights);
 		this.batch.end();
 	}
 
