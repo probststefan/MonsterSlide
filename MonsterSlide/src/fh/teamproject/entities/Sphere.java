@@ -20,6 +20,7 @@ public class Sphere implements InputProcessor {
 	public Vector3 direction;
 	public float velocity;
 	boolean isGrounded = false;
+	int state = 0;
 
 	public Sphere() {
 		this.direction = new Vector3(0f, -1f, 0f);
@@ -44,6 +45,25 @@ public class Sphere implements InputProcessor {
 		}
 		this.instance.transform.getTranslation(this.position);
 		Gdx.app.log("Sphere", "Sphere position: " + this.position);
+
+		if (keycode == Keys.SPACE) {
+			state = (state + 1) % 3;
+			Vector3 dir = new Vector3();
+			switch (state) {
+			case 0:
+				dir.x = 1f;
+				break;
+			case 1:
+				dir.y = 1f;
+				break;
+			case 2:
+				dir.z = 1f;
+				break;
+			default:
+				break;
+			}
+			this.direction = dir;
+		}
 
 		return false;
 	}
