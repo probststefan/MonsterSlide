@@ -32,8 +32,12 @@ public class Plane {
 		this.instance = new ModelInstance(m);
 
 		this.instance.transform.scl(4);
+		this.instance.transform.rotate(new Vector3(1.0f, 1.0f, 0), 45);
 		// this.instance.transform.translate(0, -1f, 0);
 
+		// Normale erstellen und diese auch rotieren, damit die Kollision
+		// richtig abgefragt werden kann.
 		this.normal = new Vector3(0, 1f, 0);
+		this.normal.rotate(new Vector3(1.0f, 1.0f, 0), 45);
 	}
 }

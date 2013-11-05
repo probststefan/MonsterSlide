@@ -30,4 +30,41 @@ public class Collision {
 			return false;
 		}
 	}
+
+	/**
+	 * <code>intersection</code> compares a dynamix sphere to a stationary
+	 * plane. The velocity of the sphere is given as well as the period of time
+	 * for movement. If a collision occurs somewhere along this time period,
+	 * true is returned. False is returned otherwise.
+	 * 
+	 * @param plane
+	 *            the stationary plane to test against.
+	 * @param sphere
+	 *            the dynamic sphere to test.
+	 * @param velocity
+	 *            the velocity of the sphere.
+	 * @param time
+	 *            the time range to test.
+	 * @return true if intersection occurs, false otherwise.
+	 */
+	public static boolean intersection(Plane plane, Sphere sphere, Vector3 velocity,
+			float time) {
+
+		// Vector3 planeNormal = new Vector3(0, 1f, 0);
+		// Normale der Plane aus der Klasse holen.
+		Vector3 planeNormal = plane.normal;
+
+		// float sdist = planeNormal.dot(sphere.position) - plane.getConstant();
+		float sdist = planeNormal.dot(sphere.position) - 0f;
+
+		if (sdist > sphere.radius) {
+			float dotNW = planeNormal.dot(velocity);
+			return (sphere.radius - sdist / dotNW) < time;
+		} else if (sdist < -sphere.radius) {
+			float dotNW = planeNormal.dot(velocity);
+			return (-(sphere.radius + sdist) / dotNW) < time;
+		} else {
+			return true;
+		}
+	}
 }

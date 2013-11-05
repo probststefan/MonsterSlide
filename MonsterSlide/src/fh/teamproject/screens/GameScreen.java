@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
+import com.badlogic.gdx.math.Vector3;
 
 import fh.teamproject.entities.Plane;
 import fh.teamproject.entities.Sphere;
@@ -68,6 +69,9 @@ public class GameScreen implements Screen {
 		/* UPDATE */
 		this.camera.update();
 		this.collision.intersectSphereToPlane(this.sphere, this.plane);
+		System.out.println(this.collision.intersection(plane, sphere, new Vector3(0,
+				-0.5f, 0), 0.5f));
+
 		/* RENDER */
 		this.batch.begin(this.camera);
 		// this.batch.render(this.skybox.box, this.lights);
