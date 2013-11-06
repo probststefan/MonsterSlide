@@ -33,6 +33,15 @@ public class Sphere implements InputProcessor {
 		this.instance = new ModelInstance(m, new Vector3(0f, 3f, 0f));
 	}
 
+	public void update(boolean collideWithPlane) {
+		if (!collideWithPlane) {
+			this.instance.transform.translate(new Vector3(0f, -1.0f
+					* Gdx.graphics.getDeltaTime(), 0f));
+
+			this.instance.transform.getTranslation(position);
+		}
+	}
+
 	@Override
 	public boolean keyDown(int keycode) {
 		if (keycode == Keys.DOWN) {

@@ -57,6 +57,11 @@ public class Collision {
 		// float sdist = planeNormal.dot(sphere.position) - plane.getConstant();
 		float sdist = planeNormal.dot(sphere.position) - 0f;
 
+		// System.out.println("Sphere rad. " + sphere.radius + " sdist: " +
+		// sdist);
+		// TODO: Kontrolle ob der Ball noch nicht zu weit kollidiert ist
+		// (Backtracing?).
+
 		if (sdist > sphere.radius) {
 			float dotNW = planeNormal.dot(velocity);
 			return (sphere.radius - sdist / dotNW) < time;

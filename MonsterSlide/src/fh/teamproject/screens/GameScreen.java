@@ -30,6 +30,8 @@ public class GameScreen implements Screen {
 	Plane plane;
 	Collision collision;
 
+	private boolean collideWithPlane = false;
+
 	public GameScreen() {
 
 		this.camera = new PerspectiveCamera(67, Gdx.graphics.getWidth(),
@@ -69,8 +71,10 @@ public class GameScreen implements Screen {
 		/* UPDATE */
 		this.camera.update();
 		this.collision.intersectSphereToPlane(this.sphere, this.plane);
-		System.out.println(this.collision.intersection(plane, sphere, new Vector3(0,
-				-0.5f, 0), 0.5f));
+		collideWithPlane = this.collision.intersection(plane, sphere, new Vector3(0,
+				-0.5f, 0), 0.5f);
+		System.out.println(collideWithPlane);
+		this.sphere.update(collideWithPlane);
 
 		/* RENDER */
 		this.batch.begin(this.camera);
