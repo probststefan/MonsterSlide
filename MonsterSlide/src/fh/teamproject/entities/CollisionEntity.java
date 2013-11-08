@@ -17,7 +17,7 @@ public abstract class CollisionEntity {
 	private btDefaultMotionState motionState;
 	private btRigidBody rigidBody;
 	private Vector3 localInertia;
-	private int mass;
+	private float mass;
 
 	CollisionEntity() {
 		this.motionState = new btDefaultMotionState();
@@ -80,7 +80,7 @@ public abstract class CollisionEntity {
 	 * 
 	 * @param mass
 	 */
-	public void setMass(int mass) {
+	public void setMass(float mass) {
 		this.mass = mass;
 		this.collisionShape.calculateLocalInertia(this.mass, this.localInertia);
 	}

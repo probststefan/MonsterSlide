@@ -16,7 +16,6 @@ import com.badlogic.gdx.physics.bullet.collision.btStaticPlaneShape;
 public class Plane extends CollisionEntity {
 
 	public ModelInstance instance;
-	public Vector3 normal;
 
 	public Plane() {
 		super();
@@ -37,11 +36,6 @@ public class Plane extends CollisionEntity {
 		// this.instance.transform.scl(4);
 		this.instance.transform.rotate(new Vector3(1.0f, 1.0f, 0), 20);
 		this.instance.transform.translate(0, 0, 0);
-
-		// Normale erstellen und diese auch rotieren, damit die Kollision
-		// richtig abgefragt werden kann.
-		this.normal = new Vector3(0, 1f, 0);
-		this.normal.rotate(new Vector3(1.0f, 1.0f, 0), 45);
 
 		// Bullet-Eigenschaften setzen.
 		this.setCollisionShape(new btStaticPlaneShape(new Vector3(0, 1, 0), 0));

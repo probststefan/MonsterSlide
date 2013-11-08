@@ -40,7 +40,7 @@ public class Sphere extends CollisionEntity implements InputProcessor {
 		this.setCollisionShape(new btSphereShape(this.radius));
 		this.setEntityWorldTransform(this.instance.transform);
 		this.setLocalInertia(new Vector3(0, 0, 0));
-		this.setMass(1); // Masse der Sphere.
+		this.setMass(1.0f); // Masse der Sphere.
 		this.createRigidBody();
 	}
 

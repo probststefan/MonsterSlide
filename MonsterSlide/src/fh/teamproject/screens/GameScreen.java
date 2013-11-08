@@ -90,10 +90,6 @@ public class GameScreen implements Screen {
 			((btDynamicsWorld) world.getWorld()).stepSimulation(
 					Gdx.graphics.getDeltaTime(), this.world.getMaxSubSteps(),
 					this.world.getFixedTimeStep());
-
-			// Status der Sphere aktualisieren.
-			this.sphere.getRigidBody().getMotionState()
-					.getWorldTransform(this.sphere.instance.transform);
 		}
 
 		/* RENDER */
@@ -101,6 +97,10 @@ public class GameScreen implements Screen {
 		this.batch.render(this.sphere.instance, this.lights);
 		this.batch.render(this.plane.instance, this.lights);
 		this.batch.end();
+
+		// Status der Sphere aktualisieren.
+		this.sphere.getRigidBody().getMotionState()
+				.getWorldTransform(this.sphere.instance.transform);
 	}
 
 	@Override
