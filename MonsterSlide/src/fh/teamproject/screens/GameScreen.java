@@ -39,7 +39,7 @@ public class GameScreen implements Screen {
 		this.camera = new PerspectiveCamera(67, Gdx.graphics.getWidth(),
 				Gdx.graphics.getHeight());
 		this.camera.translate(0f, 0f, 10f);
-		this.camera.lookAt(0, 0, 0);
+		// this.camera.lookAt(0, 0, 0);
 		this.controller = new CameraInputController(this.camera);
 		this.world = new World();
 		this.sphere = new Sphere();
@@ -69,7 +69,7 @@ public class GameScreen implements Screen {
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
 		if (debuggerOn) {
-			// Stellt die Kollisionsobjekt von Bullet grafisch dar.
+			// Stellt die Kollisionsobjekte von Bullet grafisch dar.
 			Gdx.gl.glDisable(GL10.GL_DEPTH_TEST);
 			setDebugMode(DebugDrawModes.DBG_DrawWireframe, camera.combined);
 			Gdx.gl.glEnable(GL10.GL_DEPTH_TEST);
@@ -82,7 +82,7 @@ public class GameScreen implements Screen {
 		}
 
 		/* UPDATE */
-		// this.camera.lookAt(this.sphere.position);
+		this.camera.lookAt(this.sphere.position);
 		this.camera.update();
 
 		// Bullet update.
@@ -101,6 +101,9 @@ public class GameScreen implements Screen {
 		// Status der Sphere aktualisieren.
 		this.sphere.getRigidBody().getMotionState()
 				.getWorldTransform(this.sphere.instance.transform);
+
+		// Die Position der Sphere aktualisieren.
+		this.sphere.instance.transform.getTranslation(this.sphere.position);
 	}
 
 	@Override
