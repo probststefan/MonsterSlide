@@ -24,22 +24,14 @@ public class Sphere implements InputProcessor {
 
 	public Sphere() {
 		this.direction = new Vector3(0f, -1f, 0f);
-		this.velocity = 0.5f;
 
 		ModelBuilder builder = new ModelBuilder();
 		Material material = new Material(ColorAttribute.createDiffuse(Color.GREEN));
-		Model m = builder.createSphere(this.radius * 2f, this.radius * 2f,
-				this.radius * 2f, 16, 16, material, Usage.Position | Usage.Normal);
-		this.instance = new ModelInstance(m, new Vector3(0f, 3f, 0f));
-	}
-
-	public void update(boolean collideWithPlane) {
-		if (!collideWithPlane) {
-			this.instance.transform.translate(new Vector3(0f, -1.0f
-					* Gdx.graphics.getDeltaTime(), 0f));
-
-			this.instance.transform.getTranslation(position);
-		}
+		// Durchmesser der Sphere berechnen.
+		float diameter = this.radius * 2;
+		Model m = builder.createSphere(diameter, diameter, diameter, 16, 16, material,
+				Usage.Position | Usage.Normal);
+		this.instance = new ModelInstance(m, new Vector3(0f, 20.0f, 0f));
 	}
 
 	@Override

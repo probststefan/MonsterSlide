@@ -6,12 +6,14 @@ import com.badlogic.gdx.math.Vector3;
 import fh.teamproject.entities.Plane;
 import fh.teamproject.entities.Sphere;
 
+@Deprecated
 public class Collision {
 
 	public Collision() {
 		// TODO Auto-generated constructor stub
 	}
 
+	@Deprecated
 	public boolean intersectSphereToPlane(Sphere sphere, Plane plane) {
 		Vector3 circleBorderPoint = plane.normal.cpy();
 		// Vektor wird umgedreht.
@@ -50,8 +52,10 @@ public class Collision {
 	public static boolean intersection(Plane plane, Sphere sphere, Vector3 velocity,
 			float time) {
 
-		// Vector3 planeNormal = new Vector3(0, 1f, 0);
-		// Normale der Plane aus der Klasse holen.
+		/*
+		 * Normale der Plane aus der Klasse holen. Diese wurde auch bei der
+		 * Translation beruecksichtigt.
+		 */
 		Vector3 planeNormal = plane.normal;
 
 		// float sdist = planeNormal.dot(sphere.position) - plane.getConstant();

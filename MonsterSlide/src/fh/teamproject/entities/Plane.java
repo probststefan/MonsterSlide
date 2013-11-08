@@ -31,9 +31,9 @@ public class Plane {
 				material, Usage.Position | Usage.Normal | Usage.TextureCoordinates);
 		this.instance = new ModelInstance(m);
 
-		this.instance.transform.scl(4);
-		this.instance.transform.rotate(new Vector3(1.0f, 1.0f, 0), 45);
-		// this.instance.transform.translate(0, -1f, 0);
+		// this.instance.transform.scl(4);
+		this.instance.transform.rotate(new Vector3(1.0f, 1.0f, 0), 20);
+		this.instance.transform.translate(0, 0, 0);
 
 		// Normale erstellen und diese auch rotieren, damit die Kollision
 		// richtig abgefragt werden kann.
