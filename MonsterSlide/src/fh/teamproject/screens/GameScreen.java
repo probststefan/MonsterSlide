@@ -22,7 +22,7 @@ import fh.teamproject.utils.DebugDrawer;
 
 public class GameScreen implements Screen {
 	// Den Debug-Modus von Bullet ein- und ausschalten.
-	private boolean debuggerOn = true;
+	private boolean debuggerOn = false;
 	public DebugDrawer debugDrawer = null;
 
 	PerspectiveCamera camera;
