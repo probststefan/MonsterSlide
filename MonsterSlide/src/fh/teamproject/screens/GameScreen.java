@@ -5,6 +5,8 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
@@ -23,6 +25,7 @@ import fh.teamproject.utils.DebugDrawer;
 public class GameScreen implements Screen {
 	// Den Debug-Modus von Bullet ein- und ausschalten.
 	private boolean debuggerOn = false;
+	private boolean showFps = true;
 	public DebugDrawer debugDrawer = null;
 
 	PerspectiveCamera camera;
@@ -34,6 +37,9 @@ public class GameScreen implements Screen {
 	World world;
 	Sphere sphere;
 	Plane plane;
+
+	private SpriteBatch spriteBatch;
+	private BitmapFont font;
 
 	public GameScreen() {
 		this.camera = new PerspectiveCamera(67, Gdx.graphics.getWidth(),
@@ -61,6 +67,12 @@ public class GameScreen implements Screen {
 		// Objekte zur Bullet-Welt hinzufuegen.
 		world.addRigidBody(this.plane.getRigidBody());
 		world.addRigidBody(this.sphere.getRigidBody());
+
+		if (showFps) {
+			// Wird zur Zeit genutzt um die fps anzuzeigen.
+			spriteBatch = new SpriteBatch();
+			font = new BitmapFont();
+		}
 	}
 
 	@Override
@@ -97,6 +109,14 @@ public class GameScreen implements Screen {
 		this.batch.render(this.sphere.instance, this.lights);
 		this.batch.render(this.plane.instance, this.lights);
 		this.batch.end();
+
+		if (showFps) {
+			// FPS anzeigen.
+			spriteBatch.begin();
+			font.draw(spriteBatch, Gdx.graphics.getFramesPerSecond() + " fps", 10,
+					Gdx.graphics.getHeight() - 10);
+			spriteBatch.end();
+		}
 
 		// Status der Sphere aktualisieren.
 		this.sphere.getRigidBody().getMotionState()
