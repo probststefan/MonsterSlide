@@ -1,6 +1,5 @@
 package fh.teamproject.entities;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
@@ -55,7 +54,7 @@ public class Player extends CollisionEntity implements InputProcessor {
 
 		}
 		this.instance.transform.getTranslation(this.position);
-		Gdx.app.log("Sphere", "Sphere position: " + this.position);
+		// Gdx.app.log("Sphere", "Sphere position: " + this.position);
 
 		if (keycode == Keys.SPACE) {
 			state = (state + 1) % 3;

@@ -11,13 +11,16 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.physics.bullet.collision.btStaticPlaneShape;
+import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
+import com.badlogic.gdx.physics.bullet.collision.btConvexHullShape;
 
-public class SlideElement extends CollisionEntity {
+import fh.teamproject.interfaces.ISlidePart;
+
+public class SlidePart extends CollisionEntity implements ISlidePart {
 
 	public ModelInstance instance;
 
-	public SlideElement() {
+	public SlidePart() {
 		super();
 
 		ModelBuilder builder = new ModelBuilder();
@@ -38,12 +41,14 @@ public class SlideElement extends CollisionEntity {
 		this.instance.transform.translate(0, 0, 0);
 
 		// Bullet-Eigenschaften setzen.
-		// btConvexHullShape colShapeTemp = new btConvexHullShape();
-		// btConvexHullShape colShape = new btConvexHullShape(v, 4, 12);
-		// colShape.addPoint(new Vector3(-10, 0, -10));
-		// btCollisionShape colShape = colShapeTemp;
+		btConvexHullShape convesHullShape = new btConvexHullShape();
+		convesHullShape.addPoint(new Vector3(-10, 0, -10));
+		convesHullShape.addPoint(new Vector3(-10, 0, 10));
+		convesHullShape.addPoint(new Vector3(10, 0, 10));
+		convesHullShape.addPoint(new Vector3(10, 0, -10));
+		btCollisionShape colShape = convesHullShape;
 
-		this.setCollisionShape(new btStaticPlaneShape(new Vector3(0, 1, 0), 0));
+		this.setCollisionShape(colShape);
 		this.setEntityWorldTransform(this.instance.transform);
 		this.setLocalInertia(new Vector3(0, 0, 0));
 		this.createRigidBody();
@@ -63,6 +68,18 @@ public class SlideElement extends CollisionEntity {
 
 	@Override
 	public int getID() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void setWidth(float width) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public float getWidth() {
 		// TODO Auto-generated method stub
 		return 0;
 	}

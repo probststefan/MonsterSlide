@@ -14,10 +14,11 @@ import fh.teamproject.interfaces.ISlide;
 import fh.teamproject.interfaces.IWorld;
 
 public class World implements IWorld {
-	private btDiscreteDynamicsWorld dynamicsWorld;
 	// Bullet Infos.
+	private btDiscreteDynamicsWorld dynamicsWorld;
 	private int maxSubSteps = 5;
 	private float fixedTimeStep = 1f / 60f;
+	private float worldGravtiy = -9.81f;
 
 	public World() {
 		btBroadphaseInterface broadphase = new btDbvtBroadphase();
@@ -28,7 +29,7 @@ public class World implements IWorld {
 
 		dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver,
 				collisionConfiguration);
-		dynamicsWorld.setGravity(new Vector3(0, -9.81f, 0));
+		dynamicsWorld.setGravity(new Vector3(0, this.worldGravtiy, 0));
 	}
 
 	public void addRigidBody(btRigidBody rigidBody) {
