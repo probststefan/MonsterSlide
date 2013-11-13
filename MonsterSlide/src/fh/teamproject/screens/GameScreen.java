@@ -1,10 +1,9 @@
 package fh.teamproject.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL10;
-<<<<<<< HEAD
-=======
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -22,7 +21,6 @@ import fh.teamproject.entities.Plane;
 import fh.teamproject.entities.Sphere;
 import fh.teamproject.entities.World;
 import fh.teamproject.utils.DebugDrawer;
->>>>>>> origin/physics
 
 public class GameScreen implements Screen {
 	// Den Debug-Modus von Bullet ein- und ausschalten.
@@ -30,11 +28,6 @@ public class GameScreen implements Screen {
 	private boolean showFps = true;
 	public DebugDrawer debugDrawer = null;
 
-<<<<<<< HEAD
-	public GameScreen() {
-
-
-=======
 	PerspectiveCamera camera;
 	CameraInputController controller;
 
@@ -80,15 +73,12 @@ public class GameScreen implements Screen {
 			spriteBatch = new SpriteBatch();
 			font = new BitmapFont();
 		}
->>>>>>> origin/physics
 	}
 
 	@Override
 	public void render(float delta) {
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-<<<<<<< HEAD
-=======
 
 		if (debuggerOn) {
 			// Stellt die Kollisionsobjekte von Bullet grafisch dar.
@@ -134,7 +124,6 @@ public class GameScreen implements Screen {
 
 		// Die Position der Sphere aktualisieren.
 		this.sphere.instance.transform.getTranslation(this.sphere.position);
->>>>>>> origin/physics
 	}
 
 	@Override
