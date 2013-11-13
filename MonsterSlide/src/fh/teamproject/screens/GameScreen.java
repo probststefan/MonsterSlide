@@ -17,8 +17,8 @@ import com.badlogic.gdx.physics.bullet.dynamics.btDynamicsWorld;
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw;
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw.DebugDrawModes;
 
-import fh.teamproject.entities.Plane;
-import fh.teamproject.entities.Sphere;
+import fh.teamproject.entities.SlideElement;
+import fh.teamproject.entities.Player;
 import fh.teamproject.entities.World;
 import fh.teamproject.utils.DebugDrawer;
 
@@ -35,8 +35,8 @@ public class GameScreen implements Screen {
 	Environment lights;
 
 	World world;
-	Sphere sphere;
-	Plane plane;
+	Player sphere;
+	SlideElement plane;
 
 	private SpriteBatch spriteBatch;
 	private BitmapFont font;
@@ -48,8 +48,8 @@ public class GameScreen implements Screen {
 		// this.camera.lookAt(0, 0, 0);
 		this.controller = new CameraInputController(this.camera);
 		this.world = new World();
-		this.sphere = new Sphere();
-		this.plane = new Plane();
+		this.sphere = new Player();
+		this.plane = new SlideElement();
 
 		this.batch = new ModelBatch();
 

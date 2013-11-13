@@ -13,7 +13,7 @@ import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.btSphereShape;
 
-public class Sphere extends CollisionEntity implements InputProcessor {
+public class Player extends CollisionEntity implements InputProcessor {
 
 	public Vector3 position = new Vector3();
 	public ModelInstance instance;
@@ -23,7 +23,7 @@ public class Sphere extends CollisionEntity implements InputProcessor {
 	boolean isGrounded = false;
 	int state = 0;
 
-	public Sphere() {
+	public Player() {
 		super();
 
 		// Grafische Darstellung erstellen.
@@ -121,4 +121,21 @@ public class Sphere extends CollisionEntity implements InputProcessor {
 		return false;
 	}
 
+	@Override
+	public Vector3 getPosition() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ModelInstance getModelInstance() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int getID() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }

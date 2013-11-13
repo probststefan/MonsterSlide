@@ -13,11 +13,11 @@ import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.btStaticPlaneShape;
 
-public class Plane extends CollisionEntity {
+public class SlideElement extends CollisionEntity {
 
 	public ModelInstance instance;
 
-	public Plane() {
+	public SlideElement() {
 		super();
 
 		ModelBuilder builder = new ModelBuilder();
@@ -34,13 +34,36 @@ public class Plane extends CollisionEntity {
 		this.instance = new ModelInstance(m);
 
 		// this.instance.transform.scl(4);
-		this.instance.transform.rotate(new Vector3(1.0f, 1.0f, 0), 20);
+		this.instance.transform.rotate(new Vector3(1.0f, 1.0f, 0), 5);
 		this.instance.transform.translate(0, 0, 0);
 
 		// Bullet-Eigenschaften setzen.
+		// btConvexHullShape colShapeTemp = new btConvexHullShape();
+		// btConvexHullShape colShape = new btConvexHullShape(v, 4, 12);
+		// colShape.addPoint(new Vector3(-10, 0, -10));
+		// btCollisionShape colShape = colShapeTemp;
+
 		this.setCollisionShape(new btStaticPlaneShape(new Vector3(0, 1, 0), 0));
 		this.setEntityWorldTransform(this.instance.transform);
 		this.setLocalInertia(new Vector3(0, 0, 0));
 		this.createRigidBody();
+	}
+
+	@Override
+	public Vector3 getPosition() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ModelInstance getModelInstance() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int getID() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }

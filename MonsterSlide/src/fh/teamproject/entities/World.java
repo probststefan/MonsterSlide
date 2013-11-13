@@ -9,7 +9,11 @@ import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.physics.bullet.dynamics.btSequentialImpulseConstraintSolver;
 
-public class World {
+import fh.teamproject.interfaces.IPlayer;
+import fh.teamproject.interfaces.ISlide;
+import fh.teamproject.interfaces.IWorld;
+
+public class World implements IWorld {
 	private btDiscreteDynamicsWorld dynamicsWorld;
 	// Bullet Infos.
 	private int maxSubSteps = 5;
@@ -41,5 +45,17 @@ public class World {
 
 	public btDiscreteDynamicsWorld getWorld() {
 		return this.dynamicsWorld;
+	}
+
+	@Override
+	public ISlide getSlide() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IPlayer getPlayer() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
