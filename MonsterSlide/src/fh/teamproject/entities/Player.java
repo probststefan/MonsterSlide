@@ -1,7 +1,5 @@
 package fh.teamproject.entities;
 
-import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g3d.Material;
@@ -12,7 +10,9 @@ import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.btSphereShape;
 
-public class Player extends CollisionEntity implements InputProcessor {
+import fh.teamproject.interfaces.IPlayer;
+
+public class Player extends CollisionEntity implements IPlayer {
 
 	public Vector3 position = new Vector3();
 	public ModelInstance instance;
@@ -43,81 +43,12 @@ public class Player extends CollisionEntity implements InputProcessor {
 		this.createRigidBody();
 	}
 
-	@Override
-	public boolean keyDown(int keycode) {
-		if (keycode == Keys.DOWN) {
-			this.instance.transform.translate(this.direction.cpy().scl(this.velocity));
-		}
-		if (keycode == Keys.UP) {
-			this.instance.transform.translate(this.direction.cpy()
-					.scl(-1 * this.velocity));
+	public void update() {
+		// Status der Sphere aktualisieren.
+		this.getRigidBody().getMotionState().getWorldTransform(this.instance.transform);
 
-		}
+		// Die Position der Sphere aktualisieren.
 		this.instance.transform.getTranslation(this.position);
-		// Gdx.app.log("Sphere", "Sphere position: " + this.position);
-
-		if (keycode == Keys.SPACE) {
-			state = (state + 1) % 3;
-			Vector3 dir = new Vector3();
-			switch (state) {
-			case 0:
-				dir.x = 1f;
-				break;
-			case 1:
-				dir.y = 1f;
-				break;
-			case 2:
-				dir.z = 1f;
-				break;
-			default:
-				break;
-			}
-			this.direction = dir;
-		}
-
-		return false;
-	}
-
-	@Override
-	public boolean keyUp(int keycode) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean keyTyped(char character) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean touchDragged(int screenX, int screenY, int pointer) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean mouseMoved(int screenX, int screenY) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean scrolled(int amount) {
-		// TODO Auto-generated method stub
-		return false;
 	}
 
 	@Override
@@ -136,5 +67,35 @@ public class Player extends CollisionEntity implements InputProcessor {
 	public int getID() {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+
+	@Override
+	public void accelerate(float amount) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void brake(float amount) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void slideLeft() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void slideRight() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void jump() {
+		// TODO Auto-generated method stub
+
 	}
 }

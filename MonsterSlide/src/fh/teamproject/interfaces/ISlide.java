@@ -1,9 +1,9 @@
 package fh.teamproject.interfaces;
 
-import com.badlogic.gdx.utils.Array;
+import java.util.ArrayList;
 
 public interface ISlide extends IEntity {
 
-	public Array<ISlidePart> getSlideParts();
+	public ArrayList<ISlidePart> getSlideParts();
 
 }

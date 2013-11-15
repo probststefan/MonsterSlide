@@ -13,13 +13,12 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.math.Matrix4;
-import com.badlogic.gdx.physics.bullet.dynamics.btDynamicsWorld;
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw;
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw.DebugDrawModes;
 
 import fh.teamproject.entities.Player;
-import fh.teamproject.entities.SlidePart;
 import fh.teamproject.entities.World;
+import fh.teamproject.interfaces.ISlidePart;
 import fh.teamproject.utils.DebugDrawer;
 
 public class GameScreen implements Screen {
@@ -35,8 +34,7 @@ public class GameScreen implements Screen {
 	Environment lights;
 
 	World world;
-	Player sphere;
-	SlidePart plane;
+	Player player;
 
 	private SpriteBatch spriteBatch;
 	private BitmapFont font;
@@ -45,12 +43,10 @@ public class GameScreen implements Screen {
 		this.camera = new PerspectiveCamera(67, Gdx.graphics.getWidth(),
 				Gdx.graphics.getHeight());
 		this.camera.translate(0f, 0f, 10f);
-		// this.camera.lookAt(0, 0, 0);
 		this.controller = new CameraInputController(this.camera);
 
 		this.world = new World();
-		this.sphere = new Player();
-		this.plane = new SlidePart();
+		this.player = (Player) this.world.getPlayer();
 
 		this.batch = new ModelBatch();
 
@@ -60,14 +56,17 @@ public class GameScreen implements Screen {
 		this.lights.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
 
 		InputMultiplexer inputMul = new InputMultiplexer();
-		inputMul.addProcessor(this.sphere);
 		inputMul.addProcessor(this.controller);
 
 		Gdx.input.setInputProcessor(inputMul);
 
-		// Objekte zur Bullet-Welt hinzufuegen.
-		world.addRigidBody(this.plane.getRigidBody());
-		world.addRigidBody(this.sphere.getRigidBody());
+		// Elemente der Rutsche zur Bullet-Welt hinzufuegen.
+		for (ISlidePart slidePart : this.world.getSlide().getSlideParts()) {
+			world.addRigidBody(slidePart.getRigidBody());
+		}
+
+		// Spieler zur Bullet-Welt hinzufuegen.
+		world.addRigidBody(this.player.getRigidBody());
 
 		if (showFps) {
 			// Wird zur Zeit genutzt um die fps anzuzeigen.
@@ -81,50 +80,25 @@ public class GameScreen implements Screen {
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
-		if (debuggerOn) {
-			// Stellt die Kollisionsobjekte von Bullet grafisch dar.
-			Gdx.gl.glDisable(GL10.GL_DEPTH_TEST);
-			setDebugMode(DebugDrawModes.DBG_DrawWireframe, camera.combined);
-			Gdx.gl.glEnable(GL10.GL_DEPTH_TEST);
-
-			if (debugDrawer != null && debugDrawer.getDebugMode() > 0) {
-				debugDrawer.begin();
-				world.getWorld().debugDrawWorld();
-				debugDrawer.end();
-			}
-		}
+		this.debugger();
 
 		/* UPDATE */
-		this.camera.lookAt(this.sphere.position);
+		// this.camera.lookAt(this.player.position);
 		this.camera.update();
-
-		// Bullet update.
-		if (world.getWorld() instanceof btDynamicsWorld) {
-			((btDynamicsWorld) world.getWorld()).stepSimulation(
-					Gdx.graphics.getDeltaTime(), this.world.getMaxSubSteps(),
-					this.world.getFixedTimeStep());
-		}
+		this.world.update();
 
 		/* RENDER */
 		this.batch.begin(this.camera);
-		this.batch.render(this.sphere.instance, this.lights);
-		this.batch.render(this.plane.instance, this.lights);
+		// Player rendern.
+		this.batch.render(this.player.instance, this.lights);
+		// Rutschelemente rendern.
+		for (ISlidePart slidePart : this.world.getSlide().getSlideParts()) {
+			this.batch.render(slidePart.getModelInstance(), this.lights);
+		}
 		this.batch.end();
 
-		if (showFps) {
-			// FPS anzeigen.
-			spriteBatch.begin();
-			font.draw(spriteBatch, Gdx.graphics.getFramesPerSecond() + " fps", 10,
-					Gdx.graphics.getHeight() - 10);
-			spriteBatch.end();
-		}
-
-		// Status der Sphere aktualisieren.
-		this.sphere.getRigidBody().getMotionState()
-				.getWorldTransform(this.sphere.instance.transform);
-
-		// Die Position der Sphere aktualisieren.
-		this.sphere.instance.transform.getTranslation(this.sphere.position);
+		this.showFPS();
+		this.player.update();
 	}
 
 	@Override
@@ -163,6 +137,21 @@ public class GameScreen implements Screen {
 
 	}
 
+	public void debugger() {
+		if (debuggerOn) {
+			// Stellt die Kollisionsobjekte von Bullet grafisch dar.
+			Gdx.gl.glDisable(GL10.GL_DEPTH_TEST);
+			setDebugMode(DebugDrawModes.DBG_DrawWireframe, camera.combined);
+			Gdx.gl.glEnable(GL10.GL_DEPTH_TEST);
+
+			if (debugDrawer != null && debugDrawer.getDebugMode() > 0) {
+				debugDrawer.begin();
+				world.getWorld().debugDrawWorld();
+				debugDrawer.end();
+			}
+		}
+	}
+
 	public void setDebugMode(final int mode, final Matrix4 projMatrix) {
 		if (mode == btIDebugDraw.DebugDrawModes.DBG_NoDebug && debugDrawer == null)
 			return;
@@ -174,5 +163,15 @@ public class GameScreen implements Screen {
 
 	public int getDebugMode() {
 		return (debugDrawer == null) ? 0 : debugDrawer.getDebugMode();
+	}
+
+	public void showFPS() {
+		if (showFps) {
+			// FPS anzeigen.
+			spriteBatch.begin();
+			font.draw(spriteBatch, Gdx.graphics.getFramesPerSecond() + " fps", 10,
+					Gdx.graphics.getHeight() - 10);
+			spriteBatch.end();
+		}
 	}
 }

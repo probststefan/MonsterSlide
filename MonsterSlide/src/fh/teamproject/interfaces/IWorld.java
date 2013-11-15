@@ -6,5 +6,4 @@ public interface IWorld {
 
 	public IPlayer getPlayer();
 
-
 }
