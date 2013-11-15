@@ -14,8 +14,6 @@ import fh.teamproject.interfaces.IPlayer;
 
 public class Player extends CollisionEntity implements IPlayer {
 
-	public Vector3 position = new Vector3();
-	public ModelInstance instance;
 	public float radius = 1f;
 	public Vector3 direction;
 	public float velocity;
@@ -46,27 +44,6 @@ public class Player extends CollisionEntity implements IPlayer {
 	public void update() {
 		// Status der Sphere aktualisieren.
 		this.getRigidBody().getMotionState().getWorldTransform(this.instance.transform);
-
-		// Die Position der Sphere aktualisieren.
-		this.instance.transform.getTranslation(this.position);
-	}
-
-	@Override
-	public Vector3 getPosition() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ModelInstance getModelInstance() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public int getID() {
-		// TODO Auto-generated method stub
-		return 0;
 	}
 
 	@Override

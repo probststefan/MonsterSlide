@@ -23,8 +23,8 @@ import fh.teamproject.utils.DebugDrawer;
 
 public class GameScreen implements Screen {
 	// Den Debug-Modus von Bullet ein- und ausschalten.
-	private boolean debuggerOn = false;
-	private boolean showFps = true;
+	private final boolean debuggerOn = false;
+	private final boolean showFps = true;
 	public DebugDrawer debugDrawer = null;
 
 	PerspectiveCamera camera;
@@ -62,16 +62,16 @@ public class GameScreen implements Screen {
 
 		// Elemente der Rutsche zur Bullet-Welt hinzufuegen.
 		for (ISlidePart slidePart : this.world.getSlide().getSlideParts()) {
-			world.addRigidBody(slidePart.getRigidBody());
+			this.world.addRigidBody(slidePart.getRigidBody());
 		}
 
 		// Spieler zur Bullet-Welt hinzufuegen.
-		world.addRigidBody(this.player.getRigidBody());
+		this.world.addRigidBody(this.player.getRigidBody());
 
-		if (showFps) {
+		if (this.showFps) {
 			// Wird zur Zeit genutzt um die fps anzuzeigen.
-			spriteBatch = new SpriteBatch();
-			font = new BitmapFont();
+			this.spriteBatch = new SpriteBatch();
+			this.font = new BitmapFont();
 		}
 	}
 
@@ -86,7 +86,7 @@ public class GameScreen implements Screen {
 		// this.camera.lookAt(this.player.position);
 		this.camera.update();
 		this.world.update();
-		this.world.getSlide().update(this.player.position);
+		this.world.getSlide().update(this.player.getPosition());
 
 		/* RENDER */
 		this.batch.begin(this.camera);
@@ -139,40 +139,42 @@ public class GameScreen implements Screen {
 	}
 
 	public void debugger() {
-		if (debuggerOn) {
+		if (this.debuggerOn) {
 			// Stellt die Kollisionsobjekte von Bullet grafisch dar.
 			Gdx.gl.glDisable(GL10.GL_DEPTH_TEST);
-			setDebugMode(DebugDrawModes.DBG_DrawWireframe, camera.combined);
+			this.setDebugMode(DebugDrawModes.DBG_DrawWireframe, this.camera.combined);
 			Gdx.gl.glEnable(GL10.GL_DEPTH_TEST);
 
-			if (debugDrawer != null && debugDrawer.getDebugMode() > 0) {
-				debugDrawer.begin();
-				world.getWorld().debugDrawWorld();
-				debugDrawer.end();
+			if ((this.debugDrawer != null) && (this.debugDrawer.getDebugMode() > 0)) {
+				this.debugDrawer.begin();
+				this.world.getWorld().debugDrawWorld();
+				this.debugDrawer.end();
 			}
 		}
 	}
 
 	public void setDebugMode(final int mode, final Matrix4 projMatrix) {
-		if (mode == btIDebugDraw.DebugDrawModes.DBG_NoDebug && debugDrawer == null)
+		if ((mode == btIDebugDraw.DebugDrawModes.DBG_NoDebug) && (this.debugDrawer == null)) {
 			return;
-		if (debugDrawer == null)
-			world.getWorld().setDebugDrawer(debugDrawer = new DebugDrawer());
-		debugDrawer.lineRenderer.setProjectionMatrix(projMatrix);
-		debugDrawer.setDebugMode(mode);
+		}
+		if (this.debugDrawer == null) {
+			this.world.getWorld().setDebugDrawer(this.debugDrawer = new DebugDrawer());
+		}
+		this.debugDrawer.lineRenderer.setProjectionMatrix(projMatrix);
+		this.debugDrawer.setDebugMode(mode);
 	}
 
 	public int getDebugMode() {
-		return (debugDrawer == null) ? 0 : debugDrawer.getDebugMode();
+		return (this.debugDrawer == null) ? 0 : this.debugDrawer.getDebugMode();
 	}
 
 	public void showFPS() {
-		if (showFps) {
+		if (this.showFps) {
 			// FPS anzeigen.
-			spriteBatch.begin();
-			font.draw(spriteBatch, Gdx.graphics.getFramesPerSecond() + " fps", 10,
+			this.spriteBatch.begin();
+			this.font.draw(this.spriteBatch, Gdx.graphics.getFramesPerSecond() + " fps", 10,
 					Gdx.graphics.getHeight() - 10);
-			spriteBatch.end();
+			this.spriteBatch.end();
 		}
 	}
 }

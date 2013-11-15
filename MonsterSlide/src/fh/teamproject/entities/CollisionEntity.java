@@ -14,9 +14,9 @@ import fh.teamproject.interfaces.ICollisionEntity;
  * 
  * @author stefanprobst
  */
-public abstract class CollisionEntity implements ICollisionEntity {
+public abstract class CollisionEntity extends Entitiy implements ICollisionEntity {
 	private btCollisionShape collisionShape;
-	private btDefaultMotionState motionState;
+	private final btDefaultMotionState motionState;
 	private btRigidBody rigidBody;
 	private Vector3 localInertia;
 	private float mass;
@@ -31,9 +31,10 @@ public abstract class CollisionEntity implements ICollisionEntity {
 	/**
 	 * Erstellt den endgueltigen RigidBody der von Bullet benutzt wird.
 	 */
+	@Override
 	public void createRigidBody() {
 		btRigidBodyConstructionInfo rigidBodyInfo = new btRigidBodyConstructionInfo(
-				this.mass, motionState, this.collisionShape, this.localInertia);
+				this.mass, this.motionState, this.collisionShape, this.localInertia);
 
 		this.rigidBody = new btRigidBody(rigidBodyInfo);
 	}
@@ -44,6 +45,7 @@ public abstract class CollisionEntity implements ICollisionEntity {
 	 * 
 	 * @return btRigidBody
 	 */
+	@Override
 	public btRigidBody getRigidBody() {
 		return this.rigidBody;
 	}
@@ -54,6 +56,7 @@ public abstract class CollisionEntity implements ICollisionEntity {
 	 * 
 	 * @param collisionShape
 	 */
+	@Override
 	public void setCollisionShape(btCollisionShape collisionShape) {
 		this.collisionShape = collisionShape;
 	}
@@ -64,8 +67,9 @@ public abstract class CollisionEntity implements ICollisionEntity {
 	 * 
 	 * @param transform
 	 */
+	@Override
 	public void setEntityWorldTransform(Matrix4 transform) {
-		motionState.setWorldTransform(transform);
+		this.motionState.setWorldTransform(transform);
 	}
 
 	/**
@@ -73,6 +77,7 @@ public abstract class CollisionEntity implements ICollisionEntity {
 	 * 
 	 * @param localInertia
 	 */
+	@Override
 	public void setLocalInertia(Vector3 localInertia) {
 		this.localInertia = localInertia;
 	}
@@ -82,8 +87,10 @@ public abstract class CollisionEntity implements ICollisionEntity {
 	 * 
 	 * @param mass
 	 */
+	@Override
 	public void setMass(float mass) {
 		this.mass = mass;
 		this.collisionShape.calculateLocalInertia(this.mass, this.localInertia);
 	}
+
 }
