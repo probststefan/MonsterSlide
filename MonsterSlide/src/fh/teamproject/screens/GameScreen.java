@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.physics.bullet.dynamics.btDynamicsWorld;
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw;
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw.DebugDrawModes;
 
@@ -65,6 +66,15 @@ public class GameScreen implements Screen {
 			world.addRigidBody(slidePart.getRigidBody());
 		}
 
+		int i = 0;
+		for (ISlidePart slidePart : this.world.getSlide().getSlideParts()) {
+
+			if (i == 1) {
+				slidePart.releaseAll();
+			}
+			i++;
+		}
+
 		// Spieler zur Bullet-Welt hinzufuegen.
 		world.addRigidBody(this.player.getRigidBody());
 
@@ -94,7 +104,19 @@ public class GameScreen implements Screen {
 		this.batch.render(this.player.instance, this.lights);
 		// Rutschelemente rendern.
 		for (ISlidePart slidePart : this.world.getSlide().getSlideParts()) {
-			this.batch.render(slidePart.getModelInstance(), this.lights);
+			if (slidePart.getAliveState() == false) {
+				// SlidePart aus der Welt entfernen.
+				world.removeRigidBody(slidePart.getRigidBody());
+				slidePart.getRigidBody().dispose();
+				slidePart.releaseAll();
+				slidePart = null;
+			} else {
+				if (slidePart instanceof btDynamicsWorld == false) {
+					world.addRigidBody(slidePart.getRigidBody());
+				}
+
+				this.batch.render(slidePart.getModelInstance(), this.lights);
+			}
 		}
 		this.batch.end();
 

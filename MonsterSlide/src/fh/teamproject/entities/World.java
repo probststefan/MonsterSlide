@@ -56,6 +56,10 @@ public class World implements IWorld {
 		this.dynamicsWorld.addRigidBody(rigidBody);
 	}
 
+	public void removeRigidBody(btRigidBody rigidBody) {
+		this.dynamicsWorld.removeRigidBody(rigidBody);
+	}
+
 	public int getMaxSubSteps() {
 		return this.maxSubSteps;
 	}

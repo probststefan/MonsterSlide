@@ -28,6 +28,13 @@ public abstract class CollisionEntity implements ICollisionEntity {
 		this.mass = 0;
 	}
 
+	public void releaseAll() {
+		this.collisionShape.release();
+		this.motionState.release();
+		this.rigidBody.release();
+		this.localInertia = null;
+	}
+
 	/**
 	 * Erstellt den endgueltigen RigidBody der von Bullet benutzt wird.
 	 */
