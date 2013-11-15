@@ -86,6 +86,7 @@ public class GameScreen implements Screen {
 		// this.camera.lookAt(this.player.position);
 		this.camera.update();
 		this.world.update();
+		this.world.getSlide().update(this.player.position);
 
 		/* RENDER */
 		this.batch.begin(this.camera);

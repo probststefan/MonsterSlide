@@ -15,19 +15,31 @@ import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
 import com.badlogic.gdx.physics.bullet.collision.btConvexHullShape;
+import com.badlogic.gdx.utils.Pool.Poolable;
 
 import fh.teamproject.interfaces.ISlidePart;
 
-public class SlidePart extends CollisionEntity implements ISlidePart {
+/**
+ * Klasse stellt ein einzelnes Rutschelement dar. Es wird das Poolable-Interface
+ * von libgdx implementiert.
+ * 
+ * @url https://code.google.com/p/libgdx/wiki/MemoryManagment
+ * @author stefanprobst
+ * 
+ */
+public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
 	private ModelInstance instance;
+	// Eckpunkte des SlidePart.
 	private Vector3[] vertices;
 	private float width = 20.0f;
+	public boolean alive;
 
 	public SlidePart() {
 		super();
 
 		vertices = new Vector3[4];
+		alive = false;
 	}
 
 	/**
@@ -86,6 +98,8 @@ public class SlidePart extends CollisionEntity implements ISlidePart {
 		this.setEntityWorldTransform(this.instance.transform);
 		this.setLocalInertia(new Vector3(0, 0, 0));
 		this.createRigidBody();
+
+		this.alive = true;
 	}
 
 	/**
@@ -138,5 +152,11 @@ public class SlidePart extends CollisionEntity implements ISlidePart {
 	@Override
 	public float getWidth() {
 		return this.width;
+	}
+
+	@Override
+	public void reset() {
+		// TODO Auto-generated method stub
+
 	}
 }
