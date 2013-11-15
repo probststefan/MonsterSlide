@@ -16,6 +16,12 @@ public abstract class Entitiy implements IEntity {
 	}
 
 	@Override
+	public void update() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
 	public ModelInstance getModelInstance() {
 		// TODO Auto-generated method stub
 		return this.instance;

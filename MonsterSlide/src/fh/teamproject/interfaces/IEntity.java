@@ -9,5 +9,7 @@ public interface IEntity {
 
 	public ModelInstance getModelInstance();
 
+	public void update();
+
 	public int getID();
 }
