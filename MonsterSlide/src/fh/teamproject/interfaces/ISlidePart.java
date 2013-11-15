@@ -9,4 +9,8 @@ public interface ISlidePart extends ICollisionEntity {
 	public Vector3 getVertice(int position);
 
 	public float getWidth();
+
+	public boolean getAliveState();
+
+	public void setAliveState(boolean alive);
 }

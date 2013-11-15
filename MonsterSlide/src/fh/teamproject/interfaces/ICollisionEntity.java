@@ -19,4 +19,6 @@ public interface ICollisionEntity extends IEntity {
 
 	public void setMass(float mass);
 
+	public void releaseAll();
+
 }

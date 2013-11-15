@@ -127,6 +127,14 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		this.vertices[position] = vertice;
 	}
 
+	public boolean getAliveState() {
+		return this.alive;
+	}
+
+	public void setAliveState(boolean alive) {
+		this.alive = alive;
+	}
+
 	@Override
 	public Vector3 getPosition() {
 		// TODO Auto-generated method stub

@@ -10,7 +10,7 @@ public interface ISlide extends IEntity {
 
 	public ArrayList<ISlidePart> getSlideParts();
 
-	public void removeSlideParty(ISlidePart slidePart);
+	public void removeSlidePart(ISlidePart slidePart);
 
 	public void update(Vector3 playerPosition);
 

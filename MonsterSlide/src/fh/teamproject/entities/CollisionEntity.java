@@ -34,6 +34,15 @@ public abstract class CollisionEntity extends Entitiy implements ICollisionEntit
 		this.getRigidBody().getMotionState().getWorldTransform(this.instance.transform);
 
 	}
+
+	@Override
+	public void releaseAll() {
+		this.collisionShape.release();
+		this.motionState.release();
+		this.rigidBody.release();
+		this.localInertia = null;
+	}
+
 	/**
 	 * Erstellt den endgueltigen RigidBody der von Bullet benutzt wird.
 	 */

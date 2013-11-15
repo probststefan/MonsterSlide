@@ -18,7 +18,7 @@ public class Slide extends Entitiy implements ISlide {
 	private int randomSlope = 0;
 
 	// SlidePart pool.
-	private final Pool<SlidePart> slidePartPool = new Pool<SlidePart>() {
+	private final Pool<ISlidePart> slidePartPool = new Pool<ISlidePart>() {
 		@Override
 		protected SlidePart newObject() {
 			return new SlidePart();
@@ -37,7 +37,7 @@ public class Slide extends Entitiy implements ISlide {
 		this.tmpVertices[3] = new Vector3(10, 0, -10);
 
 		// Zum Start existieren schon direkt einige SlideParts.
-		for (int i = 0; i < 5; ++i) {
+		for (int i = 0; i < 3; ++i) {
 			this.addSlidePart();
 		}
 	}
@@ -50,10 +50,10 @@ public class Slide extends Entitiy implements ISlide {
 	public void update(Vector3 playerPosition) {
 		for (int i = 0; i < this.slideParts.size(); ++i) {
 			// Kontrollieren ob der Spieler schon unter dem Rutschelement ist.
-			if (playerPosition.y < (this.slideParts.get(i).getVertice(1).y - 5)) {
-				// Rutschelement aus der Liste entfernen. Den Rest sollte der
-				// den Garbage collector regeln, theoretisch zumindestens.
-				this.slidePartPool.free((SlidePart) this.slideParts.get(i));
+			if (playerPosition.y < slideParts.get(i).getVertice(1).y - 2) {
+				slideParts.get(i).setAliveState(false);
+				// Rutschelement aus der Liste entfernen.
+				slidePartPool.free(this.slideParts.get(i));
 				this.slideParts.remove(i);
 
 				this.addSlidePart();
@@ -67,17 +67,18 @@ public class Slide extends Entitiy implements ISlide {
 	@Override
 	public void addSlidePart() {
 		// Rutschelement erstellen und hinzufuegen.
-		SlidePart slidePart = this.slidePartPool.obtain();
-		slidePart.setVertice(this.tmpVertices[0], 0);
-		slidePart.setVertice(this.tmpVertices[1], 1);
-		slidePart.setVertice(this.tmpVertices[2], 2);
-		slidePart.setVertice(this.tmpVertices[3], 3);
+		SlidePart slidePart = (SlidePart) slidePartPool.obtain();
+		slidePart.setVertice(tmpVertices[0], 0);
+		slidePart.setVertice(tmpVertices[1], 1);
+		slidePart.setVertice(tmpVertices[2], 2);
+		slidePart.setVertice(tmpVertices[3], 3);
 		slidePart.createSlidePart();
 		this.slideParts.add(slidePart);
 
 		// tmpVertices fuer das naechste Elem. updaten.
 		// Gefaelle zufaellig bestimmen.
 		this.randomSlope = this.rand.nextInt(10);
+		randomSlope = 2;
 
 		this.tmpVertices[0] = this.tmpVertices[1];
 		this.tmpVertices[3] = this.tmpVertices[2];
@@ -88,7 +89,7 @@ public class Slide extends Entitiy implements ISlide {
 	}
 
 	@Override
-	public void removeSlideParty(ISlidePart slidePart) {
+	public void removeSlidePart(ISlidePart slidePart) {
 		this.slideParts.remove(slidePart);
 	}
 
