@@ -11,7 +11,6 @@ import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
-import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw;
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw.DebugDrawModes;
@@ -19,6 +18,7 @@ import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw.DebugDrawModes;
 import fh.teamproject.entities.Player;
 import fh.teamproject.entities.World;
 import fh.teamproject.interfaces.ISlidePart;
+import fh.teamproject.utils.ChaseCameraController;
 import fh.teamproject.utils.DebugDrawer;
 
 public class GameScreen implements Screen {
@@ -28,7 +28,8 @@ public class GameScreen implements Screen {
 	public DebugDrawer debugDrawer = null;
 
 	PerspectiveCamera camera;
-	CameraInputController controller;
+	ChaseCameraController chaseCamContr;
+	// CameraInputController controller;
 
 	ModelBatch batch;
 	Environment lights;
@@ -40,13 +41,14 @@ public class GameScreen implements Screen {
 	private BitmapFont font;
 
 	public GameScreen() {
-		this.camera = new PerspectiveCamera(67, Gdx.graphics.getWidth(),
-				Gdx.graphics.getHeight());
-		this.camera.translate(0f, 0f, 10f);
-		this.controller = new CameraInputController(this.camera);
 
 		this.world = new World();
 		this.player = (Player) this.world.getPlayer();
+		this.camera = new PerspectiveCamera(67, Gdx.graphics.getWidth(),
+				Gdx.graphics.getHeight());
+
+		// this.controller = new CameraInputController(this.camera);
+		this.chaseCamContr = new ChaseCameraController(this.camera, this.player);
 
 		this.batch = new ModelBatch();
 
@@ -56,7 +58,7 @@ public class GameScreen implements Screen {
 		this.lights.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
 
 		InputMultiplexer inputMul = new InputMultiplexer();
-		inputMul.addProcessor(this.controller);
+		// inputMul.addProcessor(this.controller);
 
 		Gdx.input.setInputProcessor(inputMul);
 
@@ -83,7 +85,9 @@ public class GameScreen implements Screen {
 		this.debugger();
 
 		/* UPDATE */
-		// this.camera.lookAt(this.player.position);
+		// this.camera.lookAt(this.player.getPosition());
+		this.player.update();
+		this.chaseCamContr.update();
 		this.camera.update();
 		this.world.update();
 		this.world.getSlide().update(this.player.getPosition());
@@ -99,7 +103,6 @@ public class GameScreen implements Screen {
 		this.batch.end();
 
 		this.showFPS();
-		this.player.update();
 	}
 
 	@Override

@@ -15,7 +15,7 @@ import fh.teamproject.interfaces.IPlayer;
 public class Player extends CollisionEntity implements IPlayer {
 
 	public float radius = 1f;
-	public Vector3 direction;
+	public Vector3 direction = new Vector3(0, 0, 1);
 	public float velocity;
 	boolean isGrounded = false;
 	int state = 0;
@@ -24,7 +24,6 @@ public class Player extends CollisionEntity implements IPlayer {
 		super();
 
 		// Grafische Darstellung erstellen.
-		this.direction = new Vector3(0f, -1f, 0f);
 		ModelBuilder builder = new ModelBuilder();
 		Material material = new Material(ColorAttribute.createDiffuse(Color.GREEN));
 		// Durchmesser der Sphere berechnen.
@@ -39,11 +38,14 @@ public class Player extends CollisionEntity implements IPlayer {
 		this.setLocalInertia(new Vector3(0, 0, 0));
 		this.setMass(1.0f); // Masse der Sphere.
 		this.createRigidBody();
+		this.getRigidBody().getMotionState().getWorldTransform(this.instance.transform);
+
 	}
 
+	@Override
 	public void update() {
-		// Status der Sphere aktualisieren.
-		this.getRigidBody().getMotionState().getWorldTransform(this.instance.transform);
+		// TODO Auto-generated method stub
+		super.update();
 	}
 
 	@Override
