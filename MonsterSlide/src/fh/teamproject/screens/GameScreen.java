@@ -57,7 +57,7 @@ public class GameScreen implements Screen {
 		this.camManager = new CameraManager();
 		this.camManager.addCamera(controller, Mode.FREE);
 		this.camManager.addCamera(chaseCamContr, Mode.CHASE);
-		this.camManager.setMode(Mode.FREE);
+		this.camManager.setMode(Mode.CHASE);
 		this.batch = new ModelBatch();
 
 		this.lights = new Environment();

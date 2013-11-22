@@ -14,27 +14,24 @@ public class ChaseCameraController extends CameraController {
 	public ChaseCameraController(Camera camera, Player player) {
 		super(camera);
 		this.player = player;
-		Vector3 pos = player.getPosition().cpy();
 		this.offset = player.direction.cpy().scl(-1f * this.radius);
-		// new Vector3(0, this.radius, -this.radius);
+		// Vector3 rotAxis = player.direction.cpy().crs(vector)
+		this.offset.rotate(Vector3.X, 45);
+		Vector3 pos = player.getPosition();
+		Vector3 orbitPos = pos.cpy().add(this.offset);
+		// orbitPos.mul(player.getModelInstance().transform);
+		// orbitPos.rotate(axis, degrees)
+		camera.position.set(orbitPos);
+		camera.lookAt(pos);
 
-		// Vector3 orbitPos = pos.cpy().add(this.offset);
-		// Vector3 delta = orbitPos.cpy().sub(camera.position.cpy());
-		// this.camera.translate(delta);
-		// camera.rotateAround(pos, Vector3.X, 45f);
-		// this.camera.lookAt(pos);
 	}
 
+	Vector3 oldPos = new Vector3();
 	@Override
 	public void update() {
 		Vector3 pos = this.player.getPosition().cpy();
-
-		Vector3 orbitPos = pos.cpy().add(this.offset);
-		Vector3 delta = orbitPos.cpy().sub(this.camera.position.cpy());
-
-		this.camera.translate(delta);
-		// this.camera.rotateAround(pos, Vector3.X, 45f);
-		this.camera.lookAt(pos);
+		this.camera.position.set(pos.cpy().add(this.offset));
+		this.camera.lookAt(pos.cpy().add(this.player.direction));
 		super.update();
 	}
 }
