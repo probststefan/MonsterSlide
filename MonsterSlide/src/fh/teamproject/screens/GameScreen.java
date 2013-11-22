@@ -16,10 +16,14 @@ import com.badlogic.gdx.physics.bullet.dynamics.btDynamicsWorld;
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw;
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw.DebugDrawModes;
 
+import fh.teamproject.controller.camera.ChaseCameraController;
+import fh.teamproject.controller.camera.DebugCameraController;
+import fh.teamproject.controller.camera.DebugInputController;
 import fh.teamproject.entities.Player;
 import fh.teamproject.entities.World;
 import fh.teamproject.interfaces.ISlidePart;
-import fh.teamproject.utils.ChaseCameraController;
+import fh.teamproject.utils.CameraManager;
+import fh.teamproject.utils.CameraManager.Mode;
 import fh.teamproject.utils.DebugDrawer;
 
 public class GameScreen implements Screen {
@@ -28,10 +32,8 @@ public class GameScreen implements Screen {
 	private final boolean showFps = true;
 	public DebugDrawer debugDrawer = null;
 
-	PerspectiveCamera camera;
-	ChaseCameraController chaseCamContr;
-	// CameraInputController controller;
 
+	public CameraManager camManager;
 	ModelBatch batch;
 	Environment lights;
 
@@ -45,12 +47,17 @@ public class GameScreen implements Screen {
 
 		this.world = new World();
 		this.player = (Player) this.world.getPlayer();
-		this.camera = new PerspectiveCamera(67, Gdx.graphics.getWidth(),
-				Gdx.graphics.getHeight());
 
-		// this.controller = new CameraInputController(this.camera);
-		this.chaseCamContr = new ChaseCameraController(this.camera, this.player);
-
+		DebugCameraController controller = new DebugCameraController(
+				new PerspectiveCamera(67,
+				Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
+		ChaseCameraController chaseCamContr = new ChaseCameraController(
+				new PerspectiveCamera(67,
+				Gdx.graphics.getWidth(), Gdx.graphics.getHeight()), this.player);
+		this.camManager = new CameraManager();
+		this.camManager.addCamera(controller, Mode.FREE);
+		this.camManager.addCamera(chaseCamContr, Mode.CHASE);
+		this.camManager.setMode(Mode.FREE);
 		this.batch = new ModelBatch();
 
 		this.lights = new Environment();
@@ -58,9 +65,10 @@ public class GameScreen implements Screen {
 				1f));
 		this.lights.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
 
+		DebugInputController processor = new DebugInputController(this);
 		InputMultiplexer inputMul = new InputMultiplexer();
-		// inputMul.addProcessor(this.controller);
-
+		inputMul.addProcessor(processor);
+		inputMul.addProcessor(controller);
 		Gdx.input.setInputProcessor(inputMul);
 
 		// Elemente der Rutsche zur Bullet-Welt hinzufuegen.
@@ -93,30 +101,27 @@ public class GameScreen implements Screen {
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
 		this.debugger();
-
+		this.camManager.update();
 		/* UPDATE */
-		// this.camera.lookAt(this.player.getPosition());
 		this.player.update();
-		this.chaseCamContr.update();
-		this.camera.update();
 		this.world.update();
 		this.world.getSlide().update(this.player.getPosition());
 
 		/* RENDER */
-		this.batch.begin(this.camera);
+		this.batch.begin(this.camManager.getActiveCamera());
 		// Player rendern.
 		this.batch.render(this.player.instance, this.lights);
 		// Rutschelemente rendern.
 		for (ISlidePart slidePart : this.world.getSlide().getSlideParts()) {
 			if (slidePart.getAliveState() == false) {
 				// SlidePart aus der Welt entfernen.
-				world.removeRigidBody(slidePart.getRigidBody());
+				this.world.removeRigidBody(slidePart.getRigidBody());
 				slidePart.getRigidBody().dispose();
 				slidePart.releaseAll();
 				slidePart = null;
 			} else {
-				if (slidePart instanceof btDynamicsWorld == false) {
-					world.addRigidBody(slidePart.getRigidBody());
+				if ((slidePart instanceof btDynamicsWorld) == false) {
+					this.world.addRigidBody(slidePart.getRigidBody());
 				}
 
 				this.batch.render(slidePart.getModelInstance(), this.lights);
@@ -167,7 +172,8 @@ public class GameScreen implements Screen {
 		if (this.debuggerOn) {
 			// Stellt die Kollisionsobjekte von Bullet grafisch dar.
 			Gdx.gl.glDisable(GL10.GL_DEPTH_TEST);
-			this.setDebugMode(DebugDrawModes.DBG_DrawWireframe, this.camera.combined);
+			this.setDebugMode(DebugDrawModes.DBG_DrawWireframe,
+					this.camManager.getActiveCamera().combined);
 			Gdx.gl.glEnable(GL10.GL_DEPTH_TEST);
 
 			if ((this.debugDrawer != null) && (this.debugDrawer.getDebugMode() > 0)) {
@@ -179,7 +185,8 @@ public class GameScreen implements Screen {
 	}
 
 	public void setDebugMode(final int mode, final Matrix4 projMatrix) {
-		if ((mode == btIDebugDraw.DebugDrawModes.DBG_NoDebug) && (this.debugDrawer == null)) {
+		if ((mode == btIDebugDraw.DebugDrawModes.DBG_NoDebug)
+				&& (this.debugDrawer == null)) {
 			return;
 		}
 		if (this.debugDrawer == null) {
@@ -197,8 +204,8 @@ public class GameScreen implements Screen {
 		if (this.showFps) {
 			// FPS anzeigen.
 			this.spriteBatch.begin();
-			this.font.draw(this.spriteBatch, Gdx.graphics.getFramesPerSecond() + " fps", 10,
-					Gdx.graphics.getHeight() - 10);
+			this.font.draw(this.spriteBatch, Gdx.graphics.getFramesPerSecond() + " fps",
+					10, Gdx.graphics.getHeight() - 10);
 			this.spriteBatch.end();
 		}
 	}
