@@ -1,94 +1,86 @@
 package fh.teamproject.screens;
 
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+
+import fh.teamproject.screens.menusites.MainMenuSite;
+import fh.teamproject.screens.utils.IMenuScreen;
 
 public class MenuScreen implements Screen {
-
+    
+    private IMenuScreen actualSite;
+    private String[] menuNames;
+    private IMenuScreen[] siteList;
     private Game game;
-    private Stage stage;
-    private Table table;
-    private TextButton button;
-    private TextButtonStyle style;
+
     public MenuScreen(Game g)
     {
         game = g;
-        stage = new Stage(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        Gdx.input.setInputProcessor(stage);
-        table = new Table();
-        table.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        style = new TextButtonStyle();
-        style.checkedFontColor = new Color(Color.BLUE);
-        style.checkedOverFontColor = new Color(Color.RED);
-        style.downFontColor = new Color(Color.GREEN);
-        style.fontColor = new Color(Color.YELLOW);
-        style.overFontColor = new Color(Color.PINK);
-        style.font = new BitmapFont();
-        button = new TextButton("start Game", style);
-        button.setSize(Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
-        button.center();
-        button.setPosition(0, 0);
-        button.addListener(new ChangeListener() {
-            
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                // TODO Auto-generated method stub
-                game.setScreen(new GameScreen());
-            }
-        });
-        table.add(button);
-        stage.addActor(table);
+        siteList = new IMenuScreen[5];
+        menuNames = new String[5];
+        actualSite = siteList[0] = new MainMenuSite(this);
+        menuNames[0] = "MainMenu";
     }
     @Override
     public void render(float delta) {
         // TODO Auto-generated method stub
-        stage.act();
-        stage.draw();
+        actualSite.render(delta);
     }
 
     @Override
     public void resize(int width, int height) {
         // TODO Auto-generated method stub
-        
+        actualSite.resize(width, height);
     }
 
     @Override
     public void show() {
         // TODO Auto-generated method stub
-        
+        actualSite.show();
     }
 
     @Override
     public void hide() {
         // TODO Auto-generated method stub
-        
+        actualSite.hide();
     }
 
     @Override
     public void pause() {
         // TODO Auto-generated method stub
-        
+        actualSite.pause();
     }
 
     @Override
     public void resume() {
         // TODO Auto-generated method stub
-        
+        actualSite.resume();
     }
 
     @Override
     public void dispose() {
         // TODO Auto-generated method stub
-        
+        actualSite.dispose();
     }
-
+    
+    public Game getGame() {
+        return this.game;
+    }
+    
+    public IMenuScreen findMenuScreen(String name)
+    {
+        for (int i = 0; i < menuNames.length; i++)
+        {
+            if (name.equals(menuNames[i])) {
+                return siteList[i];
+            }
+        }
+        return null;
+    }
+    public IMenuScreen getActualSite() {
+        return actualSite;
+    }
+    public void setActualSite(IMenuScreen actualSite) {
+        this.actualSite = actualSite;
+    }
 }
