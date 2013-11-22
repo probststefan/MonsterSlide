@@ -15,7 +15,7 @@ import fh.teamproject.interfaces.IPlayer;
 public class Player extends CollisionEntity implements IPlayer {
 
 	public float radius = 1f;
-	public Vector3 direction = new Vector3(0, 0, 1);
+	public Vector3 direction = new Vector3(0, 0, 1f);
 	public float velocity;
 	boolean isGrounded = false;
 	int state = 0;
@@ -39,6 +39,7 @@ public class Player extends CollisionEntity implements IPlayer {
 		this.setMass(1.0f); // Masse der Sphere.
 		this.createRigidBody();
 		this.getRigidBody().getMotionState().getWorldTransform(this.instance.transform);
+
 
 	}
 
