@@ -13,8 +13,11 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.bullet.collision.Collision;
+import com.badlogic.gdx.physics.bullet.collision.btCollisionObject;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
 import com.badlogic.gdx.physics.bullet.collision.btConvexHullShape;
+import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld;
 import com.badlogic.gdx.utils.Pool.Poolable;
 
 import fh.teamproject.interfaces.ISlidePart;
@@ -29,7 +32,6 @@ import fh.teamproject.interfaces.ISlidePart;
  */
 public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
-	private ModelInstance instance;
 	// Eckpunkte des SlidePart.
 	private Vector3[] vertices;
 	private float width = 20.0f;
@@ -71,9 +73,11 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		Material material = new Material(ColorAttribute.createDiffuse(color));
 		material.set(textureAttr);
 
-		// Model m = builder.createRect(-10, 0, -10, -10, 0, 10, 10, 0, 10, 10,
-		// 0, -10, 0, 1, 0, material, Usage.Position | Usage.Normal |
-		// Usage.TextureCoordinates);
+		this.vertices = new Vector3[4];
+		this.vertices[0] = new Vector3(-10, 0, -10);
+		this.vertices[1] = new Vector3(-10, 0, 10);
+		this.vertices[2] = new Vector3(10, 0, 10);
+		this.vertices[3] = new Vector3(10, 0, -10);
 
 		Model m = builder.createRect(this.vertices[0].x, this.vertices[0].y,
 				this.vertices[0].z, this.vertices[1].x, this.vertices[1].y,
@@ -83,8 +87,8 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 						| Usage.TextureCoordinates);
 
 		this.instance = new ModelInstance(m);
-		// this.instance.transform.rotate(new Vector3(1.0f, 1.0f, 0), 5);
-		// this.instance.transform.translate(0, 0, 0);
+		this.instance.transform.rotate(new Vector3(1.0f, 1.0f, 0), 4);
+		this.instance.transform.translate(0, 0, 0);
 
 		// Bullet-Eigenschaften setzen.
 		btConvexHullShape convesHullShape = new btConvexHullShape();
@@ -100,6 +104,29 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		this.createRigidBody();
 
 		this.alive = true;
+	}
+
+	public void move(Vector3 tmpSlidePartPos, btDiscreteDynamicsWorld dynamicsWorld) {
+		// Die gerenderte Plane bewegen.
+		this.instance.transform.translate(tmpSlidePartPos);
+
+		// Die Bullet-Plane bewegen.
+		dynamicsWorld.removeRigidBody(this.getRigidBody());
+
+		this.getRigidBody().setCollisionFlags(
+				this.getRigidBody().getCollisionFlags()
+						| btCollisionObject.CollisionFlags.CF_KINEMATIC_OBJECT);
+		this.getRigidBody().setActivationState(Collision.DISABLE_DEACTIVATION);
+
+		this.getRigidBody().setWorldTransform(this.instance.transform);
+
+		this.getRigidBody().setCollisionFlags(
+				this.getRigidBody().getCollisionFlags()
+						& ~(btCollisionObject.CollisionFlags.CF_KINEMATIC_OBJECT));
+
+		this.getRigidBody().forceActivationState(1);
+
+		dynamicsWorld.addRigidBody(this.getRigidBody());
 	}
 
 	/**
@@ -133,12 +160,6 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
 	public void setAliveState(boolean alive) {
 		this.alive = alive;
-	}
-
-	@Override
-	public Vector3 getPosition() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override

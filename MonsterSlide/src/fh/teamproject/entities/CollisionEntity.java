@@ -5,7 +5,6 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBodyConstructionInfo;
-import com.badlogic.gdx.physics.bullet.linearmath.btDefaultMotionState;
 
 import fh.teamproject.interfaces.ICollisionEntity;
 
@@ -16,13 +15,14 @@ import fh.teamproject.interfaces.ICollisionEntity;
  */
 public abstract class CollisionEntity extends Entitiy implements ICollisionEntity {
 	private btCollisionShape collisionShape;
-	private final btDefaultMotionState motionState;
-	private btRigidBody rigidBody;
+	public MotionState motionState;
+	private btRigidBodyConstructionInfo rigidBodyInfo;
+	public btRigidBody rigidBody;
 	private Vector3 localInertia;
 	private float mass;
 
 	CollisionEntity() {
-		this.motionState = new btDefaultMotionState();
+		// this.motionState = new btDefaultMotionState();
 		this.localInertia = new Vector3();
 		// Standardmaessig erstmal keine Masse setzen.
 		this.mass = 0;
@@ -31,8 +31,14 @@ public abstract class CollisionEntity extends Entitiy implements ICollisionEntit
 	@Override
 	public void update() {
 		super.update();
-		this.getRigidBody().getMotionState().getWorldTransform(this.instance.transform);
+		this.rigidBody.getMotionState().getWorldTransform(this.instance.transform);
+	}
 
+	public void dispose() {
+		this.rigidBody.dispose();
+		this.motionState.dispose();
+		this.collisionShape.dispose();
+		this.rigidBodyInfo.dispose();
 	}
 
 	@Override
@@ -48,10 +54,14 @@ public abstract class CollisionEntity extends Entitiy implements ICollisionEntit
 	 */
 	@Override
 	public void createRigidBody() {
-		btRigidBodyConstructionInfo rigidBodyInfo = new btRigidBodyConstructionInfo(
-				this.mass, this.motionState, this.collisionShape, this.localInertia);
+		rigidBodyInfo = new btRigidBodyConstructionInfo(this.mass, this.motionState,
+				this.collisionShape, this.localInertia);
 
 		this.rigidBody = new btRigidBody(rigidBodyInfo);
+	}
+
+	public void createMotionState() {
+		this.motionState = new MotionState(this.instance.transform);
 	}
 
 	/**
@@ -84,6 +94,10 @@ public abstract class CollisionEntity extends Entitiy implements ICollisionEntit
 	 */
 	@Override
 	public void setEntityWorldTransform(Matrix4 transform) {
+		if (null == this.motionState) {
+			this.createMotionState();
+		}
+
 		this.motionState.setWorldTransform(transform);
 	}
 

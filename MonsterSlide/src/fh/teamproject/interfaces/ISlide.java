@@ -6,6 +6,9 @@ import com.badlogic.gdx.math.Vector3;
 
 public interface ISlide extends IEntity {
 
+	/*
+	 * Fuegt einen ISlidePart zur Liste hinzu.
+	 */
 	public void addSlidePart();
 
 	public ArrayList<ISlidePart> getSlideParts();

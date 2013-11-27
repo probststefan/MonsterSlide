@@ -40,7 +40,6 @@ public class Player extends CollisionEntity implements IPlayer {
 		this.createRigidBody();
 		this.getRigidBody().getMotionState().getWorldTransform(this.instance.transform);
 
-
 	}
 
 	@Override

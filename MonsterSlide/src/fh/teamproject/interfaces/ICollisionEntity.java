@@ -21,4 +21,6 @@ public interface ICollisionEntity extends IEntity {
 
 	public void releaseAll();
 
+	public void dispose();
+
 }
