@@ -48,9 +48,9 @@ public class Player extends CollisionEntity implements IPlayer {
 
 	@Override
 	public void update() {
-		// TODO Auto-generated method stub
 		super.update();
-
+		this.direction = this.rigidBody.getLinearVelocity().nor();
+		Gdx.app.log("Player", "" + this.direction);
 		// TODO In Controller-Klasse bauen!
 		if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
 			this.getRigidBody().applyForce(new Vector3(1000, 0, 0), this.position);
