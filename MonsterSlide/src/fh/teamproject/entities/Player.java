@@ -36,7 +36,7 @@ public class Player extends CollisionEntity implements IPlayer {
 		this.setCollisionShape(new btSphereShape(this.radius));
 		this.setEntityWorldTransform(this.instance.transform);
 		this.setLocalInertia(new Vector3(0, 0, 0));
-		this.setMass(1.0f); // Masse der Sphere.
+		this.setMass(100.0f); // Masse der Sphere.
 		this.createRigidBody();
 		this.getRigidBody().getMotionState().getWorldTransform(this.instance.transform);
 

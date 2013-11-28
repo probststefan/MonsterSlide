@@ -23,6 +23,7 @@ public class Slide extends Entitiy implements ISlide {
 
 		for (int i = 0; i < 5; ++i) {
 			this.addSlidePart();
+			tmpSlidePartPos.z += 20;
 		}
 	}
 
@@ -30,9 +31,7 @@ public class Slide extends Entitiy implements ISlide {
 	public void addSlidePart() {
 		ISlidePart slidePart = pool.obtain();
 		this.slideParts.add(slidePart);
-		slidePart.move(tmpSlidePartPos, this.dynamicsWorld);
-
-		tmpSlidePartPos.z += slidePart.getWidth();
+		this.move(slidePart);
 	}
 
 	@Override
@@ -53,10 +52,16 @@ public class Slide extends Entitiy implements ISlide {
 	@Override
 	public void update(Vector3 playerPosition) {
 		for (int i = 0; i < this.slideParts.size(); i++) {
-			if (this.slideParts.get(i).getVertice(1).y > playerPosition.y) {
-				this.pool.free(this.slideParts.get(i));
-				this.removeSlidePart(this.slideParts.get(i));
+			if (this.slideParts.get(i).getPosition().y > playerPosition.y + 2) {
+				this.move(this.slideParts.get(i));
+				// this.removeSlidePart(this.slideParts.get(i));
+				// this.addSlidePart();
+				// this.move(this.slideParts.get(i));
 			}
 		}
+	}
+
+	private void move(ISlidePart slidePart) {
+		slidePart.move(tmpSlidePartPos, this.dynamicsWorld);
 	}
 }

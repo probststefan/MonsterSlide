@@ -75,8 +75,7 @@ public class GameScreen implements Screen {
 			this.font = new BitmapFont();
 		}
 
-		this.setDebugMode(btIDebugDraw.DebugDrawModes.DBG_DrawWireframe,
-				this.camManager.getActiveCamera().combined);
+		// this.setDebugMode(btIDebugDraw.DebugDrawModes.DBG_DrawWireframe,this.camManager.getActiveCamera().combined);
 	}
 
 	@Override
