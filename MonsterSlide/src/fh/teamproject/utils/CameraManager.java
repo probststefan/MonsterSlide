@@ -32,4 +32,12 @@ public class CameraManager {
 	public Camera getActiveCamera() {
 		return this.activeCamera.getCamera();
 	}
+
+	public void setViewport(float width, float height) {
+		for (ICameraController c : this.cameras.values()) {
+			c.getCamera().viewportWidth = width;
+			c.getCamera().viewportHeight = height;
+			c.getCamera().update();
+		}
+	}
 }

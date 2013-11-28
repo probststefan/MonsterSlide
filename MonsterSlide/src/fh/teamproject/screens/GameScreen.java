@@ -98,10 +98,10 @@ public class GameScreen implements Screen {
 			this.batch.render(slidePart.getModelInstance(), this.lights);
 		}
 
-		if (debugDrawer != null && debugDrawer.getDebugMode() > 0) {
-			debugDrawer.begin();
+		if ((this.debugDrawer != null) && (this.debugDrawer.getDebugMode() > 0)) {
+			this.debugDrawer.begin();
 			this.world.getWorld().debugDrawWorld();
-			debugDrawer.end();
+			this.debugDrawer.end();
 
 			Gdx.gl.glDisable(GL10.GL_DEPTH_TEST);
 			this.setDebugMode(this.getDebugMode(),
@@ -115,7 +115,7 @@ public class GameScreen implements Screen {
 
 	@Override
 	public void resize(int width, int height) {
-		// TODO Auto-generated method stub
+		this.camManager.setViewport(width, height);
 
 	}
 
@@ -155,22 +155,24 @@ public class GameScreen implements Screen {
 			this.spriteBatch.begin();
 			this.font.draw(this.spriteBatch, Gdx.graphics.getFramesPerSecond()
 					+ " fps, Bullet: "
-					+ (int) (world.performanceCounter.load.value * 100f) + "%", 10,
+					+ (int) (this.world.performanceCounter.load.value * 100f) + "%", 10,
 					Gdx.graphics.getHeight() - 10);
 			this.spriteBatch.end();
 		}
 	}
 
 	public void setDebugMode(final int mode, final Matrix4 projMatrix) {
-		if (mode == btIDebugDraw.DebugDrawModes.DBG_NoDebug && debugDrawer == null)
+		if ((mode == btIDebugDraw.DebugDrawModes.DBG_NoDebug) && (this.debugDrawer == null)) {
 			return;
-		if (debugDrawer == null)
-			this.world.getWorld().setDebugDrawer(debugDrawer = new DebugDrawer());
-		debugDrawer.lineRenderer.setProjectionMatrix(projMatrix);
-		debugDrawer.setDebugMode(mode);
+		}
+		if (this.debugDrawer == null) {
+			this.world.getWorld().setDebugDrawer(this.debugDrawer = new DebugDrawer());
+		}
+		this.debugDrawer.lineRenderer.setProjectionMatrix(projMatrix);
+		this.debugDrawer.setDebugMode(mode);
 	}
 
 	public int getDebugMode() {
-		return (debugDrawer == null) ? 0 : debugDrawer.getDebugMode();
+		return (this.debugDrawer == null) ? 0 : this.debugDrawer.getDebugMode();
 	}
 }
