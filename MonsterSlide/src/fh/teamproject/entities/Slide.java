@@ -52,7 +52,7 @@ public class Slide extends Entitiy implements ISlide {
 	@Override
 	public void update(Vector3 playerPosition) {
 		for (int i = 0; i < this.slideParts.size(); i++) {
-			if (this.slideParts.get(i).getPosition().y > playerPosition.y + 2) {
+			if (this.slideParts.get(i).getPosition().y > playerPosition.y + 4) {
 				this.move(this.slideParts.get(i));
 				// this.removeSlidePart(this.slideParts.get(i));
 				// this.addSlidePart();

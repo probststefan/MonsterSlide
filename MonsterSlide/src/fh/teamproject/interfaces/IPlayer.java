@@ -1,5 +1,6 @@
 package fh.teamproject.interfaces;
 
+
 public interface IPlayer {
 
 	public void accelerate(float amount);

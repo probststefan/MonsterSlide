@@ -1,5 +1,7 @@
 package fh.teamproject.entities;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g3d.Material;
@@ -40,12 +42,23 @@ public class Player extends CollisionEntity implements IPlayer {
 		this.createRigidBody();
 		this.getRigidBody().getMotionState().getWorldTransform(this.instance.transform);
 
+		// Damit rutscht die Sphere nur noch und rollt nicht mehr.
+		this.getRigidBody().setAngularFactor(0);
 	}
 
 	@Override
 	public void update() {
 		// TODO Auto-generated method stub
 		super.update();
+
+		// TODO In Controller-Klasse bauen!
+		if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+			this.getRigidBody().applyForce(new Vector3(1000, 0, 0), this.position);
+		} else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+			this.getRigidBody().applyForce(new Vector3(-1000, 0, 0), this.position);
+		} else {
+			this.getRigidBody().applyForce(new Vector3(0, 0, 0), this.position);
+		}
 	}
 
 	@Override

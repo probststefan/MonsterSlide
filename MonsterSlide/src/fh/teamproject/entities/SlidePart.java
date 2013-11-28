@@ -87,7 +87,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 						| Usage.TextureCoordinates);
 
 		this.instance = new ModelInstance(m);
-		this.instance.transform.rotate(new Vector3(1.0f, 0, 0), 8);
+		this.instance.transform.rotate(new Vector3(1.0f, 0, 0), 20);
 
 		// Bullet-Eigenschaften setzen.
 		btConvexHullShape convesHullShape = new btConvexHullShape();
@@ -107,8 +107,6 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
 	public void move(Vector3 tmpSlidePartPos, btDiscreteDynamicsWorld dynamicsWorld) {
 		// Die gerenderte Plane bewegen.
-		// this.instance.transform.translate(new Vector3(0, 0, 0));
-		//
 		this.instance.transform.translate(tmpSlidePartPos);
 
 		// Die Bullet-Plane bewegen.
