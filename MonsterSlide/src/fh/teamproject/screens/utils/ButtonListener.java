@@ -16,14 +16,14 @@ public class ButtonListener extends ChangeListener{
     }
     
     public void changed(ChangeEvent event, Actor actor) {
-        if (name == null) {
-            System.exit(0);
-        }
-        else if (name.equals("Game")) {
+        if (name.equals("Game")) {
             menu.getGame().setScreen(new GameScreen());
         }
+        else if (name.equals("Exit")) {
+            System.exit(0);
+        }
         else {
-            menu.setActualSite(menu.findMenuScreen(name));
+            menu.setActualSite(menu.getIndex(name));
         }
     }
 
