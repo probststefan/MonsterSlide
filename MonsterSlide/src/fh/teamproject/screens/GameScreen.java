@@ -18,6 +18,7 @@ import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw.DebugDrawModes;
 
 import fh.teamproject.entities.Player;
 import fh.teamproject.entities.World;
+import fh.teamproject.input.InputHandling;
 import fh.teamproject.interfaces.ISlidePart;
 import fh.teamproject.utils.ChaseCameraController;
 import fh.teamproject.utils.DebugDrawer;
@@ -31,6 +32,8 @@ public class GameScreen implements Screen {
 	PerspectiveCamera camera;
 	ChaseCameraController chaseCamContr;
 	// CameraInputController controller;
+	
+	private InputHandling inputHandling;
 
 	ModelBatch batch;
 	Environment lights;
@@ -51,6 +54,8 @@ public class GameScreen implements Screen {
 		// this.controller = new CameraInputController(this.camera);
 		this.chaseCamContr = new ChaseCameraController(this.camera, this.player);
 
+		this.inputHandling = new InputHandling(player);
+		
 		this.batch = new ModelBatch();
 
 		this.lights = new Environment();
@@ -60,6 +65,7 @@ public class GameScreen implements Screen {
 
 		InputMultiplexer inputMul = new InputMultiplexer();
 		// inputMul.addProcessor(this.controller);
+		inputMul.addProcessor(inputHandling);
 
 		Gdx.input.setInputProcessor(inputMul);
 

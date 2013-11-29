@@ -1,5 +1,7 @@
 package fh.teamproject.entities;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g3d.Material;
@@ -19,6 +21,11 @@ public class Player extends CollisionEntity implements IPlayer {
 	public float velocity;
 	boolean isGrounded = false;
 	int state = 0;
+	
+	private float velocityX = 0.1f;
+	private float velocityY = 1.0f;
+	private float velocityZ = 0.0f;
+
 
 	public Player() {
 		super();
@@ -46,6 +53,10 @@ public class Player extends CollisionEntity implements IPlayer {
 	public void update() {
 		// TODO Auto-generated method stub
 		super.update();
+		//if(Gdx.input.isKeyPressed(Input.Keys.A)){
+			//this.getRigidBody().setLinearVelocity(new Vector3(this.getRigidBody().getLinearVelocity().x + velocityX, this.getRigidBody().getLinearVelocity().y, this.getRigidBody().getLinearVelocity().z + velocityZ));
+		//}
+		
 	}
 
 	@Override
@@ -57,24 +68,34 @@ public class Player extends CollisionEntity implements IPlayer {
 	@Override
 	public void brake(float amount) {
 		// TODO Auto-generated method stub
+		if(this.getRigidBody().getLinearVelocity().z - amount > 0.0f){
+			this.getRigidBody().setLinearVelocity(new Vector3(this.getRigidBody().getLinearVelocity().x, this.getRigidBody().getLinearVelocity().y, this.getRigidBody().getLinearVelocity().z - amount));
 
+		}
 	}
 
 	@Override
 	public void slideLeft() {
 		// TODO Auto-generated method stub
-
+		this.getRigidBody().setLinearVelocity(new Vector3(this.getRigidBody().getLinearVelocity().x + velocityX, this.getRigidBody().getLinearVelocity().y, this.getRigidBody().getLinearVelocity().z + velocityZ));
+		//this.getRigidBody().getLinearVelocity().x += velocityX;
+		
+		
 	}
 
 	@Override
 	public void slideRight() {
 		// TODO Auto-generated method stub
-
+		//this.getRigidBody().setLinearVelocity(new Vector3(this.getRigidBody().getVelocityInLocalPoint(this.getPosition()).x, 0.0f, 0.0f));
+		//this.getRigidBody().setLinearVelocity(new Vector3(this.getRigidBody().getVelocityInLocalPoint(this.getRigidBody().getCenterOfMassPosition()).x - 1.0f, this.getRigidBody().getVelocityInLocalPoint(this.getRigidBody().getCenterOfMassPosition()).y, this.getRigidBody().getVelocityInLocalPoint(this.getRigidBody().getCenterOfMassPosition()).z));
+				
+		this.getRigidBody().setLinearVelocity(new Vector3(this.getRigidBody().getLinearVelocity().x - velocityX, this.getRigidBody().getLinearVelocity().y, this.getRigidBody().getLinearVelocity().z + velocityZ));
+		
 	}
 
 	@Override
 	public void jump() {
 		// TODO Auto-generated method stub
-
+		this.getRigidBody().setLinearVelocity(new Vector3(this.getRigidBody().getLinearVelocity().x, this.getRigidBody().getLinearVelocity().y + velocityY, this.getRigidBody().getLinearVelocity().z));
 	}
 }
