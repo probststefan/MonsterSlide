@@ -17,7 +17,7 @@ import fh.teamproject.interfaces.IPlayer;
 public class Player extends CollisionEntity implements IPlayer {
 
 	public float radius = 1f;
-	public Vector3 direction = new Vector3(0, 0, 1);
+	public Vector3 direction = new Vector3(0, 0, 1f);
 	public float velocity;
 	boolean isGrounded = false;
 	int state = 0;
@@ -43,20 +43,27 @@ public class Player extends CollisionEntity implements IPlayer {
 		this.setCollisionShape(new btSphereShape(this.radius));
 		this.setEntityWorldTransform(this.instance.transform);
 		this.setLocalInertia(new Vector3(0, 0, 0));
-		this.setMass(1.0f); // Masse der Sphere.
+		this.setMass(100.0f); // Masse der Sphere.
 		this.createRigidBody();
 		this.getRigidBody().getMotionState().getWorldTransform(this.instance.transform);
 
+		// Damit rutscht die Sphere nur noch und rollt nicht mehr.
+		this.getRigidBody().setAngularFactor(0);
 	}
 
 	@Override
 	public void update() {
 		// TODO Auto-generated method stub
 		super.update();
-		//if(Gdx.input.isKeyPressed(Input.Keys.A)){
-			//this.getRigidBody().setLinearVelocity(new Vector3(this.getRigidBody().getLinearVelocity().x + velocityX, this.getRigidBody().getLinearVelocity().y, this.getRigidBody().getLinearVelocity().z + velocityZ));
-		//}
-		
+
+		// TODO In Controller-Klasse bauen!
+		if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+			this.getRigidBody().applyForce(new Vector3(1000, 0, 0), this.position);
+		} else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+			this.getRigidBody().applyForce(new Vector3(-1000, 0, 0), this.position);
+		} else {
+			this.getRigidBody().applyForce(new Vector3(0, 0, 0), this.position);
+		}
 	}
 
 	@Override

@@ -1,6 +1,7 @@
 package fh.teamproject.interfaces;
 
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld;
 
 public interface ISlidePart extends ICollisionEntity {
 
@@ -13,4 +14,6 @@ public interface ISlidePart extends ICollisionEntity {
 	public boolean getAliveState();
 
 	public void setAliveState(boolean alive);
+
+	public void move(Vector3 tmpSlidePartPos, btDiscreteDynamicsWorld dynamicsWorld);
 }
