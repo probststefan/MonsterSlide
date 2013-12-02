@@ -22,6 +22,7 @@ public abstract class CollisionEntity extends Entitiy implements ICollisionEntit
 	private float mass;
 
 	CollisionEntity() {
+		super();
 		// this.motionState = new btDefaultMotionState();
 		this.localInertia = new Vector3();
 		// Standardmaessig erstmal keine Masse setzen.

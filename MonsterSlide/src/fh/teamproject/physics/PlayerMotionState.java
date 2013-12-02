@@ -16,13 +16,14 @@ public class PlayerMotionState extends MotionState {
 	}
 
 	@Override
-	public void getWorldTransform(Matrix4 worldTrans) {
+	public void getWorldTransform(final Matrix4 worldTrans) {
 		super.getWorldTransform(worldTrans);
 	}
 
 	@Override
-	public void setWorldTransform(Matrix4 worldTrans) {
+	public void setWorldTransform(final Matrix4 worldTrans) {
 		super.setWorldTransform(worldTrans);
+		worldTrans.getTranslation(this.player.position);
 		this.player.syncWithBullet();
 	}
 

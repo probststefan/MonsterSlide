@@ -17,13 +17,14 @@ import fh.teamproject.physics.PlayerMotionState;
 
 public class Player extends CollisionEntity implements IPlayer {
 
-	public float radius = 1f;
-	public Vector3 direction = new Vector3(0, 0, 1f);
+	public Vector3 position = new Vector3();
+	public Vector3 direction = new Vector3(0, 0, 1);
 	public Vector3 linearVelocity = new Vector3();
-	public float turnIntensity = 5;
-	public float velocity;
-	boolean isGrounded = false;
-	int state = 0;
+	public float radius = 1f;
+	public float turnIntensity = 300;
+	public boolean isGrounded = false;
+	public int state = 0;
+	public float acceleration = 1f;
 
 	public Player() {
 		super();
@@ -39,14 +40,20 @@ public class Player extends CollisionEntity implements IPlayer {
 
 		// Bullet-Eigenschaften setzen.
 		this.setCollisionShape(new btSphereShape(this.radius));
-		this.setEntityWorldTransform(this.instance.transform);
 		this.setLocalInertia(new Vector3(0, 0, 0));
 		this.setMass(100.0f); // Masse der Sphere.
+		this.createMotionState();
 		this.createRigidBody();
-		this.getRigidBody().getMotionState().getWorldTransform(this.instance.transform);
-		this.motionState = new PlayerMotionState(this);
+		// this.getRigidBody().getMotionState().getWorldTransform(this.instance.transform);
 		// Damit rutscht die Sphere nur noch und rollt nicht mehr.
 		this.getRigidBody().setAngularFactor(0);
+		this.setEntityWorldTransform(this.instance.transform);
+	}
+
+	@Override
+	public void createMotionState() {
+		this.motionState = new PlayerMotionState(this);
+
 	}
 
 	@Override
@@ -61,32 +68,39 @@ public class Player extends CollisionEntity implements IPlayer {
 	}
 
 	public void syncWithBullet() {
-		this.linearVelocity = this.rigidBody.getLinearVelocity();
-		this.direction = this.linearVelocity.nor();
+		this.linearVelocity.set(this.rigidBody.getLinearVelocity());
+		this.direction.set(this.linearVelocity.cpy().nor());
 	}
 
 	@Override
 	public void accelerate(float amount) {
+		this.getRigidBody()
+				.applyCentralForce(this.direction.cpy().scl(this.acceleration));
 
+		this.rigidBody.setLinearVelocity(this.direction.cpy().scl(
+				this.acceleration * Gdx.graphics.getDeltaTime()));
 	}
 
 	@Override
 	public void brake(float amount) {
-		// TODO Auto-generated method stub
+		// this.getRigidBody().applyCentralForce(
+		// this.direction.cpy().scl(-this.acceleration));
 
+		this.rigidBody.setLinearVelocity(this.direction.cpy().scl(
+				-this.acceleration * Gdx.graphics.getDeltaTime()));
 	}
 
 	@Override
 	public void slideLeft() {
-		this.getRigidBody().applyImpulse(new Vector3(1, 0, 0).scl(this.turnIntensity),
-				this.position);
+		this.getRigidBody().applyCentralForce(
+				new Vector3(1, 0, 0).scl(this.turnIntensity));
 
 	}
 
 	@Override
 	public void slideRight() {
-		this.getRigidBody().applyImpulse(new Vector3(-1, 0, 0).scl(this.turnIntensity),
-				this.position);
+		this.getRigidBody().applyCentralForce(
+				new Vector3(-1, 0, 0).scl(this.turnIntensity));
 	}
 
 	@Override
