@@ -11,7 +11,6 @@ import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw;
 
@@ -21,6 +20,7 @@ import fh.teamproject.controller.camera.DebugInputController;
 import fh.teamproject.entities.Player;
 import fh.teamproject.entities.World;
 import fh.teamproject.interfaces.ISlidePart;
+import fh.teamproject.utils.CameraDebugDrawer;
 import fh.teamproject.utils.CameraManager;
 import fh.teamproject.utils.CameraManager.Mode;
 import fh.teamproject.utils.DebugDrawer;
@@ -28,10 +28,11 @@ import fh.teamproject.utils.DebugDrawer;
 public class GameScreen implements Screen {
 	// Den Debug-Modus von Bullet ein- und ausschalten.
 	private final boolean showFps = true;
+	static boolean isDebug = false;
 	public DebugDrawer debugDrawer = null;
-	public ShapeRenderer lineRenderer = new ShapeRenderer();
-
+	public CameraDebugDrawer camDebugDrawer;
 	public CameraManager camManager;
+
 	ModelBatch batch;
 	Environment lights;
 
@@ -74,7 +75,7 @@ public class GameScreen implements Screen {
 			this.spriteBatch = new SpriteBatch();
 			this.font = new BitmapFont();
 		}
-
+		this.camDebugDrawer = new CameraDebugDrawer(this.camManager);
 		// Debug
 		this.setDebugMode(btIDebugDraw.DebugDrawModes.DBG_DrawWireframe,
 				this.camManager.getActiveCamera().combined);
@@ -98,15 +99,17 @@ public class GameScreen implements Screen {
 			this.batch.render(slidePart.getModelInstance(), this.lights);
 		}
 
-		if ((this.debugDrawer != null) && (this.debugDrawer.getDebugMode() > 0)) {
-			this.debugDrawer.begin();
-			this.world.getWorld().debugDrawWorld();
-			this.debugDrawer.end();
-
-			Gdx.gl.glDisable(GL10.GL_DEPTH_TEST);
-			this.setDebugMode(this.getDebugMode(),
-					this.camManager.getActiveCamera().combined);
-			Gdx.gl.glEnable(GL10.GL_DEPTH_TEST);
+		if (GameScreen.isDebug) {
+			this.camDebugDrawer.render();
+			if ((this.debugDrawer.getDebugMode() > 0)) {
+				this.debugDrawer.begin();
+				this.world.getWorld().debugDrawWorld();
+				this.debugDrawer.end();
+				Gdx.gl.glDisable(GL10.GL_DEPTH_TEST);
+				this.setDebugMode(this.getDebugMode(),
+						this.camManager.getActiveCamera().combined);
+				Gdx.gl.glEnable(GL10.GL_DEPTH_TEST);
+			}
 		}
 		this.batch.end();
 

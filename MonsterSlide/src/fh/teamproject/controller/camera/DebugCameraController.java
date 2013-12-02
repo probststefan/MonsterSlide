@@ -19,7 +19,7 @@ public class DebugCameraController extends CameraController implements ICameraCo
 	private final int BACKWARD = Keys.S;
 	private final int UP = Keys.Q;
 	private final int DOWN = Keys.E;
-	private float velocity = 20;
+	private float velocity = 60;
 	private float degreesPerPixel = 0.5f;
 	private final Vector3 tmp = new Vector3();
 	private final Vector3 tmp2 = new Vector3();
