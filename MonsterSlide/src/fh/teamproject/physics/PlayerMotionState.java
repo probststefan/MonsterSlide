@@ -23,7 +23,7 @@ public class PlayerMotionState extends MotionState {
 	@Override
 	public void setWorldTransform(Matrix4 worldTrans) {
 		super.setWorldTransform(worldTrans);
-
+		this.player.syncWithBullet();
 	}
 
 

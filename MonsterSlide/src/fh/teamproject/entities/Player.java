@@ -52,17 +52,17 @@ public class Player extends CollisionEntity implements IPlayer {
 	@Override
 	public void update() {
 		super.update();
-		this.linearVelocity = this.rigidBody.getLinearVelocity();
-		this.direction = this.linearVelocity.nor();
-		// Gdx.app.log("Player", "" + this.rigidBody.);
 		// TODO In Controller-Klasse bauen!
 		if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
 			this.slideLeft();
 		} else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
 			this.slideRight();
-		} else {
-			this.getRigidBody().applyForce(new Vector3(0, 0, 0), this.position);
 		}
+	}
+
+	public void syncWithBullet() {
+		this.linearVelocity = this.rigidBody.getLinearVelocity();
+		this.direction = this.linearVelocity.nor();
 	}
 
 	@Override
