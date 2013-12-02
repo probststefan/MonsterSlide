@@ -31,9 +31,9 @@ public abstract class CollisionEntity extends Entitiy implements ICollisionEntit
 	@Override
 	public void update() {
 		super.update();
-		this.rigidBody.getMotionState().getWorldTransform(this.instance.transform);
 	}
 
+	@Override
 	public void dispose() {
 		this.rigidBody.dispose();
 		this.motionState.dispose();
@@ -54,10 +54,10 @@ public abstract class CollisionEntity extends Entitiy implements ICollisionEntit
 	 */
 	@Override
 	public void createRigidBody() {
-		rigidBodyInfo = new btRigidBodyConstructionInfo(this.mass, this.motionState,
+		this.rigidBodyInfo = new btRigidBodyConstructionInfo(this.mass, this.motionState,
 				this.collisionShape, this.localInertia);
 
-		this.rigidBody = new btRigidBody(rigidBodyInfo);
+		this.rigidBody = new btRigidBody(this.rigidBodyInfo);
 	}
 
 	public void createMotionState() {

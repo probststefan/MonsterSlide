@@ -13,11 +13,14 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.btSphereShape;
 
 import fh.teamproject.interfaces.IPlayer;
+import fh.teamproject.physics.PlayerMotionState;
 
 public class Player extends CollisionEntity implements IPlayer {
 
 	public float radius = 1f;
 	public Vector3 direction = new Vector3(0, 0, 1f);
+	public Vector3 linearVelocity = new Vector3();
+	public float turnIntensity = 5;
 	public float velocity;
 	boolean isGrounded = false;
 	int state = 0;
@@ -41,7 +44,7 @@ public class Player extends CollisionEntity implements IPlayer {
 		this.setMass(100.0f); // Masse der Sphere.
 		this.createRigidBody();
 		this.getRigidBody().getMotionState().getWorldTransform(this.instance.transform);
-
+		this.motionState = new PlayerMotionState(this);
 		// Damit rutscht die Sphere nur noch und rollt nicht mehr.
 		this.getRigidBody().setAngularFactor(0);
 	}
@@ -49,13 +52,14 @@ public class Player extends CollisionEntity implements IPlayer {
 	@Override
 	public void update() {
 		super.update();
-		this.direction = this.rigidBody.getLinearVelocity().nor();
-		// Gdx.app.log("Player", "" + this.direction);
+		this.linearVelocity = this.rigidBody.getLinearVelocity();
+		this.direction = this.linearVelocity.nor();
+		// Gdx.app.log("Player", "" + this.rigidBody.);
 		// TODO In Controller-Klasse bauen!
 		if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-			this.getRigidBody().applyForce(new Vector3(1000, 0, 0), this.position);
+			this.slideLeft();
 		} else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-			this.getRigidBody().applyForce(new Vector3(-1000, 0, 0), this.position);
+			this.slideRight();
 		} else {
 			this.getRigidBody().applyForce(new Vector3(0, 0, 0), this.position);
 		}
@@ -63,7 +67,6 @@ public class Player extends CollisionEntity implements IPlayer {
 
 	@Override
 	public void accelerate(float amount) {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -75,14 +78,15 @@ public class Player extends CollisionEntity implements IPlayer {
 
 	@Override
 	public void slideLeft() {
-		// TODO Auto-generated method stub
+		this.getRigidBody().applyImpulse(new Vector3(1, 0, 0).scl(this.turnIntensity),
+				this.position);
 
 	}
 
 	@Override
 	public void slideRight() {
-		// TODO Auto-generated method stub
-
+		this.getRigidBody().applyImpulse(new Vector3(-1, 0, 0).scl(this.turnIntensity),
+				this.position);
 	}
 
 	@Override
