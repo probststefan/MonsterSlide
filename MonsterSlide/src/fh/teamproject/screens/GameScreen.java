@@ -11,31 +11,39 @@ import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw;
 
 import fh.teamproject.controller.camera.ChaseCameraController;
 import fh.teamproject.controller.camera.DebugCameraController;
 import fh.teamproject.controller.camera.DebugInputController;
+import fh.teamproject.controller.player.android.SwipeController;
 import fh.teamproject.entities.Player;
 import fh.teamproject.entities.World;
 import fh.teamproject.input.InputHandling;
 import fh.teamproject.interfaces.ISlidePart;
+import fh.teamproject.utils.CameraDebugDrawer;
 import fh.teamproject.utils.CameraManager;
 import fh.teamproject.utils.CameraManager.Mode;
 import fh.teamproject.utils.DebugDrawer;
+import fh.teamproject.utils.DebugInfoPanel;
 
 public class GameScreen implements Screen {
-	// Den Debug-Modus von Bullet ein- und ausschalten.
+	// DEBUG
 	private final boolean showFps = true;
+	public static boolean isDebug = false;
 	public DebugDrawer debugDrawer = null;
-	public ShapeRenderer lineRenderer = new ShapeRenderer();
-
+	public CameraDebugDrawer camDebugDrawer;
+	public DebugInfoPanel infoPanel;
+	// Controller
+	public SwipeController swipeController;
 	public CameraManager camManager;
+
+	// Rendering
 	ModelBatch batch;
 	Environment lights;
 
+	// Logic
 	World world;
 	
 	Player player;
@@ -48,14 +56,17 @@ public class GameScreen implements Screen {
 		this.world = new World();
 		this.player = (Player) this.world.getPlayer();
 
-		DebugCameraController controller = new DebugCameraController(
+		this.infoPanel = new DebugInfoPanel();
+		this.infoPanel.showInfo(this.player);
+		DebugCameraController debugCamera = new DebugCameraController(
 				new PerspectiveCamera(67, Gdx.graphics.getWidth(),
 						Gdx.graphics.getHeight()));
 		ChaseCameraController chaseCamContr = new ChaseCameraController(
 				new PerspectiveCamera(67, Gdx.graphics.getWidth(),
 						Gdx.graphics.getHeight()), this.player);
+		this.swipeController = new SwipeController(this.player);
 		this.camManager = new CameraManager();
-		this.camManager.addCamera(controller, Mode.FREE);
+		this.camManager.addCamera(debugCamera, Mode.FREE);
 		this.camManager.addCamera(chaseCamContr, Mode.CHASE);
 		this.camManager.setMode(Mode.CHASE);
 
@@ -65,14 +76,12 @@ public class GameScreen implements Screen {
 		this.lights.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f));
 		this.lights.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
 
-		DebugInputController processor = new DebugInputController(this);
+		DebugInputController debugInput = new DebugInputController(this);
 		InputMultiplexer inputMul = new InputMultiplexer();
-		
-		//inputMul.addProcessor(inputHandling);
-		inputMul.addProcessor(processor);
-		inputMul.addProcessor(controller);
-		
 
+		// inputMul.addProcessor(new GestureDetector(this.swipeController));
+		inputMul.addProcessor(debugInput);
+		inputMul.addProcessor(debugCamera);
 		Gdx.input.setInputProcessor(inputMul);
 
 		if (this.showFps) {
@@ -80,7 +89,7 @@ public class GameScreen implements Screen {
 			this.spriteBatch = new SpriteBatch();
 			this.font = new BitmapFont();
 		}
-
+		this.camDebugDrawer = new CameraDebugDrawer(this.camManager);
 		// Debug
 		this.setDebugMode(btIDebugDraw.DebugDrawModes.DBG_DrawWireframe,
 				this.camManager.getActiveCamera().combined);
@@ -103,23 +112,21 @@ public class GameScreen implements Screen {
 		for (ISlidePart slidePart : this.world.getSlide().getSlideParts()) {
 			this.batch.render(slidePart.getModelInstance(), this.lights);
 		}
-
-		if (debugDrawer != null && debugDrawer.getDebugMode() > 0) {
-			debugDrawer.begin();
-			this.world.getWorld().debugDrawWorld();
-			debugDrawer.end();
-
-			Gdx.gl.glDisable(GL10.GL_DEPTH_TEST);
-			this.setDebugMode(this.getDebugMode(),
-					this.camManager.getActiveCamera().combined);
-			Gdx.gl.glEnable(GL10.GL_DEPTH_TEST);
-		}
 		this.batch.end();
-		
-		int time = 0;
-		time += delta;
-		if (time >= 2000) {
-			
+
+
+		if (GameScreen.isDebug) {
+			if ((this.debugDrawer.getDebugMode() > 0)) {
+				this.debugDrawer.begin();
+				this.world.getWorld().debugDrawWorld();
+				this.debugDrawer.end();
+				Gdx.gl.glDisable(GL10.GL_DEPTH_TEST);
+				this.setDebugMode(this.getDebugMode(),
+						this.camManager.getActiveCamera().combined);
+				Gdx.gl.glEnable(GL10.GL_DEPTH_TEST);
+			}
+			this.camDebugDrawer.render();
+			this.infoPanel.render();
 		}
 
 		this.showFPS();
@@ -127,7 +134,7 @@ public class GameScreen implements Screen {
 
 	@Override
 	public void resize(int width, int height) {
-		// TODO Auto-generated method stub
+		this.camManager.setViewport(width, height);
 
 	}
 
@@ -167,22 +174,24 @@ public class GameScreen implements Screen {
 			this.spriteBatch.begin();
 			this.font.draw(this.spriteBatch, Gdx.graphics.getFramesPerSecond()
 					+ " fps, Bullet: "
-					+ (int) (world.performanceCounter.load.value * 100f) + "%", 10,
+					+ (int) (this.world.performanceCounter.load.value * 100f) + "%", 10,
 					Gdx.graphics.getHeight() - 10);
 			this.spriteBatch.end();
 		}
 	}
 
 	public void setDebugMode(final int mode, final Matrix4 projMatrix) {
-		if (mode == btIDebugDraw.DebugDrawModes.DBG_NoDebug && debugDrawer == null)
+		if ((mode == btIDebugDraw.DebugDrawModes.DBG_NoDebug) && (this.debugDrawer == null)) {
 			return;
-		if (debugDrawer == null)
-			this.world.getWorld().setDebugDrawer(debugDrawer = new DebugDrawer());
-		debugDrawer.lineRenderer.setProjectionMatrix(projMatrix);
-		debugDrawer.setDebugMode(mode);
+		}
+		if (this.debugDrawer == null) {
+			this.world.getWorld().setDebugDrawer(this.debugDrawer = new DebugDrawer());
+		}
+		this.debugDrawer.lineRenderer.setProjectionMatrix(projMatrix);
+		this.debugDrawer.setDebugMode(mode);
 	}
 
 	public int getDebugMode() {
-		return (debugDrawer == null) ? 0 : debugDrawer.getDebugMode();
+		return (this.debugDrawer == null) ? 0 : this.debugDrawer.getDebugMode();
 	}
 }

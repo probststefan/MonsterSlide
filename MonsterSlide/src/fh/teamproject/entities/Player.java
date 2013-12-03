@@ -12,16 +12,21 @@ import com.badlogic.gdx.physics.bullet.collision.btSphereShape;
 
 import fh.teamproject.input.InputHandling;
 import fh.teamproject.interfaces.IPlayer;
+import fh.teamproject.physics.PlayerMotionState;
 
 public class Player extends CollisionEntity implements IPlayer {
 
+	public Vector3 position = new Vector3();
+	public Vector3 direction = new Vector3(0, 0, 1);
+	public Vector3 linearVelocity = new Vector3();
 	public float radius = 1f;
-	public Vector3 direction = new Vector3(0, 0, 1f);
-	public float velocity;
-	boolean isGrounded = false;
-	int state = 0;
-	
+
+	public float turnIntensity = 300;
+	public boolean isGrounded = false;
+	public int state = 0;
+	public float acceleration = 1f;
 	private float velocityY = 5.0f;
+
 
 
 	//wird benoetigt, um die update() methode von InputHandling aufzurufen
@@ -43,29 +48,42 @@ public class Player extends CollisionEntity implements IPlayer {
 
 		// Bullet-Eigenschaften setzen.
 		this.setCollisionShape(new btSphereShape(this.radius));
-		this.setEntityWorldTransform(this.instance.transform);
 		this.setLocalInertia(new Vector3(0, 0, 0));
 		this.setMass(100.0f); // Masse der Sphere.
+		this.createMotionState();
 		this.createRigidBody();
-		this.getRigidBody().getMotionState().getWorldTransform(this.instance.transform);
-
+		// this.getRigidBody().getMotionState().getWorldTransform(this.instance.transform);
 		// Damit rutscht die Sphere nur noch und rollt nicht mehr.
 		this.getRigidBody().setAngularFactor(0);
+		this.setEntityWorldTransform(this.instance.transform);
+	}
+
+	@Override
+	public void createMotionState() {
+		this.motionState = new PlayerMotionState(this);
+
 	}
 
 	@Override
 	public void update() {
-		// TODO Auto-generated method stub
 		super.update();
+
 		
 		//update() wird aufgerufen, um bei gedrückt-halten der Keys sich immer weiter zu bewegen
 		inputHandling.update();
+
+	public void syncWithBullet() {
+		this.linearVelocity.set(this.rigidBody.getLinearVelocity());
+		this.direction.set(this.linearVelocity.cpy().nor());
 	}
 
 	@Override
 	public void accelerate(float amount) {
-		// TODO Auto-generated method stub
+		this.getRigidBody()
+				.applyCentralForce(this.direction.cpy().scl(this.acceleration));
 
+		this.rigidBody.setLinearVelocity(this.direction.cpy().scl(
+				this.acceleration * Gdx.graphics.getDeltaTime()));
 	}
 
 	@Override
@@ -75,19 +93,30 @@ public class Player extends CollisionEntity implements IPlayer {
 			this.getRigidBody().applyForce(new Vector3(0, 0, -1000.0f), this.position);
 		}
 		
+
+		// this.getRigidBody().applyCentralForce(
+		// this.direction.cpy().scl(-this.acceleration));
+
+		//this.rigidBody.setLinearVelocity(this.direction.cpy().scl(-this.acceleration * Gdx.graphics.getDeltaTime()));
+
 	}
 
 	@Override
 	public void slideLeft() {
-		//this.getRigidBody().setLinearVelocity(new Vector3(this.getRigidBody().getLinearVelocity().x + velocityX, this.getRigidBody().getLinearVelocity().y, this.getRigidBody().getLinearVelocity().z + velocityZ));
-		this.getRigidBody().applyForce(new Vector3(1000, 0, 0), this.position);
-		
+
+		//this.getRigidBody().setLinearVelocity(new Vector3(this.getRigidBody().getLinearVelocity().x + velocityX, this.getRigidBody().getLinearVelocity().y, this.getRigidBody().getLinearVelocity().z + velocityZ));		
+		this.getRigidBody().applyCentralForce(new Vector3(1, 0, 0).scl(this.turnIntensity));
+
+
 	}
 
 	@Override
 	public void slideRight() {
+
 		//this.getRigidBody().setLinearVelocity(new Vector3(this.getRigidBody().getLinearVelocity().x - velocityX, this.getRigidBody().getLinearVelocity().y, this.getRigidBody().getLinearVelocity().z + velocityZ));
-		this.getRigidBody().applyForce(new Vector3(-1000, 0, 0), this.position);
+		this.getRigidBody().applyCentralForce(
+				new Vector3(-1, 0, 0).scl(this.turnIntensity));
+
 	}
 
 	@Override

@@ -23,6 +23,9 @@ public class DebugInputController extends InputAdapter {
 		case Keys.NUM_2:
 			this.gameScreen.camManager.setMode(Mode.FREE);
 			return true;
+		case Keys.NUM_0:
+			GameScreen.isDebug = !GameScreen.isDebug;
+			return true;
 		}
 
 		return false;
