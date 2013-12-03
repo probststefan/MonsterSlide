@@ -37,6 +37,7 @@ public class GameScreen implements Screen {
 	Environment lights;
 
 	World world;
+	
 	Player player;
 
 	private SpriteBatch spriteBatch;
@@ -61,15 +62,16 @@ public class GameScreen implements Screen {
 		this.batch = new ModelBatch();
 
 		this.lights = new Environment();
-		this.lights.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f,
-				1f));
+		this.lights.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f));
 		this.lights.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
 
 		DebugInputController processor = new DebugInputController(this);
 		InputMultiplexer inputMul = new InputMultiplexer();
 		
+		//inputMul.addProcessor(inputHandling);
 		inputMul.addProcessor(processor);
 		inputMul.addProcessor(controller);
+		
 
 		Gdx.input.setInputProcessor(inputMul);
 
@@ -113,6 +115,12 @@ public class GameScreen implements Screen {
 			Gdx.gl.glEnable(GL10.GL_DEPTH_TEST);
 		}
 		this.batch.end();
+		
+		int time = 0;
+		time += delta;
+		if (time >= 2000) {
+			
+		}
 
 		this.showFPS();
 	}
