@@ -1,5 +1,6 @@
 package fh.teamproject.utils;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.text.DecimalFormat;
 
@@ -49,12 +50,12 @@ public class DebugInfoPanel {
 			Class<?> c = this.displayedObject.getClass();
 			Field[] fields = c.getFields();
 			for (Field field : fields) {
-
-				this.table.add(field.getName());
-				this.table.add(this.parseValueAsString(this.displayedObject, field));
-
-				this.table.row();
-
+				Annotation[] anns = field.getAnnotations();
+				if (field.isAnnotationPresent(Debug.class)) {
+					this.table.add(field.getAnnotation(Debug.class).value());
+					this.table.add(this.parseValueAsString(this.displayedObject, field));
+					this.table.row();
+				}
 			}
 		}
 		this.stage.draw();
