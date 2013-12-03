@@ -1,4 +1,4 @@
-package fh.teamproject.input;
+package fh.teamproject.controller.player.pc;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;

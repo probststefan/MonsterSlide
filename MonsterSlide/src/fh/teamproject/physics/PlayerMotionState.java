@@ -2,7 +2,6 @@ package fh.teamproject.physics;
 
 import com.badlogic.gdx.math.Matrix4;
 
-import fh.teamproject.entities.MotionState;
 import fh.teamproject.entities.Player;
 
 public class PlayerMotionState extends MotionState {
