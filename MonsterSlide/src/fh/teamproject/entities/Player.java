@@ -1,5 +1,6 @@
 package fh.teamproject.entities;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g3d.Material;
@@ -71,7 +72,8 @@ public class Player extends CollisionEntity implements IPlayer {
 		
 		//update() wird aufgerufen, um bei gedrückt-halten der Keys sich immer weiter zu bewegen
 		inputHandling.update();
-
+	}
+		
 	public void syncWithBullet() {
 		this.linearVelocity.set(this.rigidBody.getLinearVelocity());
 		this.direction.set(this.linearVelocity.cpy().nor());
