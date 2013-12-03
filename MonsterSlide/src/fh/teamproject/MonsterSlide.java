@@ -11,7 +11,7 @@ public class MonsterSlide extends Game {
 	@Override
 	public void create() {
 		Bullet.init();
-		this.setScreen(new MenuScreen(this));
+		this.setScreen(new GameScreen());
 	}
 
 }

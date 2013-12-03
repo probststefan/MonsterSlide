@@ -20,25 +20,25 @@ public class InputHandling implements InputProcessor {
 
 	@Override
 	public boolean keyDown(int keycode) {
-		if(keycode == Input.Keys.A){
+		if(keycode == Input.Keys.UP){
+			player.accelerate(10.0f);
+		}
+		
+		if(keycode == Input.Keys.LEFT){
 			player.slideLeft();
-			System.out.println("keyDown A");
 		}
 		
-		if(keycode == Input.Keys.D) {
+		if(keycode == Input.Keys.RIGHT) {
 			player.slideRight();
-			System.out.println("keyDown D");
 		}
 		
-		if(keycode == Input.Keys.S) {
+		if(keycode == Input.Keys.DOWN) {
 			player.brake(5.0f);
-			System.out.println("Brake");
 		}
 		
-		if(keycode == Input.Keys.F && canJump) {
+		if(keycode == Input.Keys.SPACE && canJump) {
 			player.jump();
 			jumpCooldown = 0.0f;
-			System.out.println("jump");
 		}
 		
 		return false;
@@ -81,17 +81,17 @@ public class InputHandling implements InputProcessor {
 		// TODO Auto-generated method stub
 		if(screenX < 50){
 			player.slideLeft();
-			System.out.println("Maus Links");
+
 		}
 		
 		if(screenX > (Gdx.graphics.getWidth() - 50)) {
 			player.slideRight();
-			System.out.println("Maus Rechts");
+
 		}
 		
 		if(screenX > 50 && screenX < (Gdx.graphics.getWidth() - 50) && screenY > (Gdx.graphics.getHeight() - 30)) {
 			player.brake(1.0f);
-			System.out.println("Maus Brake");
+			
 		}
 		
 		return false;
@@ -103,23 +103,27 @@ public class InputHandling implements InputProcessor {
 		return false;
 	}
 
-	//abfrage, ob ein Key gedrückt wird, wird ein Key gedrückt, wird die entsprchende methode aufgrufen
+	//abfrage, ob ein Key gedrÃ¼ckt wird, wird ein Key gedrÃ¼ckt, wird die entsprchende methode aufgrufen
 	
 	public void update(){
-		if(Gdx.input.isKeyPressed(Input.Keys.A)) {
-			keyDown(Input.Keys.A);
+		if(Gdx.input.isKeyPressed(Input.Keys.UP)){
+			keyDown(Input.Keys.UP);
 		}
 		
-		if(Gdx.input.isKeyPressed(Input.Keys.D)) {
-			keyDown(Input.Keys.D);
+		if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+			keyDown(Input.Keys.LEFT);
 		}
 		
-		if(Gdx.input.isKeyPressed(Input.Keys.S)) {
-			keyDown(Input.Keys.S);
+		if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+			keyDown(Input.Keys.RIGHT);
 		}
 		
-		if(Gdx.input.isKeyPressed(Input.Keys.F)) {
-			keyDown(Input.Keys.F);
+		if(Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+			keyDown(Input.Keys.DOWN);
+		}
+		
+		if(Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+			keyDown(Input.Keys.SPACE);
 		}
 		
 		if(Gdx.input.isTouched()) {
@@ -127,8 +131,8 @@ public class InputHandling implements InputProcessor {
 		}
 
 		
-		//hier wird der jumpCooldown hochgezählt bis er den wert 5.0f erreicht, hat jumpCooldown den wert 5.0f erreiht, wird canJump = true
-		if(jumpCooldown <= 5.0f) {
+		//hier wird der jumpCooldown hochgezÃ¤hlt bis er den wert 5.0f erreicht, hat jumpCooldown den wert 5.0f erreiht, wird canJump = true
+		if(jumpCooldown <= 1.0f) {
 			jumpCooldown += Gdx.graphics.getDeltaTime();
 			canJump = false;
 		} else {

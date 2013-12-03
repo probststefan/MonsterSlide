@@ -22,13 +22,11 @@ public class Player extends CollisionEntity implements IPlayer {
 	public Vector3 linearVelocity = new Vector3();
 	public float radius = 1f;
 
-	public float turnIntensity = 300;
+	public float turnIntensity = 1000;
 	public boolean isGrounded = false;
 	public int state = 0;
-	public float acceleration = 1f;
-	private float velocityY = 5.0f;
-
-
+	public float acceleration = 1000.0f;
+	private float jumpAmount = 7.0f;
 
 	//wird benoetigt, um die update() methode von InputHandling aufzurufen
 	private InputHandling inputHandling;
@@ -68,9 +66,7 @@ public class Player extends CollisionEntity implements IPlayer {
 	@Override
 	public void update() {
 		super.update();
-
-		
-		//update() wird aufgerufen, um bei gedrückt-halten der Keys sich immer weiter zu bewegen
+		//update() wird aufgerufen, um bei gedrueckt-halten der Keys sich immer weiter zu bewegen
 		inputHandling.update();
 	}
 		
@@ -81,19 +77,20 @@ public class Player extends CollisionEntity implements IPlayer {
 
 	@Override
 	public void accelerate(float amount) {
-		this.getRigidBody()
-				.applyCentralForce(this.direction.cpy().scl(this.acceleration));
+		this.getRigidBody().applyCentralForce(new Vector3(0, 0, 1000.0f));
 
-		this.rigidBody.setLinearVelocity(this.direction.cpy().scl(
-				this.acceleration * Gdx.graphics.getDeltaTime()));
+		//this.rigidBody.setLinearVelocity(this.direction.cpy().scl(this.acceleration * Gdx.graphics.getDeltaTime()));
 	}
 
 	@Override
 	public void brake(float amount) {
 		// TODO Auto-generated method stub
-		if(this.getRigidBody().getLinearVelocity().z - amount > 10.0f){
-			this.getRigidBody().applyForce(new Vector3(0, 0, -1000.0f), this.position);
+		// Auskommentiert, um Bremsen nicht mehr zu begrenzen
+		if(this.getRigidBody().getLinearVelocity().z > 0.0f){
+			this.getRigidBody().applyCentralForce(new Vector3(0, 0, -1000.0f));
 		}
+		
+		//this.getRigidBody().applyForce(new Vector3(0, 0, -1000.0f), this.position);
 		
 
 		// this.getRigidBody().applyCentralForce(
@@ -105,25 +102,19 @@ public class Player extends CollisionEntity implements IPlayer {
 
 	@Override
 	public void slideLeft() {
-
 		//this.getRigidBody().setLinearVelocity(new Vector3(this.getRigidBody().getLinearVelocity().x + velocityX, this.getRigidBody().getLinearVelocity().y, this.getRigidBody().getLinearVelocity().z + velocityZ));		
 		this.getRigidBody().applyCentralForce(new Vector3(1, 0, 0).scl(this.turnIntensity));
-
-
 	}
 
 	@Override
 	public void slideRight() {
-
 		//this.getRigidBody().setLinearVelocity(new Vector3(this.getRigidBody().getLinearVelocity().x - velocityX, this.getRigidBody().getLinearVelocity().y, this.getRigidBody().getLinearVelocity().z + velocityZ));
-		this.getRigidBody().applyCentralForce(
-				new Vector3(-1, 0, 0).scl(this.turnIntensity));
-
+		this.getRigidBody().applyCentralForce(new Vector3(-1, 0, 0).scl(this.turnIntensity));
 	}
 
 	@Override
 	public void jump() {
-		this.getRigidBody().setLinearVelocity(new Vector3(this.getRigidBody().getLinearVelocity().x, this.getRigidBody().getLinearVelocity().y + velocityY, this.getRigidBody().getLinearVelocity().z));
+		this.getRigidBody().setLinearVelocity(new Vector3(this.getRigidBody().getLinearVelocity().x, this.getRigidBody().getLinearVelocity().y + jumpAmount, this.getRigidBody().getLinearVelocity().z));
 		//this.getRigidBody().applyForce(new Vector3(0, 1000, 0), this.position);
 	}
 }

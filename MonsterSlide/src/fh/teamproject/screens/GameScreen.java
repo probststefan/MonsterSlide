@@ -20,7 +20,6 @@ import fh.teamproject.controller.camera.DebugInputController;
 import fh.teamproject.controller.player.android.SwipeController;
 import fh.teamproject.entities.Player;
 import fh.teamproject.entities.World;
-import fh.teamproject.input.InputHandling;
 import fh.teamproject.interfaces.ISlidePart;
 import fh.teamproject.utils.CameraDebugDrawer;
 import fh.teamproject.utils.CameraManager;
