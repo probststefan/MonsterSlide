@@ -23,8 +23,10 @@ public class DebugInputController extends InputAdapter {
 		case Keys.NUM_2:
 			this.gameScreen.camManager.setMode(Mode.FREE);
 			return true;
-		case Keys.NUM_0:
+		case Keys.P:
 			GameScreen.isDebug = !GameScreen.isDebug;
+			// Muss gesetzt werden sonst schreibt man weiter in Textfelder.. :/
+			DebugInfoPanel.stage.setKeyboardFocus(null);
 			return true;
 		}
 

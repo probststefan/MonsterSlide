@@ -20,27 +20,38 @@ public class Player extends CollisionEntity implements IPlayer {
 
 	@Debug(name = "Position", isModifiable = false)
 	public Vector3 position = new Vector3();
+
 	@Debug(name = "Direction", isModifiable = false)
 	public Vector3 direction = new Vector3(0, 0, 1);
+
 	@Debug(name = "Linear Velocity", isModifiable = false)
 	public Vector3 linearVelocity = new Vector3();
-	@Debug(name = "Radius", isModifiable = false)
-	public float radius = 1f;
 
-	@Debug(name = "Turn Intensity", isModifiable = true)
-	public float turnIntensity = 3000;
-	@Debug(name = "Is Grounded?", isModifiable = false)
-	public boolean isGrounded = false;
-	@Debug(name = "Jump Amount", isModifiable = true)
-	private float jumpAmount = 7.0f;
+	@Debug(name = "Speed", isModifiable = false)
+	public float speed = 0;
+
+	@Debug(name = "Max Speed", isModifiable = true)
+	public float MAX_SPEED = 30;
 
 	@Debug(name = "Acceleration", isModifiable = true)
 	public float acceleration = 800f;
-	@Debug(name = "Velocity Y", isModifiable = true)
-	private float velocityY = 5.0f;
+
+	@Debug(name = "Radius", isModifiable = false)
+	public float radius = 1f;
+
+	@Debug(name = "Is Grounded?", isModifiable = false)
+	public boolean isGrounded = false;
+
+	@Debug(name = "Turn Intensity", isModifiable = true)
+	public float turnIntensity = 3000;
+
+	@Debug(name = "Jump Amount", isModifiable = true)
+	private float jumpAmount = 7.0f;
+
+
 
 	// wird benoetigt, um die update() methode von InputHandling aufzurufen
-	private InputHandling inputHandling;
+	public InputHandling inputHandling;
 
 	public Player() {
 		super();
@@ -52,9 +63,9 @@ public class Player extends CollisionEntity implements IPlayer {
 		Material material = new Material(ColorAttribute.createDiffuse(Color.GREEN));
 		// Durchmesser der Sphere berechnen.
 		float diameter = this.radius * 2;
-		Model m = builder.createSphere(diameter, diameter, diameter, 16, 16, material,
+		Model m = builder.createSphere(diameter, diameter, diameter, 32, 32, material,
 				Usage.Position | Usage.Normal);
-		this.instance = new ModelInstance(m, new Vector3(0f, 20.0f, 0f));
+		this.instance = new ModelInstance(m, new Vector3(0f, 3.0f, 0f));
 
 		// Bullet-Eigenschaften setzen.
 		this.setCollisionShape(new btSphereShape(this.radius));
@@ -86,6 +97,7 @@ public class Player extends CollisionEntity implements IPlayer {
 
 	public void syncWithBullet() {
 		this.linearVelocity.set(this.rigidBody.getLinearVelocity());
+		this.speed = this.linearVelocity.len();
 		this.direction.set(this.linearVelocity.cpy().nor());
 	}
 

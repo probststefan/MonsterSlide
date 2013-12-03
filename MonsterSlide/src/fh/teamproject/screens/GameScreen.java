@@ -19,6 +19,7 @@ import fh.teamproject.interfaces.ISlidePart;
 import fh.teamproject.utils.CameraManager;
 import fh.teamproject.utils.CameraManager.Mode;
 import fh.teamproject.utils.debug.DebugDrawer;
+import fh.teamproject.utils.debug.DebugInfoPanel;
 import fh.teamproject.utils.debug.DebugInputController;
 
 public class GameScreen implements Screen {
@@ -66,12 +67,12 @@ public class GameScreen implements Screen {
 		InputMultiplexer debugInputMul = new InputMultiplexer();
 		InputMultiplexer allInputs = new InputMultiplexer();
 		debugInputMul.addProcessor(debugInput);
+		debugInputMul.addProcessor(DebugInfoPanel.stage);
 		debugInputMul.addProcessor((InputProcessor) this.camManager
 				.getController(Mode.FREE));
-		debugInputMul.addProcessor(this.debugDrawer.infoPanel.stage);
 		
 		// gameInputMul.addProcessor(new GestureDetector(this.swipeController));
-		
+		// gameInputMul.addProcessor(this.player.inputHandling);
 		allInputs.addProcessor(debugInputMul);
 		allInputs.addProcessor(gameInputMul);
 		Gdx.input.setInputProcessor(allInputs);

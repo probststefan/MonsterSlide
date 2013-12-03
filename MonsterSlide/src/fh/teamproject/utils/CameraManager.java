@@ -46,6 +46,21 @@ public class CameraManager {
 	}
 
 	public void setMode(Mode mode) {
+		if (mode == Mode.FREE) {
+			// Camera original = this.activeCamera.getCamera();
+			// this.activeCamera = this.cameras.get(mode);
+			// Camera freeCam = this.activeCamera.getCamera();
+			// // freeCam.direction.set(original.direction);
+			// // freeCam.up.set(original.up);
+			// freeCam.position.set(original.position);
+			// // freeCam.lookAt(this.gameScreen.player.position);
+			// // freeCam.near = original.near;
+			// // freeCam.far = original.far;
+			// // freeCam.view.set(original.view);
+			// // freeCam.projection.set(original.projection);
+			// this.activeCamera.getCamera().update(true);
+		} else {
+		}
 		this.activeCamera = this.cameras.get(mode);
 	}
 
