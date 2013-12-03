@@ -14,16 +14,24 @@ import com.badlogic.gdx.physics.bullet.collision.btSphereShape;
 
 import fh.teamproject.interfaces.IPlayer;
 import fh.teamproject.physics.PlayerMotionState;
+import fh.teamproject.utils.Debug;
+
 
 public class Player extends CollisionEntity implements IPlayer {
 
+	@Debug("Position")
 	public Vector3 position = new Vector3();
+	@Debug("Direction")
 	public Vector3 direction = new Vector3(0, 0, 1);
+	@Debug("Linear Velocity")
 	public Vector3 linearVelocity = new Vector3();
+	@Debug("Radius")
 	public float radius = 1f;
+	@Debug("Turn Intensity")
 	public float turnIntensity = 300;
+	@Debug("Is Grounded?")
 	public boolean isGrounded = false;
-	public int state = 0;
+	@Debug("Acceleration")
 	public float acceleration = 1f;
 
 	public Player() {
