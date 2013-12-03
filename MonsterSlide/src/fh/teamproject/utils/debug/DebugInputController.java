@@ -1,4 +1,4 @@
-package fh.teamproject.controller.camera;
+package fh.teamproject.utils.debug;
 
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputAdapter;

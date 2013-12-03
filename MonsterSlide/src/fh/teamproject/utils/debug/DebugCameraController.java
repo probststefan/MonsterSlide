@@ -1,4 +1,4 @@
-package fh.teamproject.controller.camera;
+package fh.teamproject.utils.debug;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.IntIntMap;
 
+import fh.teamproject.controller.camera.CameraController;
 import fh.teamproject.interfaces.ICameraController;
 
 public class DebugCameraController extends CameraController implements ICameraController,
