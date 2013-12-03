@@ -1,6 +1,5 @@
 package fh.teamproject.utils.debug;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.text.DecimalFormat;
 
@@ -27,29 +26,37 @@ import com.badlogic.gdx.utils.ObjectMap;
 
 public class DebugInfoPanel {
 
-	public Stage stage;
+	public static Stage stage;
 	Skin debugSkin = new Skin();
 	InfoPanel panel;
 	Table root;
+
 	public DebugInfoPanel() {
-		this.stage = new Stage();
+		DebugInfoPanel.stage = new Stage();
 		this.root = new Table();
 		this.root.setFillParent(true);
 		this.root.top().right();
-		this.stage.addActor(this.root);
+		DebugInfoPanel.stage.addActor(this.root);
 		this.setupSkin();
+
 	}
 
 	private void setupSkin() {
 		Pixmap pixmap = new Pixmap(1, 1, Format.RGB565);
 		pixmap.setColor(Color.BLACK);
 		pixmap.fill();
-		TextureRegion region = new TextureRegion(new Texture(pixmap));
-		this.debugSkin.add("default", region);
+		TextureRegion defaultBlackBackground = new TextureRegion(new Texture(pixmap));
+		this.debugSkin.add("default", defaultBlackBackground);
+		
 		pixmap.setColor(0.33f, 0.33f, 0.33f, 1f);
 		pixmap.fill();
-		TextureRegion lightBG = new TextureRegion(new Texture(pixmap));
-		TextureRegionDrawable bgTex = new TextureRegionDrawable(lightBG);
+		TextureRegionDrawable bgTex = new TextureRegionDrawable(new TextureRegion(
+				new Texture(pixmap)));
+		
+		pixmap.setColor(Color.WHITE);
+		pixmap.drawRectangle(0, 0, 5, 15);
+		TextureRegionDrawable cursor = new TextureRegionDrawable(new TextureRegion(
+				new Texture(pixmap)));
 
 		BitmapFont font = new BitmapFont();
 		LabelStyle labels = new LabelStyle();
@@ -62,15 +69,17 @@ public class DebugInfoPanel {
 		tfStyle.font = font;
 		tfStyle.fontColor = Color.WHITE;
 		tfStyle.background = bgTex;
+		tfStyle.cursor = cursor;
 		this.debugSkin.add("default", tfStyle);
 
 	}
 
 	public void render() {
-		this.stage.setViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		this.stage.act();
+		DebugInfoPanel.stage.setViewport(Gdx.graphics.getWidth(),
+				Gdx.graphics.getHeight());
+		DebugInfoPanel.stage.act();
 		this.panel.update();
-		this.stage.draw();
+		DebugInfoPanel.stage.draw();
 	}
 
 	public void showInfo(Object obj) {
@@ -87,6 +96,7 @@ class InfoPanel extends Table {
 
 	ObjectMap<Field, Label> debugFields = new ObjectMap<Field, Label>(15);
 	Object displayedObject;
+
 	public InfoPanel(final Object obj, Skin skin) {
 		super(skin);
 		this.displayedObject = obj;
@@ -101,7 +111,6 @@ class InfoPanel extends Table {
 			Class<?> c = obj.getClass();
 			Field[] fields = c.getFields();
 			for (final Field field : fields) {
-				Annotation[] anns = field.getAnnotations();
 				if (field.isAnnotationPresent(Debug.class)) {
 					this.add(field.getAnnotation(Debug.class).name());
 					Label l = new Label(InfoPanel.parseValueAsString(obj, field), skin);
@@ -114,9 +123,11 @@ class InfoPanel extends Table {
 						tmp.addListener(new InputListener() {
 							@Override
 							public boolean keyUp(InputEvent event, int keycode) {
-								if(keycode == Keys.ENTER ) {
+								if (keycode == Keys.ENTER) {
 									try {
 										field.setFloat(obj, Float.valueOf(tmp.getText()));
+										tmp.setText("");
+										DebugInfoPanel.stage.setKeyboardFocus(null);
 									} catch (NumberFormatException e) {
 										// TODO Auto-generated catch block
 										e.printStackTrace();
@@ -140,6 +151,7 @@ class InfoPanel extends Table {
 				}
 			}
 		}
+
 	}
 
 	public void update() {
@@ -155,7 +167,7 @@ class InfoPanel extends Table {
 		String type = field.getType().getName();
 		try {
 			if (type.equals("float")) {
-				tmp = String.valueOf(field.getFloat(c));
+				tmp = String.valueOf(df.format(field.getFloat(c)));
 			} else if (type.equals("int")) {
 				tmp = String.valueOf(field.getInt(c));
 			} else if (type.equals("boolean")) {
