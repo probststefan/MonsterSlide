@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
 import fh.teamproject.screens.menusites.CreditsSite;
+import fh.teamproject.screens.menusites.DemoSite;
 import fh.teamproject.screens.menusites.MainMenuSite;
 
 public class MenuScreen implements Screen {
@@ -29,6 +30,7 @@ public class MenuScreen implements Screen {
     public void render(float delta) {
         stage.act();
         stage.draw();
+        Table.drawDebug(stage);
     }
 
     @Override
@@ -44,13 +46,13 @@ public class MenuScreen implements Screen {
         nameList[0] = "MainMenu";
         siteList[1] = new CreditsSite(this);
         nameList[1] = "Credits";
-        siteList[2] = null;
-        nameList[2] = "No Site";
+        siteList[2] = new DemoSite(this);
+        nameList[2] = "Demo";
         siteList[3] = null;
         nameList[3] = "No Site";
         siteList[4] = null;
         nameList[4] = "No Site";
-        actualSite = siteList[0];
+        actualSite = siteList[2];
         stage.addActor(actualSite);
     }
 
