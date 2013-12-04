@@ -23,6 +23,9 @@ public class DemoSite extends AbstractMenuSite {
         //this.setBackground(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("data/mainmenu.jpg"), true))));
         this.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         this.center();
+        for (@SuppressWarnings("rawtypes") com.esotericsoftware.tablelayout.Cell c : this.getCells()) {
+            c.size(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        }
         //Styles
         style = new TextButtonStyle();
         style.checkedFontColor = new Color(Color.BLUE);
@@ -40,15 +43,17 @@ public class DemoSite extends AbstractMenuSite {
         start.center();
         //Adden Rückwärts vom erstellen
         this.add(start);
-        for (@SuppressWarnings("rawtypes") com.esotericsoftware.tablelayout.Cell c : this.getCells()) {
-            c.size(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        }
         this.debug(Debug.all);
     }
 
     @Override
     public void resize(float width, float height) {
         // TODO Auto-generated method stub
+        this.setSize(width, height);
+        for (@SuppressWarnings("rawtypes") com.esotericsoftware.tablelayout.Cell c : this.getCells()) {
+            c.size(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        }
+        start.setSize(width, height);
         
     }
 }
