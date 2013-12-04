@@ -7,13 +7,10 @@ public interface ISlidePart extends ICollisionEntity {
 
 	public void setWidth(float width);
 
-	public Vector3 getVertice(int position);
+	public float getVertice(int position);
 
 	public float getWidth();
 
-	public boolean getAliveState();
-
-	public void setAliveState(boolean alive);
-
-	public void move(Vector3 tmpSlidePartPos, btDiscreteDynamicsWorld dynamicsWorld);
+	public void move(Vector3[] startPoints, Vector3[] endPoints,
+			btDiscreteDynamicsWorld dynamicsWorld);
 }

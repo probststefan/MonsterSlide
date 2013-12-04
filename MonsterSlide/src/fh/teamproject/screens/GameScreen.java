@@ -37,7 +37,7 @@ public class GameScreen implements Screen {
 
 	// Logic
 	public World world;
-	
+
 	public Player player;
 
 	private SpriteBatch spriteBatch;
@@ -55,7 +55,8 @@ public class GameScreen implements Screen {
 		this.batch = new ModelBatch();
 
 		this.lights = new Environment();
-		this.lights.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f));
+		this.lights.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f,
+				1f));
 		this.lights.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
 
 		// Debug
@@ -70,7 +71,7 @@ public class GameScreen implements Screen {
 		debugInputMul.addProcessor(DebugInfoPanel.stage);
 		debugInputMul.addProcessor((InputProcessor) this.camManager
 				.getController(Mode.FREE));
-		
+
 		// gameInputMul.addProcessor(new GestureDetector(this.swipeController));
 		// gameInputMul.addProcessor(this.player.inputHandling);
 		allInputs.addProcessor(debugInputMul);
