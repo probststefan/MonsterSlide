@@ -28,6 +28,9 @@ public class DebugInputController extends InputAdapter {
 			// Muss gesetzt werden sonst schreibt man weiter in Textfelder.. :/
 			DebugInfoPanel.stage.setKeyboardFocus(null);
 			return true;
+		case Keys.F:
+			this.gameScreen.isFreezed = !this.gameScreen.isFreezed;
+			return true;
 		}
 
 		return false;

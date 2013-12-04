@@ -26,6 +26,7 @@ public class GameScreen implements Screen {
 	// DEBUG
 	private final boolean showFps = true;
 	public static boolean isDebug = false;
+	public boolean isFreezed = false;
 	public DebugDrawer debugDrawer;
 	// Controller
 	public SwipeController swipeController;
@@ -90,25 +91,26 @@ public class GameScreen implements Screen {
 	public void render(float delta) {
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-
 		this.camManager.update();
-		/* UPDATE */
-		this.world.update();
-
-		/* RENDER */
-		this.batch.begin(this.camManager.getActiveCamera());
-		// Player rendern.
-		this.batch.render(this.player.instance, this.lights);
-		// Rutschelemente rendern.
-		for (ISlidePart slidePart : this.world.getSlide().getSlideParts()) {
-			this.batch.render(slidePart.getModelInstance(), this.lights);
+		if (this.isFreezed) {
+			/* UPDATE */
+			this.world.update();
 		}
-		this.batch.end();
+			/* RENDER */
+			this.batch.begin(this.camManager.getActiveCamera());
+			// Player rendern.
+			this.batch.render(this.player.instance, this.lights);
+			// Rutschelemente rendern.
+			for (ISlidePart slidePart : this.world.getSlide().getSlideParts()) {
+				this.batch.render(slidePart.getModelInstance(), this.lights);
+			}
+			this.batch.end();
 
-		if (GameScreen.isDebug) {
-			this.debugDrawer.render();
-		}
-		this.showFPS();
+			if (GameScreen.isDebug) {
+				this.debugDrawer.render();
+			}
+			this.showFPS();
+
 	}
 
 	@Override
