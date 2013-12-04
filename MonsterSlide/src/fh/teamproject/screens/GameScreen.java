@@ -44,6 +44,7 @@ public class GameScreen implements Screen {
 
 	// Logic
 	World world;
+	
 	Player player;
 
 	private SpriteBatch spriteBatch;
@@ -67,15 +68,16 @@ public class GameScreen implements Screen {
 		this.camManager.addCamera(debugCamera, Mode.FREE);
 		this.camManager.addCamera(chaseCamContr, Mode.CHASE);
 		this.camManager.setMode(Mode.CHASE);
+
 		this.batch = new ModelBatch();
 
 		this.lights = new Environment();
-		this.lights.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f,
-				1f));
+		this.lights.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f));
 		this.lights.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
 
 		DebugInputController debugInput = new DebugInputController(this);
 		InputMultiplexer inputMul = new InputMultiplexer();
+
 		// inputMul.addProcessor(new GestureDetector(this.swipeController));
 		inputMul.addProcessor(debugInput);
 		inputMul.addProcessor(debugCamera);
@@ -110,6 +112,7 @@ public class GameScreen implements Screen {
 			this.batch.render(slidePart.getModelInstance(), this.lights);
 		}
 		this.batch.end();
+
 
 		if (GameScreen.isDebug) {
 			if ((this.debugDrawer.getDebugMode() > 0)) {
