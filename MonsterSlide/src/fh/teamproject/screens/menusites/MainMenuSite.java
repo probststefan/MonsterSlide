@@ -23,14 +23,13 @@ public class MainMenuSite extends Table{
     {
         //Table
         super();
-        this.setBackground(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("data/mainmenu.jpg"), true))));
         this.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        this.right();
-        this.bottom();
+        this.setBackground(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("data/mainmenu.jpg"), true))));
+        this.right().bottom();
         //Style
         style = new TextButtonStyle();
-        style.checkedFontColor = new Color(Color.YELLOW);
-        style.checkedOverFontColor = new Color(Color.RED);
+        style.checkedFontColor = new Color(Color.BLUE);
+        style.checkedOverFontColor = new Color(Color.MAGENTA);
         style.downFontColor = new Color(Color.GREEN);
         style.fontColor = new Color(Color.BLUE);
         style.overFontColor = new Color(Color.MAGENTA);
