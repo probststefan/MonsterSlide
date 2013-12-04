@@ -20,7 +20,6 @@ import fh.teamproject.controller.camera.DebugInputController;
 import fh.teamproject.controller.player.android.SwipeController;
 import fh.teamproject.entities.Player;
 import fh.teamproject.entities.World;
-import fh.teamproject.input.InputHandling;
 import fh.teamproject.interfaces.ISlidePart;
 import fh.teamproject.utils.CameraDebugDrawer;
 import fh.teamproject.utils.CameraManager;
@@ -31,7 +30,7 @@ import fh.teamproject.utils.DebugInfoPanel;
 public class GameScreen implements Screen {
 	// DEBUG
 	private final boolean showFps = true;
-	public static boolean isDebug = false;
+	public static boolean isDebug = true;
 	public DebugDrawer debugDrawer = null;
 	public CameraDebugDrawer camDebugDrawer;
 	public DebugInfoPanel infoPanel;
@@ -45,7 +44,7 @@ public class GameScreen implements Screen {
 
 	// Logic
 	World world;
-	
+
 	Player player;
 
 	private SpriteBatch spriteBatch;
@@ -73,7 +72,8 @@ public class GameScreen implements Screen {
 		this.batch = new ModelBatch();
 
 		this.lights = new Environment();
-		this.lights.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f));
+		this.lights.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f,
+				1f));
 		this.lights.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
 
 		DebugInputController debugInput = new DebugInputController(this);
@@ -113,7 +113,6 @@ public class GameScreen implements Screen {
 			this.batch.render(slidePart.getModelInstance(), this.lights);
 		}
 		this.batch.end();
-
 
 		if (GameScreen.isDebug) {
 			if ((this.debugDrawer.getDebugMode() > 0)) {
@@ -181,7 +180,8 @@ public class GameScreen implements Screen {
 	}
 
 	public void setDebugMode(final int mode, final Matrix4 projMatrix) {
-		if ((mode == btIDebugDraw.DebugDrawModes.DBG_NoDebug) && (this.debugDrawer == null)) {
+		if ((mode == btIDebugDraw.DebugDrawModes.DBG_NoDebug)
+				&& (this.debugDrawer == null)) {
 			return;
 		}
 		if (this.debugDrawer == null) {
