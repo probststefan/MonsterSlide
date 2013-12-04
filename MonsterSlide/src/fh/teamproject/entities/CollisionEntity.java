@@ -63,7 +63,8 @@ public abstract class CollisionEntity extends Entitiy implements ICollisionEntit
 	}
 
 	public void createMotionState() {
-		this.motionState = new MotionState(this.instance.transform);
+		// this.motionState = new MotionState(this.instance.transform);
+		this.motionState = new MotionState(new Matrix4());
 	}
 
 	/**

@@ -3,14 +3,6 @@ package fh.teamproject.entities;
 import java.util.ArrayList;
 import java.util.Random;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.VertexAttributes.Usage;
-import com.badlogic.gdx.graphics.g3d.Material;
-import com.badlogic.gdx.graphics.g3d.Model;
-import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
-import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.Collision;
@@ -22,11 +14,17 @@ import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld;
 import fh.teamproject.interfaces.ISlide;
 import fh.teamproject.interfaces.ISlidePart;
 
+/**
+ * Diese Klasse uebernimmt die Generierung und Darstellung der Slide. Es wird
+ * zusaetzlich die Erstellung des BulletCollisionShape erledigt.
+ * 
+ * @author stefanprobst
+ * 
+ */
 public class Slide extends CollisionEntity implements ISlide {
 
 	private final ArrayList<ISlidePart> slideParts;
 	private SlidePartPool pool;
-	private Vector3 tmpSlidePartPos;
 	private btDiscreteDynamicsWorld dynamicsWorld;
 	private btConvexHullShape convesHullShape;
 	// Gefaelle der Slide.
@@ -40,23 +38,15 @@ public class Slide extends CollisionEntity implements ISlide {
 	public Slide(btDiscreteDynamicsWorld dynamicsWorld) {
 		slideParts = new ArrayList<ISlidePart>();
 		pool = new SlidePartPool();
-		tmpSlidePartPos = new Vector3(0, 0, 0);
 		this.dynamicsWorld = dynamicsWorld;
 		rand = new Random();
+
 		this.startPoints = new Vector3[2];
 		this.endPoints = new Vector3[2];
-
 		this.startPoints[0] = new Vector3(-10, 0, -10);
 		this.startPoints[1] = new Vector3(10, 0, -10);
 		this.endPoints[0] = new Vector3(-10, -15, 10);
 		this.endPoints[1] = new Vector3(10, -15, 10);
-
-		ModelBuilder builder = new ModelBuilder();
-		Model m = builder.createRect(-10, 0, -10, 10, 0, -10, -10, -15, 10, 10, -15, 10,
-				0, 1, 0, new Material(ColorAttribute.createDiffuse(Color.BLUE)),
-				Usage.Position | Usage.Normal | Usage.TextureCoordinates);
-
-		this.instance = new ModelInstance(m);
 
 		// Bullet-Eigenschaften setzen.
 		btConvexHullShape convesHullShape = new btConvexHullShape();
@@ -74,38 +64,16 @@ public class Slide extends CollisionEntity implements ISlide {
 		// Die ersten SlideParts erstellen.
 		for (int i = 0; i < 5; ++i) {
 			this.addSlidePart();
-			tmpSlidePartPos.z += 20;
 		}
 
-		this.updateBullet();
+		this.updateBulletCollisionShape();
 	}
 
 	@Override
 	public void addSlidePart() {
 		ISlidePart slidePart = pool.obtain();
 		this.slideParts.add(slidePart);
-
-		if (tmpSlidePartPos == null) {
-			Gdx.app.log("slidePart Pos", "" + slidePart.getPosition());
-			tmpSlidePartPos = slidePart.getPosition();
-		}
-
 		this.move(slidePart);
-	}
-
-	@Override
-	public ArrayList<ISlidePart> getSlideParts() {
-		return this.slideParts;
-	}
-
-	@Override
-	public void removeSlidePart(ISlidePart slidePart) {
-		this.slideParts.remove(slidePart);
-		this.pool.free(slidePart);
-	}
-
-	public void disposeSlidePart(ISlidePart slidePart) {
-		slidePart.dispose();
 	}
 
 	@Override
@@ -113,12 +81,16 @@ public class Slide extends CollisionEntity implements ISlide {
 		for (int i = 0; i < this.slideParts.size(); i++) {
 			if (this.slideParts.get(i).getVertice(4) > playerPosition.y + 4) {
 				this.move(this.slideParts.get(i));
-				this.updateBullet();
+				this.updateBulletCollisionShape();
 			}
 		}
 	}
 
-	public void updateBullet() {
+	/**
+	 * Jedes Mal wenn die SlideParts verschoben werden, dann muss auch der
+	 * komplette Kollisionskoerper von Bullet neu erstellt werden.
+	 */
+	public void updateBulletCollisionShape() {
 		// Die Bullet-Plane bewegen.
 		dynamicsWorld.removeRigidBody(this.getRigidBody());
 
@@ -134,6 +106,8 @@ public class Slide extends CollisionEntity implements ISlide {
 
 		convesHullShape = new btConvexHullShape();
 
+		// Ueber alle Vertices der SlideParts laufen und sie zu einem
+		// CollisionShape zusammen bauen.
 		for (ISlidePart slidePart : this.slideParts) {
 			convesHullShape.addPoint(new Vector3(slidePart.getVertice(0), slidePart
 					.getVertice(1), slidePart.getVertice(2)));
@@ -157,17 +131,47 @@ public class Slide extends CollisionEntity implements ISlide {
 		dynamicsWorld.addRigidBody(this.getRigidBody());
 	}
 
+	@Override
+	public ArrayList<ISlidePart> getSlideParts() {
+		return this.slideParts;
+	}
+
+	@Override
+	public void removeSlidePart(ISlidePart slidePart) {
+		this.slideParts.remove(slidePart);
+		this.pool.free(slidePart);
+	}
+
+	public void disposeSlidePart(ISlidePart slidePart) {
+		slidePart.dispose();
+	}
+
+	/**
+	 * Generiert ganz einfache Verschiebungen auf der x-Achse, nach links oder
+	 * rechts.
+	 */
 	private void createRandomEndPoints() {
 		this.slope -= 20;
 
-		int randX = rand.nextInt(10);
+		// TODO: Extrem haesslich geschrieben. Stefan fragen!
+		int leftRight = 1;
+		if (rand.nextInt(2) == 1) {
+			leftRight = -1;
+		}
+		int randX = rand.nextInt(10) * leftRight;
 
-		this.endPoints[0] = new Vector3(this.endPoints[0].x, this.slope,
+		this.endPoints[0] = new Vector3(this.endPoints[0].x - randX, this.slope,
 				this.endPoints[0].z + 20);
-		this.endPoints[1] = new Vector3(this.endPoints[1].x, this.slope,
+		this.endPoints[1] = new Vector3(this.endPoints[1].x - randX, this.slope,
 				this.endPoints[1].z + 20);
 	}
 
+	/**
+	 * Bewegt die letzte SlidePart vorne an die Slide und setzt die
+	 * Positionspunkte fuer den nachsten Abschnitt.
+	 * 
+	 * @param slidePart
+	 */
 	private void move(ISlidePart slidePart) {
 		slidePart.move(this.startPoints, this.endPoints, this.dynamicsWorld);
 

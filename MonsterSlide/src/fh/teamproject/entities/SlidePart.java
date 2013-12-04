@@ -29,6 +29,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 	// Eckpunkte des SlidePart.
 	private float[] vertices;
 	private float width = 20.0f;
+	private float[] tmpVertices;
 	private ModelBuilder builder;
 	private Material material;
 
@@ -43,6 +44,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 	 */
 	public void createSlidePart() {
 		builder = new ModelBuilder();
+		tmpVertices = new float[20 + 12];
 
 		Texture texture = new Texture(Gdx.files.internal("data/floor.jpg"), true);
 		TextureAttribute textureAttr = new TextureAttribute(TextureAttribute.Diffuse,
@@ -56,46 +58,17 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		material = new Material(ColorAttribute.createDiffuse(color));
 		material.set(textureAttr);
 
-		// this.vertices = new Vector3[4];
-		this.vertices[0] = -10;
-		this.vertices[1] = 0;
-		this.vertices[2] = -10;
-
-		this.vertices[3] = -10;
-		this.vertices[4] = 0;
-		this.vertices[5] = 10;
-
-		this.vertices[6] = 10;
-		this.vertices[7] = 0;
-		this.vertices[8] = 10;
-
-		this.vertices[9] = 10;
-		this.vertices[10] = 0;
-		this.vertices[11] = -10;
-
-		/*
-		 * this.vertices[0] = new Vector3(-10, 0, -10); this.vertices[1] = new
-		 * Vector3(-10, 0, 10); this.vertices[2] = new Vector3(10, 0, 10);
-		 * this.vertices[3] = new Vector3(10, 0, -10);
-		 */
-
-		Model m = builder.createRect(this.vertices[0], this.vertices[1],
-				this.vertices[2], this.vertices[3], this.vertices[4], this.vertices[5],
-				this.vertices[6], this.vertices[7], this.vertices[8], this.vertices[9],
-				this.vertices[10], this.vertices[11], 0, 1, 0, material, Usage.Position
-						| Usage.Normal | Usage.TextureCoordinates);
+		// Ein Model erstellen, welches dann spaeter durch die Welt
+		// verschoben wird.
+		Model m = builder.createRect(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0,
+				material, Usage.Position | Usage.Normal | Usage.TextureCoordinates);
 
 		this.instance = new ModelInstance(m);
-		this.instance.transform.rotate(new Vector3(1.0f, 0, 0), 0);
 	}
 
-	// public void move(Vector3 tmpSlidePartPos, btDiscreteDynamicsWorld
-	// dynamicsWorld) {
 	public void move(Vector3[] startPoints, Vector3[] endPoints,
 			btDiscreteDynamicsWorld dynamicsWorld) {
 		// Die gerenderte Plane bewegen.
-		// this.instance.transform.translate(tmpSlidePartPos);
-		float[] tmpVertices = new float[20 + 12];
 		this.instance.model.meshes.get(0).getVertices(tmpVertices);
 
 		// Die Indices sind etwas merkwuerdig. Zwischendrin sind immer noch 5
@@ -118,21 +91,21 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
 		this.instance.model.meshes.get(0).setVertices(tmpVertices);
 
-		this.vertices[0] = tmpVertices[0];
-		this.vertices[1] = tmpVertices[1];
-		this.vertices[2] = tmpVertices[2];
+		this.setVertice(tmpVertices[0], 0);
+		this.setVertice(tmpVertices[1], 1);
+		this.setVertice(tmpVertices[2], 2);
 
-		this.vertices[3] = tmpVertices[8];
-		this.vertices[4] = tmpVertices[9];
-		this.vertices[5] = tmpVertices[10];
+		this.setVertice(tmpVertices[8], 3);
+		this.setVertice(tmpVertices[9], 4);
+		this.setVertice(tmpVertices[10], 5);
 
-		this.vertices[6] = tmpVertices[16];
-		this.vertices[7] = tmpVertices[17];
-		this.vertices[8] = tmpVertices[18];
+		this.setVertice(tmpVertices[16], 6);
+		this.setVertice(tmpVertices[17], 7);
+		this.setVertice(tmpVertices[18], 8);
 
-		this.vertices[9] = tmpVertices[24];
-		this.vertices[10] = tmpVertices[25];
-		this.vertices[11] = tmpVertices[26];
+		this.setVertice(tmpVertices[24], 9);
+		this.setVertice(tmpVertices[25], 10);
+		this.setVertice(tmpVertices[26], 11);
 	}
 
 	/**
@@ -184,6 +157,5 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 	@Override
 	public void reset() {
 		// TODO Auto-generated method stub
-
 	}
 }
