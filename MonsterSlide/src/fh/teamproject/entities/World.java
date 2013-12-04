@@ -43,8 +43,8 @@ public class World implements IWorld {
 		this.dispatcher = new btCollisionDispatcher(this.collisionConfiguration);
 		this.solver = new btSequentialImpulseConstraintSolver();
 
-		this.dynamicsWorld = new btDiscreteDynamicsWorld(this.dispatcher, this.broadphase, this.solver,
-				this.collisionConfiguration);
+		this.dynamicsWorld = new btDiscreteDynamicsWorld(this.dispatcher,
+				this.broadphase, this.solver, this.collisionConfiguration);
 		this.dynamicsWorld.setGravity(new Vector3(0, this.worldGravtiy, 0));
 
 		// Rutsche und Spieler erzeugen.
@@ -53,9 +53,11 @@ public class World implements IWorld {
 		PlayerTickCallback playerCallback = new PlayerTickCallback(this.player);
 		playerCallback.attach(this.dynamicsWorld, false);
 
+		this.dynamicsWorld.addRigidBody(this.slide.getRigidBody());
+
 		// Elemente der Rutsche zur Bullet-Welt hinzufuegen.
 		for (ISlidePart slidePart : this.slide.getSlideParts()) {
-			this.dynamicsWorld.addRigidBody(slidePart.getRigidBody());
+			// this.dynamicsWorld.addRigidBody(slidePart.getRigidBody());
 		}
 
 		// Spieler zur Bullet-Welt hinzufuegen.

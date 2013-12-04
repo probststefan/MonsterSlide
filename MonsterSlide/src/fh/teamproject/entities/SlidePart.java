@@ -11,10 +11,6 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.physics.bullet.collision.Collision;
-import com.badlogic.gdx.physics.bullet.collision.btCollisionObject;
-import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
-import com.badlogic.gdx.physics.bullet.collision.btConvexHullShape;
 import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld;
 import com.badlogic.gdx.utils.Pool.Poolable;
 
@@ -35,7 +31,6 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 	private float width = 20.0f;
 	private ModelBuilder builder;
 	private Material material;
-	private btConvexHullShape convesHullShape;
 
 	public SlidePart() {
 		super();
@@ -92,23 +87,6 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
 		this.instance = new ModelInstance(m);
 		this.instance.transform.rotate(new Vector3(1.0f, 0, 0), 0);
-
-		// Bullet-Eigenschaften setzen.
-		btConvexHullShape convesHullShape = new btConvexHullShape();
-		convesHullShape.addPoint(new Vector3(this.vertices[0], this.vertices[1],
-				this.vertices[2]));
-		convesHullShape.addPoint(new Vector3(this.vertices[3], this.vertices[4],
-				this.vertices[5]));
-		convesHullShape.addPoint(new Vector3(this.vertices[6], this.vertices[7],
-				this.vertices[8]));
-		convesHullShape.addPoint(new Vector3(this.vertices[9], this.vertices[10],
-				this.vertices[11]));
-		btCollisionShape colShape = convesHullShape;
-
-		this.setCollisionShape(colShape);
-		this.setEntityWorldTransform(this.instance.transform);
-		this.setLocalInertia(new Vector3(0, 0, 0));
-		this.createRigidBody();
 	}
 
 	// public void move(Vector3 tmpSlidePartPos, btDiscreteDynamicsWorld
@@ -155,40 +133,6 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		this.vertices[9] = tmpVertices[24];
 		this.vertices[10] = tmpVertices[25];
 		this.vertices[11] = tmpVertices[26];
-
-		// Die Bullet-Plane bewegen.
-		dynamicsWorld.removeRigidBody(this.getRigidBody());
-
-		this.getRigidBody().setCollisionFlags(
-				this.getRigidBody().getCollisionFlags()
-						| btCollisionObject.CollisionFlags.CF_KINEMATIC_OBJECT);
-		this.getRigidBody().setActivationState(Collision.DISABLE_DEACTIVATION);
-
-		// TEST START
-		// Die CollisionShape von Bullet an die Gerenderte anpassen.
-		if (convesHullShape != null) {
-			convesHullShape.dispose();
-		}
-
-		convesHullShape = new btConvexHullShape();
-		convesHullShape.addPoint(startPoints[0]);
-		convesHullShape.addPoint(endPoints[0]);
-		convesHullShape.addPoint(endPoints[1]);
-		convesHullShape.addPoint(startPoints[1]);
-		btCollisionShape colShape = convesHullShape;
-
-		this.getRigidBody().setCollisionShape(colShape);
-		// TEST ENDE
-
-		// this.getRigidBody().setWorldTransform(this.instance.transform);
-
-		this.getRigidBody().setCollisionFlags(
-				this.getRigidBody().getCollisionFlags()
-						& ~(btCollisionObject.CollisionFlags.CF_KINEMATIC_OBJECT));
-
-		this.getRigidBody().forceActivationState(1);
-
-		dynamicsWorld.addRigidBody(this.getRigidBody());
 	}
 
 	/**
