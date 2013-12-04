@@ -4,40 +4,24 @@ import java.lang.reflect.Field;
 import java.text.DecimalFormat;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+
+import fh.teamproject.MonsterSlide;
 
 public class DebugInfoPanel {
 
 	Stage stage;
 	Table table;
-	Skin debugSkin = new Skin();
 	Object displayedObject;
-	Label l;
 	DecimalFormat df = new DecimalFormat("###.##");
 
 	public DebugInfoPanel() {
 		this.stage = new Stage();
-		this.table = new Table(this.debugSkin);
+		this.table = new Table(MonsterSlide.skinManager.skin);
 		this.table.setFillParent(true);
 		this.table.top().right();
 		this.stage.addActor(this.table);
-		this.setupSkin();
-	}
-
-	private void setupSkin() {
-		BitmapFont font = new BitmapFont();
-
-		LabelStyle labels = new LabelStyle();
-		labels.font = font;
-		labels.fontColor = Color.WHITE;
-
-		this.debugSkin.add("default", labels);
 	}
 
 	public void render() {
