@@ -77,6 +77,7 @@ public class MenuScreen implements Screen {
         return actualSite;
     }
     public void setActualSite(int i) {
+        stage.clear();
         stage = new Stage(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         Gdx.input.setInputProcessor(stage);
         this.actualSite = siteList[i];
