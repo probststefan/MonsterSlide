@@ -14,7 +14,7 @@ import com.esotericsoftware.tablelayout.BaseTableLayout.Debug;
 import fh.teamproject.screens.MenuScreen;
 import fh.teamproject.screens.utils.ButtonListener;
 
-public class CreditsSite extends Table{
+public class CreditsSite extends AbstractMenuSite {
 
     private Table nametable;
     private Table backtable;
@@ -28,7 +28,7 @@ public class CreditsSite extends Table{
     {
         //Tables
         super();
-        //this.setBackground(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("data/mainmenu.jpg"), true))));
+        this.setBackground(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("data/mainmenu.jpg"), true))));
         this.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         this.center();
         nametable = new Table();
@@ -71,5 +71,11 @@ public class CreditsSite extends Table{
         this.row();
         this.add(backtable);
         this.debug(Debug.all);
+    }
+
+    @Override
+    public void resize(float width, float height) {
+        // TODO Auto-generated method stub
+        
     }
 }

@@ -6,14 +6,15 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
+import fh.teamproject.screens.menusites.AbstractMenuSite;
 import fh.teamproject.screens.menusites.CreditsSite;
 import fh.teamproject.screens.menusites.DemoSite;
 import fh.teamproject.screens.menusites.MainMenuSite;
 
 public class MenuScreen implements Screen {
     
-    private Table actualSite;
-    private Table[] siteList;
+    private AbstractMenuSite actualSite;
+    private AbstractMenuSite[] siteList;
     private String[] nameList;
     private Stage stage;
     private Game game;
@@ -21,7 +22,7 @@ public class MenuScreen implements Screen {
     public MenuScreen(Game g)
     {
         actualSite = null;
-        siteList = new Table[5];
+        siteList = new AbstractMenuSite[5];
         nameList = new String[5];
         stage = null;
         game = g;
@@ -35,6 +36,7 @@ public class MenuScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
+        actualSite.resize(width, height);
     }
 
     @Override
@@ -42,16 +44,7 @@ public class MenuScreen implements Screen {
         //Stage
         stage = new Stage(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         Gdx.input.setInputProcessor(stage);
-        siteList[0] = new MainMenuSite(this);
-        nameList[0] = "MainMenu";
-        siteList[1] = new CreditsSite(this);
-        nameList[1] = "Credits";
-        siteList[2] = new DemoSite(this);
-        nameList[2] = "Demo";
-        siteList[3] = null;
-        nameList[3] = "No Site";
-        siteList[4] = null;
-        nameList[4] = "No Site";
+        makeSites();
         actualSite = siteList[2];
         stage.addActor(actualSite);
     }
@@ -92,5 +85,17 @@ public class MenuScreen implements Screen {
             }
         }
         return -1;
+    }
+    private void makeSites() {
+        siteList[0] = new MainMenuSite(this);
+        nameList[0] = "MainMenu";
+        siteList[1] = new CreditsSite(this);
+        nameList[1] = "Credits";
+        siteList[2] = new DemoSite(this);
+        nameList[2] = "Demo";
+        siteList[3] = null;
+        nameList[3] = "No Site";
+        siteList[4] = null;
+        nameList[4] = "No Site";
     }
 }

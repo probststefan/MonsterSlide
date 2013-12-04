@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
@@ -14,7 +13,7 @@ import com.esotericsoftware.tablelayout.BaseTableLayout.Debug;
 import fh.teamproject.screens.MenuScreen;
 import fh.teamproject.screens.utils.ButtonListener;
 
-public class MainMenuSite extends Table{
+public class MainMenuSite extends AbstractMenuSite {
 
     private TextButton[] buttons;
     private TextButtonStyle style;
@@ -25,7 +24,7 @@ public class MainMenuSite extends Table{
         //Table
         super();
         this.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        //this.setBackground(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("data/mainmenu.jpg"), true))));
+        this.setBackground(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("data/mainmenu.jpg"), true))));
         this.right().bottom();
         //Style
         style = new TextButtonStyle();
@@ -57,6 +56,12 @@ public class MainMenuSite extends Table{
             this.row();
         }
         this.debug(Debug.all);
+    }
+
+    @Override
+    public void resize(float width, float height) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

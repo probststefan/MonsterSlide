@@ -2,20 +2,15 @@ package fh.teamproject.screens.menusites;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.esotericsoftware.tablelayout.BaseTableLayout.Debug;
 
 import fh.teamproject.screens.MenuScreen;
 import fh.teamproject.screens.utils.ButtonListener;
 
-public class DemoSite extends Table{
+public class DemoSite extends AbstractMenuSite {
 
     private TextButton start;
     private TextButtonStyle style;
@@ -49,5 +44,11 @@ public class DemoSite extends Table{
             c.size(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         }
         this.debug(Debug.all);
+    }
+
+    @Override
+    public void resize(float width, float height) {
+        // TODO Auto-generated method stub
+        
     }
 }
