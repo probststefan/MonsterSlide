@@ -6,6 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.utils.ObjectMap;
+import com.badlogic.gdx.utils.ObjectMap.Values;
 
 import fh.teamproject.controller.camera.ChaseCameraController;
 import fh.teamproject.interfaces.ICameraController;
@@ -79,6 +80,10 @@ public class CameraManager {
 			c.getCamera().viewportHeight = height;
 			c.getCamera().update();
 		}
+	}
+
+	public Values<ICameraController> getController() {
+		return this.cameras.values();
 	}
 
 	public LinkedList<Camera> getCameras() {

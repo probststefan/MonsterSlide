@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw;
 
+import fh.teamproject.interfaces.ICameraController;
 import fh.teamproject.screens.GameScreen;
 
 public class DebugDrawer {
@@ -56,8 +57,11 @@ public class DebugDrawer {
 				.getCamera().combined);
 		this.renderer.begin(ShapeType.Line);
 
-		for (Camera camera : this.gameScreen.camManager.getCameras()) {
-
+		for (ICameraController cont : this.gameScreen.camManager.getController()) {
+			if (cont instanceof DebugCameraController) {
+				continue;
+			}
+			Camera camera = cont.getCamera();
 			this.renderer.setColor(Color.WHITE);
 			Vector3 pos = camera.position.cpy();
 			this.renderer.box(pos.x - 1f, pos.y - 1, pos.z + 1f, 2, 2, 2);
