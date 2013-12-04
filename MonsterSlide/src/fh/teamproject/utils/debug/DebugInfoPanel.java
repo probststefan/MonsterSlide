@@ -5,29 +5,22 @@ import java.text.DecimalFormat;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Pixmap.Format;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.ObjectMap;
+
+import fh.teamproject.utils.SkinManager;
 
 public class DebugInfoPanel {
 
 	public static Stage stage;
-	Skin debugSkin = new Skin();
+	Skin debugSkin = SkinManager.skin;
 	InfoPanel panel;
 	Table root;
 
@@ -37,42 +30,8 @@ public class DebugInfoPanel {
 		this.root.setFillParent(true);
 		this.root.top().right();
 		DebugInfoPanel.stage.addActor(this.root);
-		this.setupSkin();
-
 	}
 
-	private void setupSkin() {
-		Pixmap pixmap = new Pixmap(1, 1, Format.RGB565);
-		pixmap.setColor(Color.BLACK);
-		pixmap.fill();
-		TextureRegion defaultBlackBackground = new TextureRegion(new Texture(pixmap));
-		this.debugSkin.add("default", defaultBlackBackground);
-		
-		pixmap.setColor(0.33f, 0.33f, 0.33f, 1f);
-		pixmap.fill();
-		TextureRegionDrawable bgTex = new TextureRegionDrawable(new TextureRegion(
-				new Texture(pixmap)));
-		
-		pixmap.setColor(Color.WHITE);
-		pixmap.drawRectangle(0, 0, 5, 15);
-		TextureRegionDrawable cursor = new TextureRegionDrawable(new TextureRegion(
-				new Texture(pixmap)));
-
-		BitmapFont font = new BitmapFont();
-		LabelStyle labels = new LabelStyle();
-		labels.font = font;
-		labels.fontColor = Color.WHITE;
-		labels.background = bgTex;
-		this.debugSkin.add("default", labels);
-
-		TextFieldStyle tfStyle = new TextFieldStyle();
-		tfStyle.font = font;
-		tfStyle.fontColor = Color.WHITE;
-		tfStyle.background = bgTex;
-		tfStyle.cursor = cursor;
-		this.debugSkin.add("default", tfStyle);
-
-	}
 
 	public void render() {
 		DebugInfoPanel.stage.setViewport(Gdx.graphics.getWidth(),
@@ -86,7 +45,7 @@ public class DebugInfoPanel {
 		this.panel = null;
 		this.root.clear();
 		this.panel = new InfoPanel(obj, this.debugSkin);
-		this.panel.setBackground("default");
+		this.panel.setBackground("debug");
 		this.root.add(this.panel);
 	}
 
@@ -101,23 +60,24 @@ class InfoPanel extends Table {
 		super(skin);
 		this.displayedObject = obj;
 		this.defaults().align(Align.left).pad(5f).prefSize(150, 15);
-		this.add(obj.toString()).colspan(3).align(Align.center).prefWidth(300);
+		this.add(obj.toString(), "debug").colspan(3).align(Align.center).prefWidth(300);
 		this.row();
-		this.add("Field");
-		this.add("Value");
-		this.add("Set to");
+		this.add("Field", "debug");
+		this.add("Value", "debug");
+		this.add("Set to", "debug");
 		this.row();
 		if (obj != null) {
 			Class<?> c = obj.getClass();
 			Field[] fields = c.getFields();
 			for (final Field field : fields) {
 				if (field.isAnnotationPresent(Debug.class)) {
-					this.add(field.getAnnotation(Debug.class).name());
-					Label l = new Label(InfoPanel.parseValueAsString(obj, field), skin);
+					this.add(field.getAnnotation(Debug.class).name(), "debug");
+					Label l = new Label(InfoPanel.parseValueAsString(obj, field), skin,
+							"debug");
 					this.add(l);
 					this.debugFields.put(field, l);
 					if (field.getAnnotation(Debug.class).isModifiable()) {
-						final TextField tmp = new TextField("", skin);
+						final TextField tmp = new TextField("", skin, "debug");
 						this.add(tmp);
 
 						tmp.addListener(new InputListener() {
