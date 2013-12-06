@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.ui.Button.ButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle;
@@ -13,10 +14,10 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 public class SkinManager {
 	public static Skin skin = new Skin();
-    
-    public SkinManager() {
-        this.setupDebugSkin();
-    }
+
+	public SkinManager() {
+		this.setupDebugSkin();
+	}
 
 	private void setupDebugSkin() {
 		Pixmap pixmap = new Pixmap(1, 1, Format.RGB565);
@@ -49,5 +50,8 @@ public class SkinManager {
 		tfStyle.cursor = cursor;
 		SkinManager.skin.add("debug", tfStyle);
 
-    }
+		ButtonStyle buttons = new ButtonStyle();
+		SkinManager.skin.add("debug", buttons);
+
+	}
 }

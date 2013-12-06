@@ -29,7 +29,8 @@ public class DebugInputController extends InputAdapter {
 			DebugInfoPanel.stage.setKeyboardFocus(null);
 			return true;
 		case Keys.F:
-			this.gameScreen.isFreezed = !this.gameScreen.isFreezed;
+			this.gameScreen.isPaused = !this.gameScreen.isPaused;
+			this.gameScreen.hud.root.setVisible(!this.gameScreen.hud.root.isVisible());
 			return true;
 		}
 

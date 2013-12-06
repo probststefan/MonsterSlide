@@ -16,6 +16,8 @@ import fh.teamproject.interfaces.ISlide;
 import fh.teamproject.interfaces.ISlidePart;
 import fh.teamproject.interfaces.IWorld;
 import fh.teamproject.physics.PlayerTickCallback;
+import fh.teamproject.screens.GameScreen;
+import fh.teamproject.screens.MenuScreen;
 
 public class World implements IWorld {
 
@@ -35,8 +37,10 @@ public class World implements IWorld {
 
 	public PerformanceCounter performanceCounter = new PerformanceCounter(this.getClass()
 			.getSimpleName());
+	GameScreen gameScreen;
 
-	public World() {
+	public World(GameScreen gameScreen) {
+		this.gameScreen = gameScreen;
 		// "Bullet-Welt" erstellen.
 		this.broadphase = new btDbvtBroadphase();
 		this.collisionConfiguration = new btDefaultCollisionConfiguration();
@@ -123,5 +127,28 @@ public class World implements IWorld {
 	@Override
 	public IPlayer getPlayer() {
 		return this.player;
+	}
+
+	public void reset() {
+		Gdx.app.log("World", "resetting");
+		this.gameScreen.game.setScreen(new MenuScreen(this.gameScreen.game));
+		// this.dynamicsWorld.removeRigidBody(this.player.getRigidBody());
+		//
+		// this.player.getRigidBody().setCollisionFlags(
+		// this.player.getRigidBody().getCollisionFlags()
+		// | btCollisionObject.CollisionFlags.CF_KINEMATIC_OBJECT);
+		// this.player.getRigidBody().setActivationState(
+		// CollisionConstants.DISABLE_DEACTIVATION);
+		//
+		// this.player.instance.transform.setToTranslation(new Vector3(0f, 5f,
+		// 0f));
+		//
+		// this.player.getRigidBody().setCollisionFlags(
+		// this.player.getRigidBody().getCollisionFlags()
+		// & ~(btCollisionObject.CollisionFlags.CF_KINEMATIC_OBJECT));
+		//
+		// this.player.getRigidBody().forceActivationState(1);
+		//
+		// this.dynamicsWorld.addRigidBody(this.player.getRigidBody());
 	}
 }

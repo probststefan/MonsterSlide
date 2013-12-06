@@ -3,6 +3,7 @@ package fh.teamproject.screens;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
@@ -17,36 +18,37 @@ public class MenuScreen implements Screen {
     private AbstractMenuSite[] siteList;
     private String[] nameList;
     private Stage stage;
-    private Game game;
+	private Game game;
 
     public MenuScreen(Game g)
     {
-        actualSite = null;
-        siteList = new AbstractMenuSite[5];
-        nameList = new String[5];
-        stage = null;
-        game = g;
+        this.actualSite = null;
+        this.siteList = new AbstractMenuSite[5];
+        this.nameList = new String[5];
+        this.stage = null;
+        this.game = g;
     }
     @Override
     public void render(float delta) {
-        stage.act();
-        stage.draw();
-        Table.drawDebug(stage);
+		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+        this.stage.act();
+        this.stage.draw();
+        Table.drawDebug(this.stage);
     }
 
     @Override
     public void resize(int width, int height) {
-        actualSite.resize(width, height);
+        this.actualSite.resize(width, height);
     }
 
     @Override
     public void show() {
         //Stage
-        stage = new Stage(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        Gdx.input.setInputProcessor(stage);
-        makeSites();
-        actualSite = siteList[2];
-        stage.addActor(actualSite);
+        this.stage = new Stage(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        Gdx.input.setInputProcessor(this.stage);
+        this.makeSites();
+        this.actualSite = this.siteList[2];
+        this.stage.addActor(this.actualSite);
     }
 
     @Override
@@ -69,33 +71,33 @@ public class MenuScreen implements Screen {
         return this.game;
     }
     public Table getActualSite() {
-        return actualSite;
+        return this.actualSite;
     }
     public void setActualSite(int i) {
-        stage.clear();
-        stage = new Stage(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        Gdx.input.setInputProcessor(stage);
-        this.actualSite = siteList[i];
-        stage.addActor(actualSite);
+        this.stage.clear();
+        this.stage = new Stage(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        Gdx.input.setInputProcessor(this.stage);
+        this.actualSite = this.siteList[i];
+        this.stage.addActor(this.actualSite);
     }
     public int getIndex(String name) {
-        for (int i = 0; i < nameList.length; i++) {
-            if (name.equals(nameList[i])) {
+        for (int i = 0; i < this.nameList.length; i++) {
+            if (name.equals(this.nameList[i])) {
                 return i;
             }
         }
         return -1;
     }
     private void makeSites() {
-        siteList[0] = new MainMenuSite(this);
-        nameList[0] = "MainMenu";
-        siteList[1] = new CreditsSite(this);
-        nameList[1] = "Credits";
-        siteList[2] = new DemoSite(this);
-        nameList[2] = "Demo";
-        siteList[3] = null;
-        nameList[3] = "No Site";
-        siteList[4] = null;
-        nameList[4] = "No Site";
+        this.siteList[0] = new MainMenuSite(this);
+        this.nameList[0] = "MainMenu";
+        this.siteList[1] = new CreditsSite(this);
+        this.nameList[1] = "Credits";
+        this.siteList[2] = new DemoSite(this);
+        this.nameList[2] = "Demo";
+        this.siteList[3] = null;
+        this.nameList[3] = "No Site";
+        this.siteList[4] = null;
+        this.nameList[4] = "No Site";
     }
 }
