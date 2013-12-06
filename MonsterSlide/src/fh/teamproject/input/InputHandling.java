@@ -58,7 +58,14 @@ public class InputHandling implements InputProcessor {
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		// TODO Auto-generated method stub
+		if(screenX < 50){
+			player.slideLeft();
+		}
+		
+		if(screenX > Gdx.graphics.getWidth() - 50){
+			player.slideRight();
+		}
+		
 		return false;
 	}
 
@@ -79,20 +86,21 @@ public class InputHandling implements InputProcessor {
 	@Override
 	public boolean mouseMoved(int screenX, int screenY) {
 		// TODO Auto-generated method stub
-		if(screenX < 50){
+		if(screenX < (Gdx.graphics.getWidth() / 2)){
 			player.slideLeft();
 
 		}
 		
-		if(screenX > (Gdx.graphics.getWidth() - 50)) {
+		if(screenX > ((Gdx.graphics.getWidth() / 2))) {
 			player.slideRight();
 
 		}
 		
-		if(screenX > 50 && screenX < (Gdx.graphics.getWidth() - 50) && screenY > (Gdx.graphics.getHeight() - 30)) {
+		/*if(screenX > 50 && screenX < (Gdx.graphics.getWidth() - 50) && screenY > (Gdx.graphics.getHeight() - 30)) {
 			player.brake(1.0f);
 			
 		}
+		*/
 		
 		return false;
 	}
@@ -127,6 +135,30 @@ public class InputHandling implements InputProcessor {
 		}
 		
 		if(Gdx.input.isTouched()) {
+			//mouseMoved(49, Gdx.graphics.getHeight());
+			if(Gdx.input.getX() < (Gdx.graphics.getWidth() / 2)){
+				mouseMoved(0, Gdx.graphics.getHeight());
+			}
+			if(Gdx.input.getX() > (Gdx.graphics.getWidth() / 2)){
+				mouseMoved(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+			}
+			
+			/*
+			if(Gdx.input.getX() < (Gdx.graphics.getWidth() / 4)){
+				mouseMoved((Gdx.graphics.getWidth() / 4), Gdx.graphics.getHeight());
+				System.out.println("Links" + Gdx.input.getX() + "  " + (Gdx.graphics.getWidth() / 4));
+			}
+			if(Gdx.input.getX() >  3*(Gdx.graphics.getWidth() / 4)){
+				mouseMoved(Gdx.input.getX(), Gdx.graphics.getHeight());
+				System.out.println("Rechts");
+			}
+			
+			/*
+			if(Gdx.input.getX() >  3*(Gdx.graphics.getWidth() / 4)){
+				mouseMoved(Gdx.input.getX(), Gdx.graphics.getHeight());
+				System.out.println("Rechts");
+			}
+			*/
 			
 		}
 

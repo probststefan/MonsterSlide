@@ -1,6 +1,5 @@
 package fh.teamproject.entities;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g3d.Material;
@@ -29,7 +28,7 @@ public class Player extends CollisionEntity implements IPlayer {
 	public float radius = 1f;
 
 	@Debug("Turn Intensity")
-	public float turnIntensity = 300;
+	public float turnIntensity = 1000;
 	@Debug("Is Grounded?")
 
 	public boolean isGrounded = false;
@@ -97,12 +96,11 @@ public class Player extends CollisionEntity implements IPlayer {
 	public void accelerate(float amount) {
 		this.getRigidBody().applyCentralForce(new Vector3(0, 0, 1000.0f));
 
-		//this.rigidBody.setLinearVelocity(this.direction.cpy().scl(this.acceleration * Gdx.graphics.getDeltaTime()));
+		//this.rigidBody.setLinearVelocity(this.direction.cpy().scl(1000.0f * Gdx.graphics.getDeltaTime()));
 	}
 
 	@Override
 	public void brake(float amount) {
-		// TODO Auto-generated method stub
 		// Auskommentiert, um Bremsen nicht mehr zu begrenzen
 		if(this.getRigidBody().getLinearVelocity().z > 0.0f){
 			this.getRigidBody().applyCentralForce(new Vector3(0, 0, -1000.0f));
