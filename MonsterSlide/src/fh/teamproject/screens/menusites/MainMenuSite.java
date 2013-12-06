@@ -25,7 +25,6 @@ public class MainMenuSite extends AbstractMenuSite {
         super();
         this.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         this.setBackground(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("data/mainmenu.jpg"), true))));
-        this.right().bottom();
         //Style
         style = new TextButtonStyle();
         style.checkedFontColor = new Color(Color.BLUE);
@@ -55,7 +54,7 @@ public class MainMenuSite extends AbstractMenuSite {
             this.add(buttons[i]);
             this.row();
         }
-        this.debug(Debug.all);
+        //this.debug(Debug.all);
     }
 
     @Override
