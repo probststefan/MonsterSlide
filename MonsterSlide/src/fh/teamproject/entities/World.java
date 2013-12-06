@@ -13,7 +13,6 @@ import com.badlogic.gdx.utils.PerformanceCounter;
 
 import fh.teamproject.interfaces.IPlayer;
 import fh.teamproject.interfaces.ISlide;
-import fh.teamproject.interfaces.ISlidePart;
 import fh.teamproject.interfaces.IWorld;
 import fh.teamproject.physics.PlayerTickCallback;
 import fh.teamproject.screens.GameScreen;
@@ -57,13 +56,8 @@ public class World implements IWorld {
 		PlayerTickCallback playerCallback = new PlayerTickCallback(this.player);
 		playerCallback.attach(this.dynamicsWorld, false);
 
+		// Rutsche zur Welt hinzufuegen.
 		this.dynamicsWorld.addRigidBody(this.slide.getRigidBody());
-
-		// Elemente der Rutsche zur Bullet-Welt hinzufuegen.
-		for (ISlidePart slidePart : this.slide.getSlideParts()) {
-			// this.dynamicsWorld.addRigidBody(slidePart.getRigidBody());
-		}
-
 		// Spieler zur Bullet-Welt hinzufuegen.
 		this.dynamicsWorld.addRigidBody(this.player.getRigidBody());
 	}

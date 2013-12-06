@@ -1,8 +1,6 @@
 package fh.teamproject.entities;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g3d.Material;
@@ -52,7 +50,6 @@ public class Player extends CollisionEntity implements IPlayer {
 
 	// wird benoetigt, um die update() methode von InputHandling aufzurufen
 	public InputHandling inputHandling;
-	private AssetManager assets;
 
 	public Player() {
 		super();
@@ -60,17 +57,6 @@ public class Player extends CollisionEntity implements IPlayer {
 		this.inputHandling = new InputHandling(this);
 
 		// Grafische Darstellung erstellen.
-		this.assets = new AssetManager();
-		FileHandle handle = Gdx.files.internal("model/duck/duck.g3db");
-
-		this.assets.load(handle.path(), Model.class);
-
-		while (this.assets.update() == false) {
-
-		}
-
-		Model duckModel = this.assets.get(handle.path(), Model.class);
-
 		ModelBuilder builder = new ModelBuilder();
 		Material material = new Material(ColorAttribute.createDiffuse(Color.GREEN));
 		// Durchmesser der Sphere berechnen.
@@ -78,8 +64,7 @@ public class Player extends CollisionEntity implements IPlayer {
 		Model m = builder.createSphere(diameter, diameter, diameter, 32, 32, material,
 				Usage.Position | Usage.Normal);
 
-		// this.instance = new ModelInstance(m, new Vector3(0f, 3.0f, 0f));
-		this.instance = new ModelInstance(duckModel, new Vector3(0f, 3.0f, 0f));
+		this.instance = new ModelInstance(m, new Vector3(0f, 3.0f, 0f));
 
 		// Bullet-Eigenschaften setzen.
 		this.setCollisionShape(new btSphereShape(this.radius));
