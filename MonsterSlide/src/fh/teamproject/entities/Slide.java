@@ -27,6 +27,7 @@ public class Slide extends CollisionEntity implements ISlide {
 	private SlidePartPool pool;
 	private btDiscreteDynamicsWorld dynamicsWorld;
 	private btConvexHullShape convesHullShape;
+	private final int slidePartsCount = 5;
 	// Gefaelle der Slide.
 	private int slope = 0;
 	private Random rand;
@@ -43,6 +44,7 @@ public class Slide extends CollisionEntity implements ISlide {
 
 		this.startPoints = new Vector3[2];
 		this.endPoints = new Vector3[2];
+		// Das Startelement positionieren.
 		this.startPoints[0] = new Vector3(-10, 0, -10);
 		this.startPoints[1] = new Vector3(10, 0, -10);
 		this.endPoints[0] = new Vector3(-10, -15, 10);
@@ -62,7 +64,7 @@ public class Slide extends CollisionEntity implements ISlide {
 		this.createRigidBody();
 
 		// Die ersten SlideParts erstellen.
-		for (int i = 0; i < 5; ++i) {
+		for (int i = 0; i < this.slidePartsCount; ++i) {
 			this.addSlidePart();
 		}
 
@@ -108,15 +110,31 @@ public class Slide extends CollisionEntity implements ISlide {
 
 		// Ueber alle Vertices der SlideParts laufen und sie zu einem
 		// CollisionShape zusammen bauen.
-		for (ISlidePart slidePart : this.slideParts) {
-			convesHullShape.addPoint(new Vector3(slidePart.getVertice(0), slidePart
-					.getVertice(1), slidePart.getVertice(2)));
+		ISlidePart slidePart;
+		for (int i = 0; i < this.slideParts.size(); i++) {
+			slidePart = this.slideParts.get(i);
+
+			if (i == 0) {
+				// Start 0
+				convesHullShape.addPoint(new Vector3(slidePart.getVertice(0), slidePart
+						.getVertice(1), slidePart.getVertice(2)));
+			}
+			// End 0
 			convesHullShape.addPoint(new Vector3(slidePart.getVertice(3), slidePart
 					.getVertice(4), slidePart.getVertice(5)));
+		}
+
+		for (int i = this.slideParts.size(); i > 0; i--) {
+			slidePart = this.slideParts.get(i - 1);
+			// End 1
 			convesHullShape.addPoint(new Vector3(slidePart.getVertice(6), slidePart
 					.getVertice(7), slidePart.getVertice(8)));
-			convesHullShape.addPoint(new Vector3(slidePart.getVertice(9), slidePart
-					.getVertice(10), slidePart.getVertice(11)));
+
+			if (i == 1) {
+				// Start 1
+				convesHullShape.addPoint(new Vector3(slidePart.getVertice(9), slidePart
+						.getVertice(10), slidePart.getVertice(11)));
+			}
 		}
 
 		btCollisionShape colShape = convesHullShape;
@@ -158,7 +176,7 @@ public class Slide extends CollisionEntity implements ISlide {
 		if (rand.nextInt(2) == 1) {
 			leftRight = -1;
 		}
-		int randX = rand.nextInt(10) * leftRight;
+		int randX = rand.nextInt(20) * leftRight;
 
 		this.endPoints[0] = new Vector3(this.endPoints[0].x - randX, this.slope,
 				this.endPoints[0].z + 20);
@@ -179,5 +197,11 @@ public class Slide extends CollisionEntity implements ISlide {
 		this.startPoints[1] = this.endPoints[1];
 
 		this.createRandomEndPoints();
+
+		// TODO: Das hier muss besser gehen. Das Element muss das letzte Element
+		// in der List sein, damit die Methode updateBulletCollision richtig
+		// arbeitet.
+		this.slideParts.remove(slidePart);
+		this.slideParts.add(slidePart);
 	}
 }
