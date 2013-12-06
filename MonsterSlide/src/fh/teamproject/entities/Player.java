@@ -107,21 +107,30 @@ public class Player extends CollisionEntity implements IPlayer {
 
 		//this.rigidBody.setLinearVelocity(this.direction.cpy().scl(1000.0f * Gdx.graphics.getDeltaTime()));
 
-		this.getRigidBody()
+		/*this.getRigidBody()
 				.applyCentralForce(
 						this.direction.cpy().scl(
 								this.acceleration * Gdx.graphics.getDeltaTime()));
+		*/
+		
+		this.getRigidBody().applyCentralForce(this.direction.cpy().scl(new Vector3(1, 1, 1).scl(this.turnIntensity* Gdx.graphics.getDeltaTime())));
 
 	}
 
 	@Override
 	public void brake(float amount) {
-		// Auskommentiert, um Bremsen nicht mehr zu begrenzen
-		if (this.getRigidBody().getLinearVelocity().z > 0.0f) {
+		/*if (this.getRigidBody().getLinearVelocity().z > 0.0f) {
 			this.getRigidBody().applyCentralForce(
 					this.direction.cpy().scl(
 							-1f * this.acceleration * Gdx.graphics.getDeltaTime()));
 		}
+		*/
+		
+		//um Begreunzugn der Bremse aufzuheben, einfach if() auskommentieren
+		if(this.getRigidBody().getLinearVelocity().z > 5.0f){
+			this.getRigidBody().applyCentralForce(this.direction.cpy().scl(new Vector3(-1, -1, -1).scl(this.turnIntensity* Gdx.graphics.getDeltaTime())));
+		}
+
 	}
 
 	
@@ -147,7 +156,7 @@ public class Player extends CollisionEntity implements IPlayer {
 
 	@Override
 	public void jump() {
-		this.getRigidBody().applyCentralForce(new Vector3(0, 1, 0).scl(100));
+		this.getRigidBody().applyForce(new Vector3(0, 1, 0).scl(50000), this.position);
 	}
 
 	@Override

@@ -86,21 +86,29 @@ public class InputHandling implements InputProcessor {
 	@Override
 	public boolean mouseMoved(int screenX, int screenY) {
 		// TODO Auto-generated method stub
-		if(screenX < (Gdx.graphics.getWidth() / 2)){
+		if(screenX < (Gdx.graphics.getWidth() / 4)){
 			player.slideLeft();
 
 		}
 		
-		if(screenX > ((Gdx.graphics.getWidth() / 2))) {
+		if(screenX > (3*(Gdx.graphics.getWidth() / 4))) {
 			player.slideRight();
 
 		}
 		
-		/*if(screenX > 50 && screenX < (Gdx.graphics.getWidth() - 50) && screenY > (Gdx.graphics.getHeight() - 30)) {
+		if(screenX > Gdx.graphics.getWidth() / 4 && screenX < (3*(Gdx.graphics.getWidth() / 4)) && screenY > (2*(Gdx.graphics.getHeight() / 3))) {
 			player.brake(1.0f);
-			
 		}
-		*/
+		
+		if(screenX > Gdx.graphics.getWidth() / 4 && screenX < (3*(Gdx.graphics.getWidth() / 4)) && screenY < (Gdx.graphics.getHeight() / 3)) {
+			player.accelerate(1.0f);
+		}
+		
+		if(screenX > Gdx.graphics.getWidth() / 4 && screenX < (3*(Gdx.graphics.getWidth() / 4)) && screenY > (Gdx.graphics.getHeight() / 3) && screenY < (2*(Gdx.graphics.getHeight() / 3)) && canJump) {
+			player.jump();
+			jumpCooldown = 0.0f;
+		}
+		
 		
 		return false;
 	}
@@ -135,12 +143,21 @@ public class InputHandling implements InputProcessor {
 		}
 		
 		if(Gdx.input.isTouched()) {
-			//mouseMoved(49, Gdx.graphics.getHeight());
-			if(Gdx.input.getX() < (Gdx.graphics.getWidth() / 2)){
-				mouseMoved(0, Gdx.graphics.getHeight());
+			if(Gdx.input.getX() < (Gdx.graphics.getWidth() / 4)){
+				mouseMoved(Gdx.input.getX(), Gdx.input.getY());
 			}
-			if(Gdx.input.getX() > (Gdx.graphics.getWidth() / 2)){
-				mouseMoved(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+			if(Gdx.input.getX() > (3 * (Gdx.graphics.getWidth() / 4))){
+				mouseMoved(Gdx.input.getX(), Gdx.input.getY());
+			}
+			if(Gdx.input.getX() > (Gdx.graphics.getWidth() / 4) && Gdx.input.getX() < (3*(Gdx.graphics.getWidth() / 4)) && Gdx.input.getY() > (2 * (Gdx.graphics.getHeight() / 3))){
+				mouseMoved(Gdx.input.getX(), Gdx.input.getY());
+			}
+			
+			if(Gdx.input.getX() > (Gdx.graphics.getWidth() / 4) && Gdx.input.getX() < (3*(Gdx.graphics.getWidth() / 4)) && Gdx.input.getY() < (Gdx.graphics.getHeight() / 3)){
+				mouseMoved(Gdx.input.getX(), Gdx.input.getY());
+			}
+			if(Gdx.input.getX() > (Gdx.graphics.getWidth() / 4) && Gdx.input.getX() < (3*(Gdx.graphics.getWidth() / 4)) && Gdx.input.getY() > (Gdx.graphics.getHeight() / 3) && Gdx.input.getY() < (2 * (Gdx.graphics.getHeight() / 3))){
+				mouseMoved(Gdx.input.getX(), Gdx.input.getY());
 			}
 			
 			/*
@@ -164,7 +181,7 @@ public class InputHandling implements InputProcessor {
 
 		
 		//hier wird der jumpCooldown hochgezählt bis er den wert 5.0f erreicht, hat jumpCooldown den wert 5.0f erreiht, wird canJump = true
-		if(jumpCooldown <= 1.0f) {
+		if(jumpCooldown <= 2.0f) {
 			jumpCooldown += Gdx.graphics.getDeltaTime();
 			canJump = false;
 		} else {
