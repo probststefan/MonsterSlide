@@ -2,50 +2,44 @@ package fh.teamproject.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL10;
-import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
-import com.badlogic.gdx.math.Matrix4;
-import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw;
 
-import fh.teamproject.controller.camera.ChaseCameraController;
-import fh.teamproject.controller.camera.DebugCameraController;
-import fh.teamproject.controller.camera.DebugInputController;
 import fh.teamproject.controller.player.android.SwipeController;
 import fh.teamproject.entities.Player;
 import fh.teamproject.entities.World;
 import fh.teamproject.interfaces.ISlidePart;
-import fh.teamproject.utils.CameraDebugDrawer;
 import fh.teamproject.utils.CameraManager;
 import fh.teamproject.utils.CameraManager.Mode;
-import fh.teamproject.utils.DebugDrawer;
-import fh.teamproject.utils.DebugInfoPanel;
+import fh.teamproject.utils.debug.DebugDrawer;
+import fh.teamproject.utils.debug.DebugInfoPanel;
+import fh.teamproject.utils.debug.DebugInputController;
 
 public class GameScreen implements Screen {
 	// DEBUG
 	private final boolean showFps = true;
 	public static boolean isDebug = false;
-	public DebugDrawer debugDrawer = null;
-	public CameraDebugDrawer camDebugDrawer;
-	public DebugInfoPanel infoPanel;
+	public boolean isFreezed = false;
+	public DebugDrawer debugDrawer;
 	// Controller
 	public SwipeController swipeController;
 	public CameraManager camManager;
 
 	// Rendering
-	ModelBatch batch;
-	Environment lights;
+	public ModelBatch batch;
+	public Environment lights;
 
 	// Logic
-	World world;
-	
-	Player player;
+	public World world;
+
+	public Player player;
 
 	private SpriteBatch spriteBatch;
 	private BitmapFont font;
@@ -55,80 +49,68 @@ public class GameScreen implements Screen {
 		this.world = new World();
 		this.player = (Player) this.world.getPlayer();
 
-		this.infoPanel = new DebugInfoPanel();
-		this.infoPanel.showInfo(this.player);
-		DebugCameraController debugCamera = new DebugCameraController(
-				new PerspectiveCamera(67, Gdx.graphics.getWidth(),
-						Gdx.graphics.getHeight()));
-		ChaseCameraController chaseCamContr = new ChaseCameraController(
-				new PerspectiveCamera(67, Gdx.graphics.getWidth(),
-						Gdx.graphics.getHeight()), this.player);
 		this.swipeController = new SwipeController(this.player);
-		this.camManager = new CameraManager();
-		this.camManager.addCamera(debugCamera, Mode.FREE);
-		this.camManager.addCamera(chaseCamContr, Mode.CHASE);
+		this.camManager = new CameraManager(this);
 		this.camManager.setMode(Mode.CHASE);
 
 		this.batch = new ModelBatch();
 
 		this.lights = new Environment();
-		this.lights.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f));
+		this.lights.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f,
+				1f));
 		this.lights.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
 
-		DebugInputController debugInput = new DebugInputController(this);
-		InputMultiplexer inputMul = new InputMultiplexer();
+		// Debug
+		this.debugDrawer = new DebugDrawer(this);
 
-		// inputMul.addProcessor(new GestureDetector(this.swipeController));
-		inputMul.addProcessor(debugInput);
-		inputMul.addProcessor(debugCamera);
-		Gdx.input.setInputProcessor(inputMul);
+		// Input
+		DebugInputController debugInput = new DebugInputController(this);
+		InputMultiplexer gameInputMul = new InputMultiplexer();
+		InputMultiplexer debugInputMul = new InputMultiplexer();
+		InputMultiplexer allInputs = new InputMultiplexer();
+		debugInputMul.addProcessor(debugInput);
+		debugInputMul.addProcessor(DebugInfoPanel.stage);
+		debugInputMul.addProcessor((InputProcessor) this.camManager
+				.getController(Mode.FREE));
+
+		// gameInputMul.addProcessor(new GestureDetector(this.swipeController));
+		// gameInputMul.addProcessor(this.player.inputHandling);
+		allInputs.addProcessor(debugInputMul);
+		allInputs.addProcessor(gameInputMul);
+		Gdx.input.setInputProcessor(allInputs);
 
 		if (this.showFps) {
 			// Wird zur Zeit genutzt um die fps anzuzeigen.
 			this.spriteBatch = new SpriteBatch();
 			this.font = new BitmapFont();
 		}
-		this.camDebugDrawer = new CameraDebugDrawer(this.camManager);
-		// Debug
-		this.setDebugMode(btIDebugDraw.DebugDrawModes.DBG_DrawWireframe,
-				this.camManager.getActiveCamera().combined);
+
 	}
 
 	@Override
 	public void render(float delta) {
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-
 		this.camManager.update();
-		/* UPDATE */
-		this.world.update();
-
-		/* RENDER */
-		this.batch.begin(this.camManager.getActiveCamera());
-		// Player rendern.
-		this.batch.render(this.player.instance, this.lights);
-		// Rutschelemente rendern.
-		for (ISlidePart slidePart : this.world.getSlide().getSlideParts()) {
-			this.batch.render(slidePart.getModelInstance(), this.lights);
+		if (this.isFreezed) {
+			/* UPDATE */
+			this.world.update();
 		}
-		this.batch.end();
-
-
-		if (GameScreen.isDebug) {
-			if ((this.debugDrawer.getDebugMode() > 0)) {
-				this.debugDrawer.begin();
-				this.world.getWorld().debugDrawWorld();
-				this.debugDrawer.end();
-				Gdx.gl.glDisable(GL10.GL_DEPTH_TEST);
-				this.setDebugMode(this.getDebugMode(),
-						this.camManager.getActiveCamera().combined);
-				Gdx.gl.glEnable(GL10.GL_DEPTH_TEST);
+			/* RENDER */
+			this.batch.begin(this.camManager.getActiveCamera());
+			// Player rendern.
+			this.batch.render(this.player.instance, this.lights);
+			// Rutschelemente rendern.
+			for (ISlidePart slidePart : this.world.getSlide().getSlideParts()) {
+				this.batch.render(slidePart.getModelInstance(), this.lights);
 			}
-			this.camDebugDrawer.render();
-			this.infoPanel.render();
-		}
+			this.batch.end();
 
-		this.showFPS();
+			if (GameScreen.isDebug) {
+				this.debugDrawer.render();
+			}
+			this.showFPS();
+
 	}
 
 	@Override
@@ -177,20 +159,5 @@ public class GameScreen implements Screen {
 					Gdx.graphics.getHeight() - 10);
 			this.spriteBatch.end();
 		}
-	}
-
-	public void setDebugMode(final int mode, final Matrix4 projMatrix) {
-		if ((mode == btIDebugDraw.DebugDrawModes.DBG_NoDebug) && (this.debugDrawer == null)) {
-			return;
-		}
-		if (this.debugDrawer == null) {
-			this.world.getWorld().setDebugDrawer(this.debugDrawer = new DebugDrawer());
-		}
-		this.debugDrawer.lineRenderer.setProjectionMatrix(projMatrix);
-		this.debugDrawer.setDebugMode(mode);
-	}
-
-	public int getDebugMode() {
-		return (this.debugDrawer == null) ? 0 : this.debugDrawer.getDebugMode();
 	}
 }

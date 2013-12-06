@@ -5,15 +5,15 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.esotericsoftware.tablelayout.BaseTableLayout.Debug;
 
 import fh.teamproject.screens.MenuScreen;
 import fh.teamproject.screens.utils.ButtonListener;
 
-public class MainMenuSite extends Table{
+public class MainMenuSite extends AbstractMenuSite {
 
     private TextButton[] buttons;
     private TextButtonStyle style;
@@ -23,14 +23,13 @@ public class MainMenuSite extends Table{
     {
         //Table
         super();
-        this.setBackground(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("data/mainmenu.jpg"), true))));
         this.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        this.right();
-        this.bottom();
+        this.setBackground(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("data/mainmenu.jpg"), true))));
+        this.right().bottom();
         //Style
         style = new TextButtonStyle();
-        style.checkedFontColor = new Color(Color.YELLOW);
-        style.checkedOverFontColor = new Color(Color.RED);
+        style.checkedFontColor = new Color(Color.BLUE);
+        style.checkedOverFontColor = new Color(Color.MAGENTA);
         style.downFontColor = new Color(Color.GREEN);
         style.fontColor = new Color(Color.BLUE);
         style.overFontColor = new Color(Color.MAGENTA);
@@ -44,6 +43,7 @@ public class MainMenuSite extends Table{
         listener[4] = new ButtonListener("Exit", menu);
         buttons = new TextButton[5];
         buttons[0] = new TextButton("New Game", style);
+        buttons[0].center();
         buttons[1] = new TextButton("Credits", style);
         buttons[2] = new TextButton("NoAction", style);
         buttons[3] = new TextButton("NoAction", style);
@@ -55,6 +55,13 @@ public class MainMenuSite extends Table{
             this.add(buttons[i]);
             this.row();
         }
+        this.debug(Debug.all);
+    }
+
+    @Override
+    public void resize(float width, float height) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

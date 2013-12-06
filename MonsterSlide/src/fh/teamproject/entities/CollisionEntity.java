@@ -7,6 +7,7 @@ import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBodyConstructionInfo;
 
 import fh.teamproject.interfaces.ICollisionEntity;
+import fh.teamproject.physics.MotionState;
 
 /**
  * Abstrahiert ein Kollisionsobjekt fuer die Bullet-World.
@@ -62,7 +63,8 @@ public abstract class CollisionEntity extends Entitiy implements ICollisionEntit
 	}
 
 	public void createMotionState() {
-		this.motionState = new MotionState(this.instance.transform);
+		// this.motionState = new MotionState(this.instance.transform);
+		this.motionState = new MotionState(new Matrix4());
 	}
 
 	/**

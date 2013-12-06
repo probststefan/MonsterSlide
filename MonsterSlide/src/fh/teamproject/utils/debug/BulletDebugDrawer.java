@@ -1,4 +1,4 @@
-package fh.teamproject.utils;
+package fh.teamproject.utils.debug;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
@@ -6,7 +6,7 @@ import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw;
 import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
 
 /** @author xoppa */
-public class DebugDrawer extends btIDebugDraw {
+public class BulletDebugDrawer extends btIDebugDraw {
 	public int debugMode = 0;
 	public ShapeRenderer lineRenderer = new ShapeRenderer();
 

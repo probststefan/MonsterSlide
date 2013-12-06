@@ -15,6 +15,7 @@ import fh.teamproject.interfaces.IPlayer;
 import fh.teamproject.interfaces.ISlide;
 import fh.teamproject.interfaces.ISlidePart;
 import fh.teamproject.interfaces.IWorld;
+import fh.teamproject.physics.PlayerTickCallback;
 
 public class World implements IWorld {
 
@@ -37,22 +38,26 @@ public class World implements IWorld {
 
 	public World() {
 		// "Bullet-Welt" erstellen.
-		broadphase = new btDbvtBroadphase();
-		collisionConfiguration = new btDefaultCollisionConfiguration();
-		dispatcher = new btCollisionDispatcher(collisionConfiguration);
-		solver = new btSequentialImpulseConstraintSolver();
+		this.broadphase = new btDbvtBroadphase();
+		this.collisionConfiguration = new btDefaultCollisionConfiguration();
+		this.dispatcher = new btCollisionDispatcher(this.collisionConfiguration);
+		this.solver = new btSequentialImpulseConstraintSolver();
 
-		this.dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver,
-				collisionConfiguration);
+		this.dynamicsWorld = new btDiscreteDynamicsWorld(this.dispatcher,
+				this.broadphase, this.solver, this.collisionConfiguration);
 		this.dynamicsWorld.setGravity(new Vector3(0, this.worldGravtiy, 0));
 
 		// Rutsche und Spieler erzeugen.
 		this.slide = new Slide(this.dynamicsWorld);
 		this.player = new Player();
+		PlayerTickCallback playerCallback = new PlayerTickCallback(this.player);
+		playerCallback.attach(this.dynamicsWorld, false);
+
+		this.dynamicsWorld.addRigidBody(this.slide.getRigidBody());
 
 		// Elemente der Rutsche zur Bullet-Welt hinzufuegen.
 		for (ISlidePart slidePart : this.slide.getSlideParts()) {
-			this.dynamicsWorld.addRigidBody(slidePart.getRigidBody());
+			// this.dynamicsWorld.addRigidBody(slidePart.getRigidBody());
 		}
 
 		// Spieler zur Bullet-Welt hinzufuegen.
@@ -61,11 +66,11 @@ public class World implements IWorld {
 
 	public void update() {
 		// Bullet update.
-		performanceCounter.tick();
-		performanceCounter.start();
+		this.performanceCounter.tick();
+		this.performanceCounter.start();
 		this.dynamicsWorld.stepSimulation(Gdx.graphics.getDeltaTime(),
 				this.getMaxSubSteps(), this.getFixedTimeStep());
-		performanceCounter.stop();
+		this.performanceCounter.stop();
 
 		this.player.update();
 		this.slide.update(this.player.getPosition());
@@ -107,6 +112,7 @@ public class World implements IWorld {
 	/**
 	 * Liefert die aktuelle Rutsche.
 	 */
+	@Override
 	public ISlide getSlide() {
 		return this.slide;
 	}
@@ -114,6 +120,7 @@ public class World implements IWorld {
 	/**
 	 * Liefert das aktuelle Objekt zum Spieler.
 	 */
+	@Override
 	public IPlayer getPlayer() {
 		return this.player;
 	}

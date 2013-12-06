@@ -1,4 +1,4 @@
-package fh.teamproject.controller.camera;
+package fh.teamproject.utils.debug;
 
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputAdapter;
@@ -23,8 +23,13 @@ public class DebugInputController extends InputAdapter {
 		case Keys.NUM_2:
 			this.gameScreen.camManager.setMode(Mode.FREE);
 			return true;
-		case Keys.NUM_0:
+		case Keys.P:
 			GameScreen.isDebug = !GameScreen.isDebug;
+			// Muss gesetzt werden sonst schreibt man weiter in Textfelder.. :/
+			DebugInfoPanel.stage.setKeyboardFocus(null);
+			return true;
+		case Keys.F:
+			this.gameScreen.isFreezed = !this.gameScreen.isFreezed;
 			return true;
 		}
 
