@@ -18,10 +18,12 @@ public class MenuScreen implements Screen {
     private AbstractMenuSite[] siteList;
     private String[] nameList;
     private Stage stage;
+    private Table invisible;
     private Game game;
 
     public MenuScreen(Game g)
     {
+        invisible = null;
         actualSite = null;
         siteList = new AbstractMenuSite[5];
         nameList = new String[5];
@@ -41,6 +43,8 @@ public class MenuScreen implements Screen {
     public void resize(int width, int height) {
         //System.out.println(width + "    " + height);
         stage.setViewport(width, height, true);
+        invisible.setFillParent(true);
+        invisible.invalidate();
         actualSite.resize(width, height);
     }
 
@@ -49,9 +53,14 @@ public class MenuScreen implements Screen {
         //Stage
         stage = new Stage(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         Gdx.input.setInputProcessor(stage);
+        invisible = new Table();
+        invisible.setWidth(Gdx.graphics.getWidth());
+        invisible.setHeight(Gdx.graphics.getHeight());
+        invisible.center();
         makeSites();
         actualSite = siteList[2];
-        stage.addActor(actualSite);
+        stage.addActor(invisible);
+        invisible.add(actualSite);
     }
 
     @Override

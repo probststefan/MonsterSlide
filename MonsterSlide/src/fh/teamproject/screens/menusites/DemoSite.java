@@ -24,7 +24,6 @@ public class DemoSite extends AbstractMenuSite {
         //this.setBackground(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("data/mainmenu.jpg"), true))));
         this.setWidth(Gdx.graphics.getWidth());
         this.setHeight(Gdx.graphics.getHeight());
-        this.setFillParent(true);
         //this.center();
         //Styles and Font
         //Build the Fontgenerator, Generate the Font and dispose the Generator
@@ -57,7 +56,5 @@ public class DemoSite extends AbstractMenuSite {
 
     @Override
     public void resize(float width, float height) {
-        this.setFillParent(true);
-        this.invalidate();
     }
 }
