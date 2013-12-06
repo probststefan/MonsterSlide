@@ -21,7 +21,6 @@ public class DemoSite extends AbstractMenuSite {
     {
         super();
         //set the Table
-        //this.setBackground(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("data/mainmenu.jpg"), true))));
         this.setWidth(Gdx.graphics.getWidth());
         this.setHeight(Gdx.graphics.getHeight());
         //this.center();
@@ -47,7 +46,7 @@ public class DemoSite extends AbstractMenuSite {
         //start.center();
         //Adden Rückwärts vom erstellen
         this.add(start).expandX().expandY();
-        this.debug(Debug.all);
+        //this.debug(Debug.all);
         // TODO Auto-generated method stub
         //System.out.println("ResizeBreite: " + width + "    ResizeHöhe: " + Gdx.graphics.getHeight());
         //System.out.println("TableBreite: " + this.getWidth() + "    TableHöhe: " + this.getGdx.graphics.getHeight()());

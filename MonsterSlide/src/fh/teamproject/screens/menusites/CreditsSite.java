@@ -28,7 +28,6 @@ public class CreditsSite extends AbstractMenuSite {
     {
         //Tables
         super();
-        this.setBackground(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("data/mainmenu.jpg"), true))));
         this.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         this.center();
         nametable = new Table();
@@ -70,7 +69,7 @@ public class CreditsSite extends AbstractMenuSite {
         this.add(nametable);
         this.row();
         this.add(backtable);
-        this.debug(Debug.all);
+        //this.debug(Debug.all);
     }
 
     @Override
