@@ -2,13 +2,9 @@ package fh.teamproject.screens.menusites;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.esotericsoftware.tablelayout.BaseTableLayout.Debug;
 
 import fh.teamproject.screens.MenuScreen;
 import fh.teamproject.screens.utils.ButtonListener;
@@ -24,34 +20,35 @@ public class MainMenuSite extends AbstractMenuSite {
         //Table
         super();
         this.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        this.setBackground(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("data/mainmenu.jpg"), true))));
+		// this.setBackground(new TextureRegionDrawable(new TextureRegion(new
+		// Texture(Gdx.files.internal("data/mainmenu.jpg"), true))));
         //Style
-        style = new TextButtonStyle();
-        style.checkedFontColor = new Color(Color.BLUE);
-        style.checkedOverFontColor = new Color(Color.MAGENTA);
-        style.downFontColor = new Color(Color.GREEN);
-        style.fontColor = new Color(Color.BLUE);
-        style.overFontColor = new Color(Color.MAGENTA);
-        style.font = new BitmapFont();
+        this.style = new TextButtonStyle();
+        this.style.checkedFontColor = new Color(Color.BLUE);
+        this.style.checkedOverFontColor = new Color(Color.MAGENTA);
+        this.style.downFontColor = new Color(Color.GREEN);
+        this.style.fontColor = new Color(Color.BLUE);
+        this.style.overFontColor = new Color(Color.MAGENTA);
+        this.style.font = new BitmapFont();
         //Listener + Textbuttons
-        listener = new ButtonListener[5];
-        listener[0] = new ButtonListener("Game", menu);
-        listener[1] = new ButtonListener("Credits", menu);
-        listener[2] = new ButtonListener(null, menu);
-        listener[3] = new ButtonListener(null, menu);
-        listener[4] = new ButtonListener("Exit", menu);
-        buttons = new TextButton[5];
-        buttons[0] = new TextButton("New Game", style);
-        buttons[0].center();
-        buttons[1] = new TextButton("Credits", style);
-        buttons[2] = new TextButton("NoAction", style);
-        buttons[3] = new TextButton("NoAction", style);
-        buttons[4] = new TextButton("Exit", style);
+        this.listener = new ButtonListener[5];
+        this.listener[0] = new ButtonListener("Game", menu);
+        this.listener[1] = new ButtonListener("Credits", menu);
+        this.listener[2] = new ButtonListener(null, menu);
+        this.listener[3] = new ButtonListener(null, menu);
+        this.listener[4] = new ButtonListener("Exit", menu);
+        this.buttons = new TextButton[5];
+        this.buttons[0] = new TextButton("New Game", this.style);
+        this.buttons[0].center();
+        this.buttons[1] = new TextButton("Credits", this.style);
+        this.buttons[2] = new TextButton("NoAction", this.style);
+        this.buttons[3] = new TextButton("NoAction", this.style);
+        this.buttons[4] = new TextButton("Exit", this.style);
         //Adden Rückwärts vom erstellen
-        for (int i = 0; i < buttons.length; i++) {
-            buttons[i].addListener(listener[i]);
-            buttons[i].center();
-            this.add(buttons[i]);
+        for (int i = 0; i < this.buttons.length; i++) {
+            this.buttons[i].addListener(this.listener[i]);
+            this.buttons[i].center();
+            this.add(this.buttons[i]);
             this.row();
         }
         //this.debug(Debug.all);
