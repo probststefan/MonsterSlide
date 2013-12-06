@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector3;
@@ -28,7 +27,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
 	// Eckpunkte des SlidePart.
 	private float[] vertices;
-	private float width = 20.0f;
+	private float width = 10.0f;
 	private float[] tmpVertices;
 	private ModelBuilder builder;
 	private Material material;
@@ -46,7 +45,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		builder = new ModelBuilder();
 		tmpVertices = new float[20 + 12];
 
-		Texture texture = new Texture(Gdx.files.internal("data/floor.jpg"), true);
+		Texture texture = new Texture(Gdx.files.internal("data/snow.jpg"), true);
 		TextureAttribute textureAttr = new TextureAttribute(TextureAttribute.Diffuse,
 				texture);
 
@@ -55,7 +54,8 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		color = new Color();
 		color.set((float) Math.random(), (float) Math.random(), (float) Math.random(), 1f);
 
-		material = new Material(ColorAttribute.createDiffuse(color));
+		// material = new Material(ColorAttribute.createDiffuse(color));
+		material = new Material();
 		material.set(textureAttr);
 
 		// Ein Model erstellen, welches dann spaeter durch die Welt
