@@ -61,7 +61,7 @@ public class Player extends CollisionEntity implements IPlayer {
 
 		// Grafische Darstellung erstellen.
 		this.assets = new AssetManager();
-		FileHandle handle = Gdx.files.internal("models/duck.obj");
+		FileHandle handle = Gdx.files.internal("model/duck/duck.g3db");
 
 		this.assets.load(handle.path(), Model.class);
 
