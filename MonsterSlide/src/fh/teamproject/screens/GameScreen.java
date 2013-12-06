@@ -49,7 +49,7 @@ public class GameScreen implements Screen {
 		this.world = new World();
 		this.player = (Player) this.world.getPlayer();
 
-		this.swipeController = new SwipeController(this.player);
+		//this.swipeController = new SwipeController(this.player);
 		this.camManager = new CameraManager(this);
 		this.camManager.setMode(Mode.CHASE);
 

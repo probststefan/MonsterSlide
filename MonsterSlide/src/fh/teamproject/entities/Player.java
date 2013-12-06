@@ -44,7 +44,7 @@ public class Player extends CollisionEntity implements IPlayer {
 	public boolean isGrounded = false;
 
 	@Debug(name = "Turn Intensity", isModifiable = true)
-	public float turnIntensity = 3000;
+	public float turnIntensity = 100000;
 
 	@Debug(name = "Jump Amount", isModifiable = true)
 	private float jumpAmount = 7.0f;
@@ -124,37 +124,29 @@ public class Player extends CollisionEntity implements IPlayer {
 		}
 	}
 
+	
+	
 	@Override
 	public void slideLeft() {
-
-		// this.getRigidBody().setLinearVelocity(new
-		// Vector3(this.getRigidBody().getLinearVelocity().x + velocityX,
-		// this.getRigidBody().getLinearVelocity().y,
-		// this.getRigidBody().getLinearVelocity().z + velocityZ));
 		this.getRigidBody()
 				.applyCentralForce(
 						new Vector3(1, 0, 0).scl(this.turnIntensity
 								* Gdx.graphics.getDeltaTime()));
+		
+		//this.getRigidBody().applyForce(new Vector3(1, 0, 0).scl(this.turnIntensity), this.position);
 	}
 
 	@Override
 	public void slideRight() {
-		// this.getRigidBody().setLinearVelocity(new
-		// Vector3(this.getRigidBody().getLinearVelocity().x - velocityX,
-		// this.getRigidBody().getLinearVelocity().y,
-		// this.getRigidBody().getLinearVelocity().z + velocityZ));
 		this.getRigidBody().applyCentralForce(
 				new Vector3(-1, 0, 0).scl(this.turnIntensity
 						* Gdx.graphics.getDeltaTime()));
+		
+		//this.getRigidBody().applyForce(new Vector3(-1, 0, 0).scl(this.turnIntensity), this.position);
 	}
 
 	@Override
 	public void jump() {
-		// this.getRigidBody().setLinearVelocity(
-		// new Vector3(this.getRigidBody().getLinearVelocity().x, this
-		// .getRigidBody().getLinearVelocity().y + this.jumpAmount, this
-		// .getRigidBody().getLinearVelocity().z));
-
 		this.getRigidBody().applyCentralForce(new Vector3(0, 1, 0).scl(100));
 	}
 
