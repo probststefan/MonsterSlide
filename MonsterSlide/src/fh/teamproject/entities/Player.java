@@ -1,6 +1,8 @@
 package fh.teamproject.entities;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g3d.Material;
@@ -40,7 +42,6 @@ public class Player extends CollisionEntity implements IPlayer {
 	public float radius = 1f;
 
 	@Debug(name = "Is Grounded?", isModifiable = false)
-
 	public boolean isGrounded = false;
 
 	@Debug(name = "Turn Intensity", isModifiable = true)
@@ -49,10 +50,9 @@ public class Player extends CollisionEntity implements IPlayer {
 	@Debug(name = "Jump Amount", isModifiable = true)
 	private float jumpAmount = 7.0f;
 
-
-
 	// wird benoetigt, um die update() methode von InputHandling aufzurufen
 	public InputHandling inputHandling;
+	private AssetManager assets;
 
 	public Player() {
 		super();
@@ -60,13 +60,26 @@ public class Player extends CollisionEntity implements IPlayer {
 		this.inputHandling = new InputHandling(this);
 
 		// Grafische Darstellung erstellen.
+		this.assets = new AssetManager();
+		FileHandle handle = Gdx.files.internal("models/duck.obj");
+
+		this.assets.load(handle.path(), Model.class);
+
+		while (this.assets.update() == false) {
+
+		}
+
+		Model duckModel = this.assets.get(handle.path(), Model.class);
+
 		ModelBuilder builder = new ModelBuilder();
 		Material material = new Material(ColorAttribute.createDiffuse(Color.GREEN));
 		// Durchmesser der Sphere berechnen.
 		float diameter = this.radius * 2;
 		Model m = builder.createSphere(diameter, diameter, diameter, 32, 32, material,
 				Usage.Position | Usage.Normal);
-		this.instance = new ModelInstance(m, new Vector3(0f, 3.0f, 0f));
+
+		// this.instance = new ModelInstance(m, new Vector3(0f, 3.0f, 0f));
+		this.instance = new ModelInstance(duckModel, new Vector3(0f, 3.0f, 0f));
 
 		// Bullet-Eigenschaften setzen.
 		this.setCollisionShape(new btSphereShape(this.radius));
@@ -105,44 +118,48 @@ public class Player extends CollisionEntity implements IPlayer {
 	@Override
 	public void accelerate(float amount) {
 
-		//this.rigidBody.setLinearVelocity(this.direction.cpy().scl(1000.0f * Gdx.graphics.getDeltaTime()));
+		// this.rigidBody.setLinearVelocity(this.direction.cpy().scl(1000.0f *
+		// Gdx.graphics.getDeltaTime()));
 
-		/*this.getRigidBody()
-				.applyCentralForce(
-						this.direction.cpy().scl(
-								this.acceleration * Gdx.graphics.getDeltaTime()));
-		*/
-		
-		this.getRigidBody().applyCentralForce(this.direction.cpy().scl(new Vector3(1, 1, 1).scl(this.turnIntensity* Gdx.graphics.getDeltaTime())));
+		/*
+		 * this.getRigidBody() .applyCentralForce( this.direction.cpy().scl(
+		 * this.acceleration * Gdx.graphics.getDeltaTime()));
+		 */
+
+		this.getRigidBody().applyCentralForce(
+				this.direction.cpy().scl(
+						new Vector3(1, 1, 1).scl(this.turnIntensity
+								* Gdx.graphics.getDeltaTime())));
 
 	}
 
 	@Override
 	public void brake(float amount) {
-		/*if (this.getRigidBody().getLinearVelocity().z > 0.0f) {
+		/*
+		 * if (this.getRigidBody().getLinearVelocity().z > 0.0f) {
+		 * this.getRigidBody().applyCentralForce( this.direction.cpy().scl( -1f
+		 * * this.acceleration * Gdx.graphics.getDeltaTime())); }
+		 */
+
+		// um Begreunzugn der Bremse aufzuheben, einfach if() auskommentieren
+		if (this.getRigidBody().getLinearVelocity().z > 5.0f) {
 			this.getRigidBody().applyCentralForce(
 					this.direction.cpy().scl(
-							-1f * this.acceleration * Gdx.graphics.getDeltaTime()));
-		}
-		*/
-		
-		//um Begreunzugn der Bremse aufzuheben, einfach if() auskommentieren
-		if(this.getRigidBody().getLinearVelocity().z > 5.0f){
-			this.getRigidBody().applyCentralForce(this.direction.cpy().scl(new Vector3(-1, -1, -1).scl(this.turnIntensity* Gdx.graphics.getDeltaTime())));
+							new Vector3(-1, -1, -1).scl(this.turnIntensity
+									* Gdx.graphics.getDeltaTime())));
 		}
 
 	}
 
-	
-	
 	@Override
 	public void slideLeft() {
 		this.getRigidBody()
 				.applyCentralForce(
 						new Vector3(1, 0, 0).scl(this.turnIntensity
 								* Gdx.graphics.getDeltaTime()));
-		
-		//this.getRigidBody().applyForce(new Vector3(1, 0, 0).scl(this.turnIntensity), this.position);
+
+		// this.getRigidBody().applyForce(new Vector3(1, 0,
+		// 0).scl(this.turnIntensity), this.position);
 	}
 
 	@Override
@@ -150,8 +167,9 @@ public class Player extends CollisionEntity implements IPlayer {
 		this.getRigidBody().applyCentralForce(
 				new Vector3(-1, 0, 0).scl(this.turnIntensity
 						* Gdx.graphics.getDeltaTime()));
-		
-		//this.getRigidBody().applyForce(new Vector3(-1, 0, 0).scl(this.turnIntensity), this.position);
+
+		// this.getRigidBody().applyForce(new Vector3(-1, 0,
+		// 0).scl(this.turnIntensity), this.position);
 	}
 
 	@Override

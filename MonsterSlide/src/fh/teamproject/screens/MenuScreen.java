@@ -20,8 +20,17 @@ public class MenuScreen implements Screen {
     private Stage stage;
 	private Game game;
 
+    private Table invisible;
+
     public MenuScreen(Game g)
     {
+        this.actualSite = null;
+        this.siteList = new AbstractMenuSite[5];
+        this.nameList = new String[5];
+        this.stage = null;
+        this.game = g;
+
+        this.invisible = null;
         this.actualSite = null;
         this.siteList = new AbstractMenuSite[5];
         this.nameList = new String[5];
@@ -40,7 +49,10 @@ public class MenuScreen implements Screen {
     @Override
     public void resize(int width, int height) {
         //System.out.println(width + "    " + height);
+
         this.stage.setViewport(width, height, true);
+        this.invisible.setFillParent(true);
+        this.invisible.invalidate();
         this.actualSite.resize(width, height);
     }
 
@@ -49,9 +61,16 @@ public class MenuScreen implements Screen {
         //Stage
         this.stage = new Stage(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         Gdx.input.setInputProcessor(this.stage);
+        this.invisible = new Table();
+        this.invisible.setWidth(Gdx.graphics.getWidth());
+        this.invisible.setHeight(Gdx.graphics.getHeight());
+        //invisible.setBackground(new TextureRegionDrawable(new TextureRegion(new Texture(Gdx.files.internal("data/mainmenu.jpg"), true))));
+
+        this.invisible.center();
         this.makeSites();
         this.actualSite = this.siteList[2];
-        this.stage.addActor(this.actualSite);
+        this.stage.addActor(this.invisible);
+        this.invisible.add(this.actualSite);
     }
 
     @Override
