@@ -22,13 +22,14 @@ public class DebugInfoPanel {
 	public static Stage stage;
 	Skin debugSkin = SkinManager.skin;
 	InfoPanel panel;
-	Table root;
+	public Table root;
 
 	public DebugInfoPanel() {
 		DebugInfoPanel.stage = new Stage();
 		this.root = new Table();
 		this.root.setFillParent(true);
 		this.root.top().right();
+		this.root.setVisible(false);
 		DebugInfoPanel.stage.addActor(this.root);
 	}
 

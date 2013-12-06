@@ -27,7 +27,6 @@ import fh.teamproject.utils.debug.DebugInputController;
 public class GameScreen implements Screen {
 	// DEBUG
 	private final boolean showFps = true;
-	public static boolean isDebug = false;
 	public boolean isPaused = false;
 	public DebugDrawer debugDrawer;
 	// Controller
@@ -116,7 +115,7 @@ public class GameScreen implements Screen {
 		}
 		this.batch.end();
 		this.hud.render();
-		if (GameScreen.isDebug) {
+		if (this.debugDrawer.isDebug) {
 			this.debugDrawer.render();
 		}
 		this.showFPS();

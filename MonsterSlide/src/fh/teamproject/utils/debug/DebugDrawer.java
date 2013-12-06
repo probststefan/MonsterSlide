@@ -16,7 +16,7 @@ import fh.teamproject.screens.GameScreen;
 public class DebugDrawer {
 
 	public GameScreen gameScreen;
-
+	public static boolean isDebug = false;
 	public DebugInfoPanel infoPanel;
 	public BulletDebugDrawer bulletdebugDrawer = null;
 
@@ -37,6 +37,12 @@ public class DebugDrawer {
 		this.renderCameras();
 		this.renderBullet();
 		this.infoPanel.render();
+	}
+
+	public void toggleDebug() {
+		DebugDrawer.isDebug=!DebugDrawer.isDebug;
+		this.infoPanel.root.setVisible(!this.infoPanel.root.isVisible());
+		Gdx.app.log("Debugger", "" + this.infoPanel.root.isVisible());
 	}
 
 	private void renderBullet() {

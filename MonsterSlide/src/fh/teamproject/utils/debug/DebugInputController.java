@@ -24,7 +24,7 @@ public class DebugInputController extends InputAdapter {
 			this.gameScreen.camManager.setMode(Mode.FREE);
 			return true;
 		case Keys.P:
-			GameScreen.isDebug = !GameScreen.isDebug;
+			this.gameScreen.debugDrawer.toggleDebug();
 			// Muss gesetzt werden sonst schreibt man weiter in Textfelder.. :/
 			DebugInfoPanel.stage.setKeyboardFocus(null);
 			return true;
