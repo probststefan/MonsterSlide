@@ -40,6 +40,7 @@ public class MenuScreen implements Screen {
     @Override
     public void resize(int width, int height) {
         //System.out.println(width + "    " + height);
+        stage.setViewport(width, height, true);
         actualSite.resize(width, height);
     }
 
