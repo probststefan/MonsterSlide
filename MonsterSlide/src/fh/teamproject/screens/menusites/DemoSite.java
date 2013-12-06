@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.esotericsoftware.tablelayout.BaseTableLayout.Debug;
+import com.esotericsoftware.tablelayout.Cell;
 
 import fh.teamproject.screens.MenuScreen;
 import fh.teamproject.screens.utils.ButtonListener;
@@ -50,10 +51,15 @@ public class DemoSite extends AbstractMenuSite {
     public void resize(float width, float height) {
         // TODO Auto-generated method stub
         this.setSize(width, height);
-        for (@SuppressWarnings("rawtypes") com.esotericsoftware.tablelayout.Cell c : this.getCells()) {
-            c.size(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        //float w = 0;
+        //float h = 0;
+        //System.out.println("Breite: " + width + "    Höhe: " + height);
+        for (@SuppressWarnings("rawtypes") Cell c : this.getCells()) {
+            c.size(width, height);
         }
         start.setSize(width, height);
-        
+        //System.out.println("TableBreite: " + this.getWidth() + "    TableHöhe: " + this.getHeight());
+        //System.out.println("ButtonBreite: " + start.getWidth() + "    ButtonHöhe: " + start.getHeight());
+        //System.out.println("CellBreite: " + width + "    CellHöhe: " + height);
     }
 }
