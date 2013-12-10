@@ -24,10 +24,9 @@ public abstract class CollisionEntity extends Entitiy implements ICollisionEntit
 
 	CollisionEntity() {
 		super();
-		// this.motionState = new btDefaultMotionState();
-		this.localInertia = new Vector3();
+		localInertia = new Vector3();
 		// Standardmaessig erstmal keine Masse setzen.
-		this.mass = 0;
+		mass = 0;
 	}
 
 	@Override
@@ -37,18 +36,18 @@ public abstract class CollisionEntity extends Entitiy implements ICollisionEntit
 
 	@Override
 	public void dispose() {
-		this.rigidBody.dispose();
-		this.motionState.dispose();
-		this.collisionShape.dispose();
-		this.rigidBodyInfo.dispose();
+		rigidBody.dispose();
+		motionState.dispose();
+		collisionShape.dispose();
+		rigidBodyInfo.dispose();
 	}
 
 	@Override
 	public void releaseAll() {
-		this.collisionShape.release();
-		this.motionState.release();
-		this.rigidBody.release();
-		this.localInertia = null;
+		collisionShape.release();
+		motionState.release();
+		rigidBody.release();
+		localInertia = null;
 	}
 
 	/**
@@ -56,15 +55,15 @@ public abstract class CollisionEntity extends Entitiy implements ICollisionEntit
 	 */
 	@Override
 	public void createRigidBody() {
-		this.rigidBodyInfo = new btRigidBodyConstructionInfo(this.mass, this.motionState,
-				this.collisionShape, this.localInertia);
+		rigidBodyInfo = new btRigidBodyConstructionInfo(mass, motionState,
+				collisionShape, localInertia);
 
-		this.rigidBody = new btRigidBody(this.rigidBodyInfo);
+		rigidBody = new btRigidBody(rigidBodyInfo);
 	}
 
 	public void createMotionState() {
 		// this.motionState = new MotionState(this.instance.transform);
-		this.motionState = new MotionState(new Matrix4());
+		motionState = new MotionState(new Matrix4());
 	}
 
 	/**
@@ -75,7 +74,7 @@ public abstract class CollisionEntity extends Entitiy implements ICollisionEntit
 	 */
 	@Override
 	public btRigidBody getRigidBody() {
-		return this.rigidBody;
+		return rigidBody;
 	}
 
 	/**
@@ -97,11 +96,11 @@ public abstract class CollisionEntity extends Entitiy implements ICollisionEntit
 	 */
 	@Override
 	public void setEntityWorldTransform(Matrix4 transform) {
-		if (null == this.motionState) {
-			this.createMotionState();
+		if (null == motionState) {
+			createMotionState();
 		}
 
-		this.motionState.setWorldTransform(transform);
+		motionState.setWorldTransform(transform);
 	}
 
 	/**
@@ -122,7 +121,7 @@ public abstract class CollisionEntity extends Entitiy implements ICollisionEntit
 	@Override
 	public void setMass(float mass) {
 		this.mass = mass;
-		this.collisionShape.calculateLocalInertia(this.mass, this.localInertia);
+		collisionShape.calculateLocalInertia(this.mass, localInertia);
 	}
 
 }

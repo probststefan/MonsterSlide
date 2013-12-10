@@ -3,6 +3,7 @@ package fh.teamproject.controller.player.pc;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
+
 import fh.teamproject.entities.Player;
 
 public class InputHandling implements InputProcessor {
@@ -36,7 +37,7 @@ public class InputHandling implements InputProcessor {
 			player.brake(5.0f);
 		}
 		
-		if(keycode == Input.Keys.SPACE && canJump) {
+		if((keycode == Input.Keys.SPACE) && canJump) {
 			player.jump();
 			jumpCooldown = 0.0f;
 		}
@@ -62,7 +63,7 @@ public class InputHandling implements InputProcessor {
 			player.slideLeft();
 		}
 		
-		if(screenX > Gdx.graphics.getWidth() - 50){
+		if(screenX > (Gdx.graphics.getWidth() - 50)){
 			player.slideRight();
 		}
 		
@@ -96,15 +97,15 @@ public class InputHandling implements InputProcessor {
 
 		}
 		
-		if(screenX > Gdx.graphics.getWidth() / 4 && screenX < (3*(Gdx.graphics.getWidth() / 4)) && screenY > (2*(Gdx.graphics.getHeight() / 3))) {
+		if((screenX > (Gdx.graphics.getWidth() / 4)) && (screenX < (3*(Gdx.graphics.getWidth() / 4))) && (screenY > (2*(Gdx.graphics.getHeight() / 3)))) {
 			player.brake(1.0f);
 		}
 		
-		if(screenX > Gdx.graphics.getWidth() / 4 && screenX < (3*(Gdx.graphics.getWidth() / 4)) && screenY < (Gdx.graphics.getHeight() / 3)) {
+		if((screenX > (Gdx.graphics.getWidth() / 4)) && (screenX < (3*(Gdx.graphics.getWidth() / 4))) && (screenY < (Gdx.graphics.getHeight() / 3))) {
 			player.accelerate(1.0f);
 		}
 		
-		if(screenX > Gdx.graphics.getWidth() / 4 && screenX < (3*(Gdx.graphics.getWidth() / 4)) && screenY > (Gdx.graphics.getHeight() / 3) && screenY < (2*(Gdx.graphics.getHeight() / 3)) && canJump) {
+		if((screenX > (Gdx.graphics.getWidth() / 4)) && (screenX < (3*(Gdx.graphics.getWidth() / 4))) && (screenY > (Gdx.graphics.getHeight() / 3)) && (screenY < (2*(Gdx.graphics.getHeight() / 3))) && canJump) {
 			player.jump();
 			jumpCooldown = 0.0f;
 		}
@@ -149,34 +150,16 @@ public class InputHandling implements InputProcessor {
 			if(Gdx.input.getX() > (3 * (Gdx.graphics.getWidth() / 4))){
 				mouseMoved(Gdx.input.getX(), Gdx.input.getY());
 			}
-			if(Gdx.input.getX() > (Gdx.graphics.getWidth() / 4) && Gdx.input.getX() < (3*(Gdx.graphics.getWidth() / 4)) && Gdx.input.getY() > (2 * (Gdx.graphics.getHeight() / 3))){
+			if((Gdx.input.getX() > (Gdx.graphics.getWidth() / 4)) && (Gdx.input.getX() < (3*(Gdx.graphics.getWidth() / 4))) && (Gdx.input.getY() > (2 * (Gdx.graphics.getHeight() / 3)))){
 				mouseMoved(Gdx.input.getX(), Gdx.input.getY());
 			}
 			
-			if(Gdx.input.getX() > (Gdx.graphics.getWidth() / 4) && Gdx.input.getX() < (3*(Gdx.graphics.getWidth() / 4)) && Gdx.input.getY() < (Gdx.graphics.getHeight() / 3)){
+			if((Gdx.input.getX() > (Gdx.graphics.getWidth() / 4)) && (Gdx.input.getX() < (3*(Gdx.graphics.getWidth() / 4))) && (Gdx.input.getY() < (Gdx.graphics.getHeight() / 3))){
 				mouseMoved(Gdx.input.getX(), Gdx.input.getY());
 			}
-			if(Gdx.input.getX() > (Gdx.graphics.getWidth() / 4) && Gdx.input.getX() < (3*(Gdx.graphics.getWidth() / 4)) && Gdx.input.getY() > (Gdx.graphics.getHeight() / 3) && Gdx.input.getY() < (2 * (Gdx.graphics.getHeight() / 3))){
+			if((Gdx.input.getX() > (Gdx.graphics.getWidth() / 4)) && (Gdx.input.getX() < (3*(Gdx.graphics.getWidth() / 4))) && (Gdx.input.getY() > (Gdx.graphics.getHeight() / 3)) && (Gdx.input.getY() < (2 * (Gdx.graphics.getHeight() / 3)))){
 				mouseMoved(Gdx.input.getX(), Gdx.input.getY());
 			}
-			
-			/*
-			if(Gdx.input.getX() < (Gdx.graphics.getWidth() / 4)){
-				mouseMoved((Gdx.graphics.getWidth() / 4), Gdx.graphics.getHeight());
-				System.out.println("Links" + Gdx.input.getX() + "  " + (Gdx.graphics.getWidth() / 4));
-			}
-			if(Gdx.input.getX() >  3*(Gdx.graphics.getWidth() / 4)){
-				mouseMoved(Gdx.input.getX(), Gdx.graphics.getHeight());
-				System.out.println("Rechts");
-			}
-			
-			/*
-			if(Gdx.input.getX() >  3*(Gdx.graphics.getWidth() / 4)){
-				mouseMoved(Gdx.input.getX(), Gdx.graphics.getHeight());
-				System.out.println("Rechts");
-			}
-			*/
-			
 		}
 
 		

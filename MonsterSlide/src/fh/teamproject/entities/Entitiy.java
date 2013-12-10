@@ -6,13 +6,20 @@ import com.badlogic.gdx.math.Vector3;
 import fh.teamproject.interfaces.IEntity;
 
 public abstract class Entitiy implements IEntity {
+	private static int idCounter = 0;
+
+	private final int id;
 	public ModelInstance instance;
 	Vector3 position = new Vector3();
-	int id;
+
+	public Entitiy() {
+		id = Entitiy.idCounter;
+		Entitiy.idCounter++;
+	}
 
 	@Override
 	public Vector3 getPosition() {
-		return this.instance.transform.getTranslation(this.position);
+		return instance.transform.getTranslation(position);
 	}
 
 	@Override
@@ -23,14 +30,12 @@ public abstract class Entitiy implements IEntity {
 
 	@Override
 	public ModelInstance getModelInstance() {
-		// TODO Auto-generated method stub
-		return this.instance;
+		return instance;
 	}
 
 	@Override
 	public int getID() {
-		// TODO Auto-generated method stub
-		return this.id;
+		return id;
 	}
 
 }

@@ -31,10 +31,10 @@ public class Player extends CollisionEntity implements IPlayer {
 	public float speed = 0;
 
 	@Debug(name = "Max Speed", isModifiable = true)
-	public float MAX_SPEED = 30;
+	public float MAX_SPEED = 50;
 
 	@Debug(name = "Acceleration", isModifiable = true)
-	public float acceleration = 800f;
+	public float acceleration = 16000f;
 
 	@Debug(name = "Radius", isModifiable = false)
 	public float radius = 1f;
@@ -43,7 +43,7 @@ public class Player extends CollisionEntity implements IPlayer {
 	public boolean isGrounded = false;
 
 	@Debug(name = "Turn Intensity", isModifiable = true)
-	public float turnIntensity = 100000;
+	public float turnIntensity = 130000;
 
 	@Debug(name = "Jump Amount", isModifiable = true)
 	private float jumpAmount = 7.0f;
@@ -54,33 +54,32 @@ public class Player extends CollisionEntity implements IPlayer {
 	public Player() {
 		super();
 
-		this.inputHandling = new InputHandling(this);
+		inputHandling = new InputHandling(this);
 
 		// Grafische Darstellung erstellen.
 		ModelBuilder builder = new ModelBuilder();
 		Material material = new Material(ColorAttribute.createDiffuse(Color.GREEN));
 		// Durchmesser der Sphere berechnen.
-		float diameter = this.radius * 2;
+		float diameter = radius * 2;
 		Model m = builder.createSphere(diameter, diameter, diameter, 32, 32, material,
 				Usage.Position | Usage.Normal);
 
-		this.instance = new ModelInstance(m, new Vector3(0f, 3.0f, 0f));
+		instance = new ModelInstance(m, new Vector3(0f, 3.0f, 0f));
 
 		// Bullet-Eigenschaften setzen.
-		this.setCollisionShape(new btSphereShape(this.radius));
-		this.setLocalInertia(new Vector3(0, 0, 0));
-		this.setMass(100.0f); // Masse der Sphere.
-		this.createMotionState();
-		this.createRigidBody();
-		// this.getRigidBody().getMotionState().getWorldTransform(this.instance.transform);
-		// Damit rutscht die Sphere nur noch und rollt nicht mehr.
-		this.getRigidBody().setAngularFactor(0);
-		this.setEntityWorldTransform(this.instance.transform);
+		setCollisionShape(new btSphereShape(radius));
+		setLocalInertia(new Vector3(0, 0, 0));
+		setMass(100.0f); // Masse der Sphere.
+		createMotionState();
+		createRigidBody();
+		getRigidBody().setAngularFactor(0); // Damit rutscht die Sphere nur noch
+		// und rollt nicht mehr.
+		setEntityWorldTransform(instance.transform);
 	}
 
 	@Override
 	public void createMotionState() {
-		this.motionState = new PlayerMotionState(this);
+		motionState = new PlayerMotionState(this);
 
 	}
 
@@ -90,81 +89,47 @@ public class Player extends CollisionEntity implements IPlayer {
 
 		// update() wird aufgerufen, um bei gedrueckt-halten der Keys sich immer
 		// weiter zu bewegen
-		this.inputHandling.update();
+		inputHandling.update();
 
 	}
 
 	public void syncWithBullet() {
-		this.linearVelocity.set(this.rigidBody.getLinearVelocity());
-		this.speed = this.linearVelocity.len();
-		this.direction.set(this.linearVelocity.cpy().nor());
+		linearVelocity.set(rigidBody.getLinearVelocity());
+		speed = linearVelocity.len();
+		direction.set(linearVelocity.cpy().nor());
 	}
 
 	@Override
 	public void accelerate(float amount) {
-
-		// this.rigidBody.setLinearVelocity(this.direction.cpy().scl(1000.0f *
-		// Gdx.graphics.getDeltaTime()));
-
-		/*
-		 * this.getRigidBody() .applyCentralForce( this.direction.cpy().scl(
-		 * this.acceleration * Gdx.graphics.getDeltaTime()));
-		 */
-
-		this.getRigidBody().applyCentralForce(
-				this.direction.cpy().scl(
-						new Vector3(1, 1, 1).scl(this.turnIntensity
-								* Gdx.graphics.getDeltaTime())));
-
+		getRigidBody().applyCentralForce(
+				direction.cpy().scl(acceleration * Gdx.graphics.getDeltaTime()));
 	}
 
 	@Override
 	public void brake(float amount) {
-		/*
-		 * if (this.getRigidBody().getLinearVelocity().z > 0.0f) {
-		 * this.getRigidBody().applyCentralForce( this.direction.cpy().scl( -1f
-		 * * this.acceleration * Gdx.graphics.getDeltaTime())); }
-		 */
-
-		// um Begreunzugn der Bremse aufzuheben, einfach if() auskommentieren
-		if (this.getRigidBody().getLinearVelocity().z > 5.0f) {
-			this.getRigidBody().applyCentralForce(
-					this.direction.cpy().scl(
-							new Vector3(-1, -1, -1).scl(this.turnIntensity
-									* Gdx.graphics.getDeltaTime())));
-		}
-
+		getRigidBody().applyCentralForce(
+				direction.cpy().scl(-1f * acceleration * Gdx.graphics.getDeltaTime()));
 	}
 
 	@Override
 	public void slideLeft() {
-		this.getRigidBody()
-				.applyCentralForce(
-						new Vector3(1, 0, 0).scl(this.turnIntensity
-								* Gdx.graphics.getDeltaTime()));
-
-		// this.getRigidBody().applyForce(new Vector3(1, 0,
-		// 0).scl(this.turnIntensity), this.position);
+		getRigidBody().applyCentralForce(
+				new Vector3(1, 0, 0).scl(turnIntensity * Gdx.graphics.getDeltaTime()));
 	}
 
 	@Override
 	public void slideRight() {
-		this.getRigidBody().applyCentralForce(
-				new Vector3(-1, 0, 0).scl(this.turnIntensity
-						* Gdx.graphics.getDeltaTime()));
-
-		// this.getRigidBody().applyForce(new Vector3(-1, 0,
-		// 0).scl(this.turnIntensity), this.position);
+		getRigidBody().applyCentralForce(
+				new Vector3(-1, 0, 0).scl(turnIntensity * Gdx.graphics.getDeltaTime()));
 	}
 
 	@Override
 	public void jump() {
-		this.getRigidBody().applyForce(new Vector3(0, 1, 0).scl(50000), this.position);
+		getRigidBody().applyForce(new Vector3(0, 1, 0).scl(50000), position);
 	}
 
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
 		return "Player";
 	}
 }

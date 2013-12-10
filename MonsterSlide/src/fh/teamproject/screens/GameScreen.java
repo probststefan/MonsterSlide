@@ -49,24 +49,24 @@ public class GameScreen implements Screen {
 
 	public GameScreen(Game game) {
 		this.game = game;
-		this.world = new World(this);
-		this.player = (Player) this.world.getPlayer();
+		world = new World(this);
+		player = (Player) world.getPlayer();
 
 		// this.swipeController = new SwipeController(this.player);
-		this.camManager = new CameraManager(this);
-		this.camManager.setMode(Mode.CHASE);
+		camManager = new CameraManager(this);
+		camManager.setMode(Mode.CHASE);
 
-		this.batch = new ModelBatch();
+		batch = new ModelBatch();
 
-		this.lights = new Environment();
-		this.lights.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f,
+		lights = new Environment();
+		lights.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f,
 				1f));
-		this.lights.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
+		lights.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
 
 		// Debug
-		this.debugDrawer = new DebugDrawer(this);
+		debugDrawer = new DebugDrawer(this);
 
-		this.hud = new Hud(this);
+		hud = new Hud(this);
 
 		// Input
 		DebugInputController debugInput = new DebugInputController(this);
@@ -75,20 +75,20 @@ public class GameScreen implements Screen {
 		InputMultiplexer allInputs = new InputMultiplexer();
 		debugInputMul.addProcessor(debugInput);
 		debugInputMul.addProcessor(DebugInfoPanel.stage);
-		debugInputMul.addProcessor((InputProcessor) this.camManager
+		debugInputMul.addProcessor((InputProcessor) camManager
 				.getController(Mode.FREE));
 
 		// gameInputMul.addProcessor(new GestureDetector(this.swipeController));
 		// gameInputMul.addProcessor(this.player.inputHandling);
-		gameInputMul.addProcessor(this.hud.stage);
+		gameInputMul.addProcessor(hud.stage);
 		allInputs.addProcessor(gameInputMul);
 		allInputs.addProcessor(debugInputMul);
 		Gdx.input.setInputProcessor(allInputs);
 
-		if (this.showFps) {
+		if (showFps) {
 			// Wird zur Zeit genutzt um die fps anzuzeigen.
-			this.spriteBatch = new SpriteBatch();
-			this.font = new BitmapFont();
+			spriteBatch = new SpriteBatch();
+			font = new BitmapFont();
 		}
 
 	}
@@ -98,34 +98,34 @@ public class GameScreen implements Screen {
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
-		if (!this.isPaused) {
+		if (!isPaused) {
 			/* UPDATE */
-			this.world.update();
+			world.update();
 		}
-		this.camManager.update();
-		this.hud.update();
+		camManager.update();
+		hud.update();
 
 		/* RENDER */
-		this.batch.begin(this.camManager.getActiveCamera());
+		batch.begin(camManager.getActiveCamera());
 		// Player rendern.
-		this.batch.render(this.player.instance, this.lights);
+		batch.render(player.instance, lights);
 		// Rutschelemente rendern.
-		for (ISlidePart slidePart : this.world.getSlide().getSlideParts()) {
-			this.batch.render(slidePart.getModelInstance(), this.lights);
+		for (ISlidePart slidePart : world.getSlide().getSlideParts()) {
+			batch.render(slidePart.getModelInstance(), lights);
 		}
-		this.batch.end();
-		this.hud.render();
-		if (this.debugDrawer.isDebug) {
-			this.debugDrawer.render();
+		batch.end();
+		hud.render();
+		if (DebugDrawer.isDebug) {
+			debugDrawer.render();
 		}
-		this.showFPS();
+		showFPS();
 
 	}
 
 	@Override
 	public void resize(int width, int height) {
-		this.camManager.setViewport(width, height);
-		this.hud.setViewport(width, height);
+		camManager.setViewport(width, height);
+		hud.setViewport(width, height);
 
 	}
 
@@ -155,18 +155,18 @@ public class GameScreen implements Screen {
 	@Override
 	public void dispose() {
 		System.out.println("Dispose");
-		this.world.dispose();
+		world.dispose();
 	}
 
 	public void showFPS() {
-		if (this.showFps) {
+		if (showFps) {
 			// FPS anzeigen.
-			this.spriteBatch.begin();
-			this.font.draw(this.spriteBatch, Gdx.graphics.getFramesPerSecond()
+			spriteBatch.begin();
+			font.draw(spriteBatch, Gdx.graphics.getFramesPerSecond()
 					+ " fps, Bullet: "
-					+ (int) (this.world.performanceCounter.load.value * 100f) + "%", 10,
+					+ (int) (world.performanceCounter.load.value * 100f) + "%", 10,
 					Gdx.graphics.getHeight() - 10);
-			this.spriteBatch.end();
+			spriteBatch.end();
 		}
 	}
 }
