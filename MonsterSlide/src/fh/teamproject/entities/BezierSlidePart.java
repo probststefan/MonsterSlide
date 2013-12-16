@@ -1,15 +1,23 @@
 package fh.teamproject.entities;
 
-import com.badlogic.gdx.math.EarClippingTriangulator;
+import com.badlogic.gdx.graphics.Mesh;
+import com.badlogic.gdx.graphics.VertexAttribute;
+import com.badlogic.gdx.graphics.VertexAttributes;
+import com.badlogic.gdx.graphics.VertexAttributes.Usage;
+import com.badlogic.gdx.graphics.g3d.Model;
+import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.math.DelaunayTriangulator;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld;
 import com.badlogic.gdx.utils.Pool.Poolable;
+import com.badlogic.gdx.utils.ShortArray;
 
 import fh.teamproject.interfaces.ISlidePart;
 
 public class BezierSlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
-	private static EarClippingTriangulator triangulator = new EarClippingTriangulator();
+	private static DelaunayTriangulator triangulator = new DelaunayTriangulator();
 
 	private Vector3 start = new Vector3(), end = new Vector3(), control1 = new Vector3(),
 			control2 = new Vector3();
@@ -32,7 +40,16 @@ public class BezierSlidePart extends CollisionEntity implements ISlidePart, Pool
 	}
 
 	private void createModelInstance() {
-
+		ShortArray indices = BezierSlidePart.triangulator.computeTriangles(pointCloud,
+				false);
+		indices.shrink();
+		Mesh mesh = new Mesh(true, pointCloud.length, indices.size, new VertexAttributes(
+				new VertexAttribute(Usage.Position, 3, ShaderProgram.POSITION_ATTRIBUTE)));
+		mesh.setVertices(pointCloud);
+		mesh.setIndices(indices.items);
+		Model m = new Model();
+		m.meshes.add(mesh);
+		instance = new ModelInstance(m);
 	}
 
 	@Override
