@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Bezier;
 import com.badlogic.gdx.math.DelaunayTriangulator;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.bullet.collision.btConvexHullShape;
 import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld;
 import com.badlogic.gdx.utils.FloatArray;
 import com.badlogic.gdx.utils.Pool.Poolable;
@@ -20,6 +21,8 @@ import fh.teamproject.interfaces.ISlidePart;
 public class BezierSlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
 	private static DelaunayTriangulator triangulator = new DelaunayTriangulator();
+
+	int width = 30;
 
 	private Vector3 start = new Vector3(), end = new Vector3(), control1 = new Vector3(),
 			control2 = new Vector3();
@@ -35,13 +38,26 @@ public class BezierSlidePart extends CollisionEntity implements ISlidePart, Pool
 		this.splitting = splitting;
 		computePointCloud();
 		createModelInstance();
+		// FloatBuffer fBuffer = BufferUtils.newFloatBuffer(pointCloud.size);
+		// fBuffer.put(pointCloud.items, 0, pointCloud.size);
+		// setCollisionShape(new btConvexHullShape(instance.model.meshes.get(0)
+		// .getVerticesBuffer(),
+		// instance.model.meshes.get(0).getNumVertices()));
+
+		btConvexHullShape collisionShape = new btConvexHullShape();
+		for (int i = 0; i < pointCloud.size; i += 3) {
+			collisionShape.addPoint(new Vector3(pointCloud.get(i), pointCloud.get(i + 1),
+					pointCloud.get(i + 2)));
+		}
+		setCollisionShape(collisionShape);
+		createRigidBody();
+
 	}
 
 	private void computePointCloud() {
 		Bezier<Vector3> bezierCurve = new Bezier<Vector3>();
 
-		bezierCurve.set(new Vector3[] { start, control1, control2,
-				end });
+		bezierCurve.set(new Vector3[] { start, control1, control2, end });
 
 		Vector3 tmpBezierVec = new Vector3();
 		pointCloud = new FloatArray();
@@ -54,7 +70,7 @@ public class BezierSlidePart extends CollisionEntity implements ISlidePart, Pool
 			pointCloud.add(tmpBezierVec.z);
 
 			// Punkte der anderen Seiten setzen.
-			pointCloud.add(tmpBezierVec.x + 10);
+			pointCloud.add(tmpBezierVec.x + width);
 			pointCloud.add(tmpBezierVec.y);
 			pointCloud.add(tmpBezierVec.z);
 		}

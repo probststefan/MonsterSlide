@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.physics.bullet.collision.btConvexHullShape;
+import com.badlogic.gdx.physics.bullet.collision.btSphereShape;
 
 import fh.teamproject.controller.player.pc.InputHandling;
 import fh.teamproject.interfaces.IPlayer;
@@ -67,15 +67,14 @@ public class Player extends CollisionEntity implements IPlayer {
 		instance = new ModelInstance(m, new Vector3(0f, 3.0f, 0f));
 
 		// Bullet-Eigenschaften setzen.
-		// setCollisionShape(new btSphereShape(radius));
-		setCollisionShape(new btConvexHullShape(instance.model.meshes.get(0)
-				.getVerticesBuffer(), instance.model.meshes.get(0).getNumVertices()));
+		setCollisionShape(new btSphereShape(radius));
 		setLocalInertia(new Vector3(0, 0, 0));
 		setMass(100.0f); // Masse der Sphere.
 		createMotionState();
 		createRigidBody();
-		getRigidBody().setAngularFactor(0); // Damit rutscht die Sphere nur noch
-		// und rollt nicht mehr.
+		// Damit rutscht die Sphere nur noch und rollt nicht mehr.
+		// getRigidBody().setAngularFactor(0);
+
 		setEntityWorldTransform(instance.transform);
 
 	}

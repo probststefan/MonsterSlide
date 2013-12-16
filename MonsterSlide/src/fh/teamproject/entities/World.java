@@ -41,70 +41,70 @@ public class World implements IWorld {
 	public World(GameScreen gameScreen) {
 		this.gameScreen = gameScreen;
 		// "Bullet-Welt" erstellen.
-		this.broadphase = new btDbvtBroadphase();
-		this.collisionConfiguration = new btDefaultCollisionConfiguration();
-		this.dispatcher = new btCollisionDispatcher(this.collisionConfiguration);
-		this.solver = new btSequentialImpulseConstraintSolver();
+		broadphase = new btDbvtBroadphase();
+		collisionConfiguration = new btDefaultCollisionConfiguration();
+		dispatcher = new btCollisionDispatcher(collisionConfiguration);
+		solver = new btSequentialImpulseConstraintSolver();
 
-		this.dynamicsWorld = new btDiscreteDynamicsWorld(this.dispatcher,
-				this.broadphase, this.solver, this.collisionConfiguration);
-		this.dynamicsWorld.setGravity(new Vector3(0, this.worldGravtiy, 0));
+		dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher,
+				broadphase, solver, collisionConfiguration);
+		dynamicsWorld.setGravity(new Vector3(0, worldGravtiy, 0));
 
 		// Rutsche und Spieler erzeugen.
-		this.slide = new Slide(this.dynamicsWorld);
-		this.player = new Player();
-		PlayerTickCallback playerCallback = new PlayerTickCallback(this.player);
-		playerCallback.attach(this.dynamicsWorld, false);
+		// slide = new Slide(dynamicsWorld);
+		player = new Player();
+		PlayerTickCallback playerCallback = new PlayerTickCallback(player);
+		playerCallback.attach(dynamicsWorld, false);
 
 		// Rutsche zur Welt hinzufuegen.
-		this.dynamicsWorld.addRigidBody(this.slide.getRigidBody());
+		// this.dynamicsWorld.addRigidBody(this.slide.getRigidBody());
 		// Spieler zur Bullet-Welt hinzufuegen.
-		this.dynamicsWorld.addRigidBody(this.player.getRigidBody());
+		dynamicsWorld.addRigidBody(player.getRigidBody());
 	}
 
 	public void update() {
 		// Bullet update.
-		this.performanceCounter.tick();
-		this.performanceCounter.start();
-		this.dynamicsWorld.stepSimulation(Gdx.graphics.getDeltaTime(),
-				this.getMaxSubSteps(), this.getFixedTimeStep());
-		this.performanceCounter.stop();
+		performanceCounter.tick();
+		performanceCounter.start();
+		dynamicsWorld.stepSimulation(Gdx.graphics.getDeltaTime(),
+				getMaxSubSteps(), getFixedTimeStep());
+		performanceCounter.stop();
 
-		this.player.update();
-		this.slide.update(this.player.getPosition());
+		player.update();
+		// slide.update(player.getPosition());
 	}
 
 	public void dispose() {
-		this.dynamicsWorld.dispose();
-		this.solver.dispose();
-		this.broadphase.dispose();
-		this.dispatcher.dispose();
-		this.collisionConfiguration.dispose();
+		dynamicsWorld.dispose();
+		solver.dispose();
+		broadphase.dispose();
+		dispatcher.dispose();
+		collisionConfiguration.dispose();
 
-		for (int i = 0; i < this.slide.getSlideParts().size(); ++i) {
-			this.slide.getSlideParts().get(i).dispose();
-			this.slide.removeSlidePart(this.slide.getSlideParts().get(i));
+		for (int i = 0; i < slide.getSlideParts().size(); ++i) {
+			slide.getSlideParts().get(i).dispose();
+			slide.removeSlidePart(slide.getSlideParts().get(i));
 		}
 	}
 
 	public void addRigidBody(btRigidBody rigidBody) {
-		this.dynamicsWorld.addRigidBody(rigidBody);
+		dynamicsWorld.addRigidBody(rigidBody);
 	}
 
 	public void removeRigidBody(btRigidBody rigidBody) {
-		this.dynamicsWorld.removeRigidBody(rigidBody);
+		dynamicsWorld.removeRigidBody(rigidBody);
 	}
 
 	public int getMaxSubSteps() {
-		return this.maxSubSteps;
+		return maxSubSteps;
 	}
 
 	public float getFixedTimeStep() {
-		return this.fixedTimeStep;
+		return fixedTimeStep;
 	}
 
 	public btDiscreteDynamicsWorld getWorld() {
-		return this.dynamicsWorld;
+		return dynamicsWorld;
 	}
 
 	/**
@@ -112,7 +112,7 @@ public class World implements IWorld {
 	 */
 	@Override
 	public ISlide getSlide() {
-		return this.slide;
+		return slide;
 	}
 
 	/**
@@ -120,12 +120,12 @@ public class World implements IWorld {
 	 */
 	@Override
 	public IPlayer getPlayer() {
-		return this.player;
+		return player;
 	}
 
 	public void reset() {
 		Gdx.app.log("World", "resetting");
-		this.gameScreen.game.setScreen(new MenuScreen(this.gameScreen.game));
+		gameScreen.game.setScreen(new MenuScreen(gameScreen.game));
 		// this.dynamicsWorld.removeRigidBody(this.player.getRigidBody());
 		//
 		// this.player.getRigidBody().setCollisionFlags(
