@@ -8,7 +8,7 @@ import fh.teamproject.interfaces.IEntity;
 public abstract class Entitiy implements IEntity {
 	private static int idCounter = 0;
 
-	private final int id;
+	protected final int id;
 	public ModelInstance instance;
 	Vector3 position = new Vector3();
 

@@ -96,8 +96,8 @@ public class GameScreen implements Screen {
 		// Tryouts
 		Vector3 start = new Vector3(-10.0f, -3.0f, -40.0f);
 		Vector3 control1 = new Vector3(0.0f, 10.0f, 10.0f);
-		Vector3 control2 = new Vector3(0.0f, -15.0f, 15.0f);
-		Vector3 end = new Vector3(0.0f, -40.0f, 200.0f);
+		Vector3 control2 = new Vector3(30.0f, -15.0f, 15.0f);
+		Vector3 end = new Vector3(50.0f, -40.0f, 200.0f);
 		bezPart = new BezierSlidePart(start, end, control1, control2, 0.1f);
 		world.getWorld().addRigidBody(bezPart.rigidBody);
 	}
