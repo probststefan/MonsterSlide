@@ -1,16 +1,9 @@
 package fh.teamproject.interfaces;
 
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld;
 
 public interface ISlidePart extends ICollisionEntity {
 
-	public void setWidth(float width);
-
-	public float getVertice(int position);
-
-	public float getWidth();
-
-	public void move(Vector3[] startPoints, Vector3[] endPoints,
-			btDiscreteDynamicsWorld dynamicsWorld);
+	public ISlidePart set(Vector3 start, Vector3 end, Vector3 control1, Vector3 control2,
+			float splitting);
 }

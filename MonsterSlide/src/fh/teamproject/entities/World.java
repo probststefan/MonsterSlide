@@ -1,6 +1,8 @@
 package fh.teamproject.entities;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g3d.Environment;
+import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.btBroadphaseInterface;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionDispatcher;
@@ -51,13 +53,11 @@ public class World implements IWorld {
 		dynamicsWorld.setGravity(new Vector3(0, worldGravtiy, 0));
 
 		// Rutsche und Spieler erzeugen.
-		// slide = new Slide(dynamicsWorld);
+		slide = new Slide(dynamicsWorld);
 		player = new Player();
 		PlayerTickCallback playerCallback = new PlayerTickCallback(player);
 		playerCallback.attach(dynamicsWorld, false);
 
-		// Rutsche zur Welt hinzufuegen.
-		// this.dynamicsWorld.addRigidBody(this.slide.getRigidBody());
 		// Spieler zur Bullet-Welt hinzufuegen.
 		dynamicsWorld.addRigidBody(player.getRigidBody());
 	}
@@ -71,7 +71,6 @@ public class World implements IWorld {
 		performanceCounter.stop();
 
 		player.update();
-		// slide.update(player.getPosition());
 	}
 
 	public void dispose() {
@@ -81,7 +80,7 @@ public class World implements IWorld {
 		dispatcher.dispose();
 		collisionConfiguration.dispose();
 
-		for (int i = 0; i < slide.getSlideParts().size(); ++i) {
+		for (int i = 0; i < slide.getSlideParts().size; ++i) {
 			slide.getSlideParts().get(i).dispose();
 			slide.removeSlidePart(slide.getSlideParts().get(i));
 		}
@@ -126,23 +125,11 @@ public class World implements IWorld {
 	public void reset() {
 		Gdx.app.log("World", "resetting");
 		gameScreen.game.setScreen(new MenuScreen(gameScreen.game));
-		// this.dynamicsWorld.removeRigidBody(this.player.getRigidBody());
-		//
-		// this.player.getRigidBody().setCollisionFlags(
-		// this.player.getRigidBody().getCollisionFlags()
-		// | btCollisionObject.CollisionFlags.CF_KINEMATIC_OBJECT);
-		// this.player.getRigidBody().setActivationState(
-		// CollisionConstants.DISABLE_DEACTIVATION);
-		//
-		// this.player.instance.transform.setToTranslation(new Vector3(0f, 5f,
-		// 0f));
-		//
-		// this.player.getRigidBody().setCollisionFlags(
-		// this.player.getRigidBody().getCollisionFlags()
-		// & ~(btCollisionObject.CollisionFlags.CF_KINEMATIC_OBJECT));
-		//
-		// this.player.getRigidBody().forceActivationState(1);
-		//
-		// this.dynamicsWorld.addRigidBody(this.player.getRigidBody());
+	}
+
+	@Override
+	public void render(ModelBatch batch, Environment lights) {
+		batch.render(player.getModelInstance(), lights);
+		slide.render(batch, lights);
 	}
 }

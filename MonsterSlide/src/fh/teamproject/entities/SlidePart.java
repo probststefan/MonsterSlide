@@ -1,161 +1,153 @@
 package fh.teamproject.entities;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.Mesh;
+import com.badlogic.gdx.graphics.VertexAttribute;
+import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
-import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
+import com.badlogic.gdx.graphics.g3d.model.MeshPart;
+import com.badlogic.gdx.graphics.g3d.model.Node;
+import com.badlogic.gdx.graphics.g3d.model.NodePart;
+import com.badlogic.gdx.graphics.g3d.utils.MeshBuilder;
+import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder.VertexInfo;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.math.Bezier;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld;
+import com.badlogic.gdx.physics.bullet.collision.btConvexHullShape;
+import com.badlogic.gdx.utils.FloatArray;
 import com.badlogic.gdx.utils.Pool.Poolable;
+import com.badlogic.gdx.utils.ShortArray;
 
 import fh.teamproject.interfaces.ISlidePart;
 
-/**
- * Klasse stellt ein einzelnes Rutschelement dar. Es wird das Poolable-Interface
- * von libgdx implementiert.
- * 
- * @url https://code.google.com/p/libgdx/wiki/MemoryManagment
- * @author stefanprobst
- * 
- */
 public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
-	// Eckpunkte des SlidePart.
-	private float[] vertices;
-	private float width = 10.0f;
-	private float[] tmpVertices;
-	private ModelBuilder builder;
-	private Material material;
+	int width = 30;
+	ShortArray indices = new ShortArray();
+
+	public Vector3 start = new Vector3(), end = new Vector3(), control1 = new Vector3(),
+			control2 = new Vector3();
+	private FloatArray pointCloud;
+	private float splitting = 0.25f;
 
 	public SlidePart() {
-		super();
-		vertices = new float[12];
+
 	}
 
-	/**
-	 * Es wird das zu rendernde Modell und der Bullet Collision Shape erstellt.
-	 * Vorher kann der SlidePart nicht genutzt werden.
-	 */
-	public void createSlidePart() {
-		builder = new ModelBuilder();
-		tmpVertices = new float[20 + 12];
-
-		Texture texture = new Texture(Gdx.files.internal("data/snow.jpg"), true);
-		TextureAttribute textureAttr = new TextureAttribute(TextureAttribute.Diffuse,
-				texture);
-
-		// Das einzelne Rutschenelement zufaellig einfaerben.
-		Color color;
-		color = new Color();
-		color.set((float) Math.random(), (float) Math.random(), (float) Math.random(), 1f);
-
-		// material = new Material(ColorAttribute.createDiffuse(color));
-		material = new Material();
-		material.set(textureAttr);
-
-		// Ein Model erstellen, welches dann spaeter durch die Welt
-		// verschoben wird.
-		Model m = builder.createRect(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0,
-				material, Usage.Position | Usage.Normal | Usage.TextureCoordinates);
-
-		this.instance = new ModelInstance(m);
+	public SlidePart(Vector3 start, Vector3 end, Vector3 control1, Vector3 control2,
+			float splitting) {
+		this.start.set(start);
+		this.end.set(end);
+		this.control1.set(control1);
+		this.control2.set(control2);
+		this.splitting = splitting;
+		setup();
 	}
 
-	public void move(Vector3[] startPoints, Vector3[] endPoints,
-			btDiscreteDynamicsWorld dynamicsWorld) {
-		// Die gerenderte Plane bewegen.
-		this.instance.model.meshes.get(0).getVertices(tmpVertices);
-
-		// Die Indices sind etwas merkwuerdig. Zwischendrin sind immer noch 5
-		// Felder fuer die Farbe.
-		tmpVertices[0] = startPoints[0].x;
-		tmpVertices[1] = startPoints[0].y;
-		tmpVertices[2] = startPoints[0].z;
-
-		tmpVertices[8] = endPoints[0].x;
-		tmpVertices[9] = endPoints[0].y;
-		tmpVertices[10] = endPoints[0].z;
-
-		tmpVertices[16] = endPoints[1].x;
-		tmpVertices[17] = endPoints[1].y;
-		tmpVertices[18] = endPoints[1].z;
-
-		tmpVertices[24] = startPoints[1].x;
-		tmpVertices[25] = startPoints[1].y;
-		tmpVertices[26] = startPoints[1].z;
-
-		this.instance.model.meshes.get(0).setVertices(tmpVertices);
-
-		this.setVertice(tmpVertices[0], 0);
-		this.setVertice(tmpVertices[1], 1);
-		this.setVertice(tmpVertices[2], 2);
-
-		this.setVertice(tmpVertices[8], 3);
-		this.setVertice(tmpVertices[9], 4);
-		this.setVertice(tmpVertices[10], 5);
-
-		this.setVertice(tmpVertices[16], 6);
-		this.setVertice(tmpVertices[17], 7);
-		this.setVertice(tmpVertices[18], 8);
-
-		this.setVertice(tmpVertices[24], 9);
-		this.setVertice(tmpVertices[25], 10);
-		this.setVertice(tmpVertices[26], 11);
+	@Override
+	public ISlidePart set(Vector3 start, Vector3 end, Vector3 control1, Vector3 control2,
+			float splitting) {
+		this.start.set(start);
+		this.end.set(end);
+		this.control1.set(control1);
+		this.control2.set(control2);
+		this.splitting = splitting;
+		setup();
+		return this;
 	}
 
-	/**
-	 * Liefert einen der vier Eckpunkte der Plane.
-	 * 
-	 * @param int position
-	 * @return Vector3 vertice
-	 */
-	public float getVertice(int position) {
-		if (position > this.vertices.length) {
-			throw new IndexOutOfBoundsException("Der SlidePart hat nur "
-					+ this.vertices.length + " Vertices!");
+	private void setup() {
+		computePointCloud();
+		createModelInstance();
+		btConvexHullShape collisionShape = new btConvexHullShape();
+		for (int i = 0; i < pointCloud.size; i += 3) {
+			collisionShape.addPoint(new Vector3(pointCloud.get(i), pointCloud.get(i + 1),
+					pointCloud.get(i + 2)));
+		}
+		setCollisionShape(collisionShape);
+		createRigidBody();
+	}
+
+	private void computePointCloud() {
+		Bezier<Vector3> bezierCurve = new Bezier<Vector3>();
+
+		bezierCurve.set(new Vector3[] { start, control1, control2, end });
+
+		Vector3 tmpBezierVec = new Vector3();
+		pointCloud = new FloatArray();
+		float epsilon = 0.001f;
+		for (float i = 0; i <= (1 + epsilon); i += splitting) {
+			// Punkte der Bezier Kurve setzen.
+			bezierCurve.valueAt(tmpBezierVec, i);
+			pointCloud.add(tmpBezierVec.x);
+			pointCloud.add(tmpBezierVec.y);
+			pointCloud.add(tmpBezierVec.z);
+			// Punkte der anderen Bezier Kurve setzen.
+			pointCloud.add(tmpBezierVec.x + width);
+			pointCloud.add(tmpBezierVec.y);
+			pointCloud.add(tmpBezierVec.z);
 		}
 
-		return this.vertices[position];
+		tmpBezierVec = null;
 	}
 
-	/**
-	 * Setzt einen Punkt eines Vertice.
-	 * 
-	 * @param vertice
-	 * @param position
-	 */
-	public void setVertice(float vertice, int position) {
-		this.vertices[position] = vertice;
-	}
+	private void createModelInstance() {
 
-	@Override
-	public ModelInstance getModelInstance() {
-		return this.instance;
-	}
+		for (int i = 0; i < ((pointCloud.size / 3) - 2); i += 2) {
+			indices.add(i + 2);
+			indices.add(i + 1);
+			indices.add(i);
 
-	@Override
-	public int getID() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+			indices.add(i + 2);
+			indices.add(i + 3);
+			indices.add(i + 1);
+		}
 
-	@Override
-	public void setWidth(float width) {
-		this.width = width;
-	}
+		MeshBuilder builder = new MeshBuilder();
+		builder.begin(new VertexAttributes(new VertexAttribute(Usage.Position, 3,
+				ShaderProgram.POSITION_ATTRIBUTE), new VertexAttribute(Usage.Color, 4,
+						ShaderProgram.COLOR_ATTRIBUTE)));
 
-	@Override
-	public float getWidth() {
-		return this.width;
+		float uMin = 0, uMax = 1, vMin = 0, vMax = 1;
+
+		for (int i = 0; i < pointCloud.size; i += 3) {
+			VertexInfo info = new VertexInfo();
+			info.setPos(pointCloud.get(i), pointCloud.get(i + 1), pointCloud.get(i + 2));
+			info.setCol(Color.BLUE);
+			builder.vertex(info);
+		}
+
+		for (short s : indices.items) {
+			builder.index(s);
+		}
+
+		Mesh mesh = builder.end();
+
+		MeshPart meshPart = new MeshPart();
+		meshPart.id = "SlidePart" + id;
+		meshPart.primitiveType = GL10.GL_TRIANGLES;
+		meshPart.mesh = mesh;
+		meshPart.indexOffset = 0;
+		meshPart.numVertices = pointCloud.size;
+
+		Model m = new Model();
+		m.nodes.add(new Node());
+		m.nodes.get(0).parts.add(new NodePart(meshPart, new Material()));
+		instance = new ModelInstance(m);
+
 	}
 
 	@Override
 	public void reset() {
 		// TODO Auto-generated method stub
+
+	}
+
+	public float[] getPointCloud() {
+		return pointCloud.toArray();
 	}
 }

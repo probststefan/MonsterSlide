@@ -12,11 +12,10 @@ import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
-import com.badlogic.gdx.math.Vector3;
 
 import fh.teamproject.controller.player.android.SwipeController;
-import fh.teamproject.entities.BezierSlidePart;
 import fh.teamproject.entities.Player;
+import fh.teamproject.entities.SlidePart;
 import fh.teamproject.entities.World;
 import fh.teamproject.hud.Hud;
 import fh.teamproject.utils.CameraManager;
@@ -48,7 +47,7 @@ public class GameScreen implements Screen {
 	public Hud hud;
 	public Game game;
 
-	BezierSlidePart bezPart;
+	SlidePart bezPart;
 	public GameScreen(Game game) {
 		this.game = game;
 		world = new World(this);
@@ -92,14 +91,6 @@ public class GameScreen implements Screen {
 			spriteBatch = new SpriteBatch();
 			font = new BitmapFont();
 		}
-
-		// Tryouts
-		Vector3 start = new Vector3(-10.0f, -3.0f, -40.0f);
-		Vector3 control1 = new Vector3(0.0f, 10.0f, 10.0f);
-		Vector3 control2 = new Vector3(30.0f, -15.0f, 15.0f);
-		Vector3 end = new Vector3(50.0f, -40.0f, 200.0f);
-		bezPart = new BezierSlidePart(start, end, control1, control2, 0.1f);
-		world.getWorld().addRigidBody(bezPart.rigidBody);
 	}
 
 	@Override
@@ -107,8 +98,8 @@ public class GameScreen implements Screen {
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
+		/* UPDATE */
 		if (!isPaused) {
-			/* UPDATE */
 			world.update();
 		}
 		camManager.update();
@@ -116,13 +107,7 @@ public class GameScreen implements Screen {
 
 		/* RENDER */
 		batch.begin(camManager.getActiveCamera());
-		// Player rendern.
-		batch.render(player.instance, lights);
-		// Rutschelemente rendern.
-		// for (ISlidePart slidePart : world.getSlide().getSlideParts()) {
-		// batch.render(slidePart.getModelInstance(), lights);
-		// }
-		batch.render(bezPart.instance, lights);
+		world.render(batch, lights);
 		batch.end();
 		hud.render();
 		if (DebugDrawer.isDebug) {

@@ -9,7 +9,6 @@ public class SlidePartPool extends Pool<ISlidePart> {
 	@Override
 	protected ISlidePart newObject() {
 		SlidePart slidePart = new SlidePart();
-		slidePart.createSlidePart();
 		return slidePart;
 	}
 
