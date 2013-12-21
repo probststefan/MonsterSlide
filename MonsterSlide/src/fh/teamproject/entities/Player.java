@@ -19,7 +19,7 @@ import fh.teamproject.utils.debug.Debug;
 public class Player extends CollisionEntity implements IPlayer {
 
 	@Debug(name = "Position", isModifiable = false)
-	public Vector3 position = new Vector3();
+	public Vector3 position = new Vector3(10f, 5.0f, 10f);
 
 	@Debug(name = "Direction", isModifiable = false)
 	public Vector3 direction = new Vector3(0, 0, 1);
@@ -64,7 +64,7 @@ public class Player extends CollisionEntity implements IPlayer {
 		Model m = builder.createSphere(diameter, diameter, diameter, 16, 16, material,
 				Usage.Position | Usage.Normal);
 
-		instance = new ModelInstance(m, new Vector3(0f, 3.0f, 0f));
+		instance = new ModelInstance(m, position);
 
 		// Bullet-Eigenschaften setzen.
 		setCollisionShape(new btSphereShape(radius));
