@@ -31,7 +31,7 @@ public class GameScreen implements Screen {
 	public DebugDrawer debugDrawer;
 	// Controller
 	public SwipeController swipeController;
-	public CameraManager camManager;
+	public static CameraManager camManager;
 
 	// Rendering
 	public ModelBatch batch;
@@ -54,8 +54,8 @@ public class GameScreen implements Screen {
 		player = (Player) world.getPlayer();
 
 		// this.swipeController = new SwipeController(this.player);
-		camManager = new CameraManager(this);
-		camManager.setMode(Mode.CHASE);
+		GameScreen.camManager = new CameraManager(this);
+		GameScreen.camManager.setMode(Mode.CHASE);
 
 		batch = new ModelBatch();
 
@@ -76,7 +76,7 @@ public class GameScreen implements Screen {
 		InputMultiplexer allInputs = new InputMultiplexer();
 		debugInputMul.addProcessor(debugInput);
 		debugInputMul.addProcessor(DebugInfoPanel.stage);
-		debugInputMul.addProcessor((InputProcessor) camManager
+		debugInputMul.addProcessor((InputProcessor) GameScreen.camManager
 				.getController(Mode.FREE));
 
 		// gameInputMul.addProcessor(new GestureDetector(this.swipeController));
@@ -102,11 +102,11 @@ public class GameScreen implements Screen {
 		if (!isPaused) {
 			world.update();
 		}
-		camManager.update();
+		GameScreen.camManager.update();
 		hud.update();
 
 		/* RENDER */
-		batch.begin(camManager.getActiveCamera());
+		batch.begin(GameScreen.camManager.getActiveCamera());
 		world.render(batch, lights);
 		batch.end();
 		hud.render();
@@ -119,7 +119,7 @@ public class GameScreen implements Screen {
 
 	@Override
 	public void resize(int width, int height) {
-		camManager.setViewport(width, height);
+		GameScreen.camManager.setViewport(width, height);
 		hud.setViewport(width, height);
 
 	}

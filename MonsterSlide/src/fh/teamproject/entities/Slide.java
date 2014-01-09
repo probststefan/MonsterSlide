@@ -25,6 +25,7 @@ public class Slide implements ISlide {
 	public Slide(btDiscreteDynamicsWorld dynamicsWorld) {
 		this.dynamicsWorld = dynamicsWorld;
 		addSlidePart();
+
 	}
 
 	@Override
@@ -34,7 +35,7 @@ public class Slide implements ISlide {
 		Vector3 control1 = new Vector3(-5.0f, -10.0f, -5.0f);
 		Vector3 control2 = new Vector3(0.0f, -10.0f, 60.0f);
 		Vector3 end = new Vector3(0.0f, 0.0f, 60.0f);
-		bezPart = pool.obtain().set(start, end, control1, control2, 0.33f);
+		bezPart = pool.obtain().set(start, end, control1, control2, 1f);
 		slideParts.add(bezPart);
 		dynamicsWorld.addRigidBody(bezPart.getRigidBody());
 
@@ -54,6 +55,7 @@ public class Slide implements ISlide {
 	public void removeSlidePart(ISlidePart slidePart) {
 		slideParts.removeValue(slidePart, false);
 	}
+
 
 	@Override
 	public void render(ModelBatch batch, Environment lights) {

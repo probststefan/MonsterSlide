@@ -11,11 +11,17 @@ import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.graphics.g3d.Renderable;
+import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.model.MeshPart;
 import com.badlogic.gdx.graphics.g3d.model.Node;
 import com.badlogic.gdx.graphics.g3d.model.NodePart;
+import com.badlogic.gdx.graphics.g3d.model.data.ModelMesh;
+import com.badlogic.gdx.graphics.g3d.shaders.DefaultShader;
+import com.badlogic.gdx.graphics.g3d.utils.DefaultTextureBinder;
 import com.badlogic.gdx.graphics.g3d.utils.MeshBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder.VertexInfo;
+import com.badlogic.gdx.graphics.g3d.utils.RenderContext;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Bezier;
 import com.badlogic.gdx.math.Vector3;
@@ -26,6 +32,7 @@ import com.badlogic.gdx.utils.Pool.Poolable;
 import com.badlogic.gdx.utils.ShortArray;
 
 import fh.teamproject.interfaces.ISlidePart;
+import fh.teamproject.screens.GameScreen;
 
 public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
@@ -39,7 +46,9 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
 	private float splitting = 0.25f;
 
-	Texture texture;
+	public Texture texture;
+	public Mesh mesh;
+
 	public SlidePart() {
 		texture = new Texture(Gdx.files.internal("data/floor.jpg"));
 	}
@@ -118,9 +127,10 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		Array<VertexInfo> vertInfo = new Array<VertexInfo>();
 		MeshBuilder builder = new MeshBuilder();
 		builder.begin(new VertexAttributes(new VertexAttribute(Usage.Position, 3,
-				ShaderProgram.POSITION_ATTRIBUTE), new VertexAttribute(Usage.Color, 4,
-						ShaderProgram.COLOR_ATTRIBUTE)));
-
+				ShaderProgram.POSITION_ATTRIBUTE)));
+		// builder.begin(new VertexAttributes(new
+		// VertexAttribute(Usage.Position, 3,
+		// ShaderProgram.POSITION_ATTRIBUTE)));
 		float uMin = 0, uMax = 1, vMin = 0, vMax = 1;
 
 		Array<Vector3> graphicsVertices = new Array<Vector3>();
@@ -128,50 +138,68 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 			Vector3 v = bezierPoints.get(i);
 			graphicsVertices.add(new Vector3(v.x, v.y, v.z));
 			graphicsVertices.add(new Vector3(v.x + width, v.y, v.z));
-			// if ((i == 0) || (i == (bezierPoints.size - 1))) {
-			// continue;
-			// }
-			// graphicsVertices.add(new Vector3(v.x, v.y, v.z));
-			// graphicsVertices.add(new Vector3(v.x + width, v.y, v.z));
+			if ((i == 0) || (i == (bezierPoints.size - 1))) {
+				continue;
+			}
+			graphicsVertices.add(new Vector3(v.x, v.y, v.z));
+			graphicsVertices.add(new Vector3(v.x + width, v.y, v.z));
 		}
 
-		for (Vector3 v : graphicsVertices) {
-			VertexInfo info = new VertexInfo();
-			info.setPos(v);
-			info.setCol(Color.BLUE);
-			// info.setNor(0f, 1f, 0f);
-			vertInfo.add(info);
-		}
-
-		// for (int i = 0; i < (graphicsVertices.size - 4); i += 4) {
+		// for (int i = 0; i <= (graphicsVertices.size - 4); i += 4) {
 		// VertexInfo info = new VertexInfo();
-		// Color col = Color.WHITE;
+		// Color col = null;// Color.BLUE;
 		// Vector3 nor = new Vector3(0f, 1f, 0f);
 		// info.set(graphicsVertices.get(i), nor, col, new Vector2(uMin, vMin));
 		// vertInfo.add(info);
 		//
+		// info = new VertexInfo();
 		// info.set(graphicsVertices.get(i + 1), nor, col, new Vector2(uMax,
 		// vMin));
 		// vertInfo.add(info);
 		//
+		// info = new VertexInfo();
 		// info.set(graphicsVertices.get(i + 2), nor, col, new Vector2(uMin,
 		// vMax));
 		// vertInfo.add(info);
 		//
+		// info = new VertexInfo();
 		// info.set(graphicsVertices.get(i + 3), nor, col, new Vector2(uMax,
 		// vMax));
 		// vertInfo.add(info);
 		// }
 
-		for (int i = 0; i < (vertInfo.size - 2); i += 2) {
+		for (int i = 0; i <= (graphicsVertices.size - 4); i += 4) {
+			VertexInfo info = new VertexInfo();
+			Color col = null;// Color.BLUE;
+			Vector3 nor = null;// new Vector3(0f, 1f, 0f);
+			info.set(graphicsVertices.get(i), nor, col, null);
+			vertInfo.add(info);
+
+			info = new VertexInfo();
+			info.set(graphicsVertices.get(i + 1), nor, col, null);
+			vertInfo.add(info);
+
+			info = new VertexInfo();
+			info.set(graphicsVertices.get(i + 2), nor, col, null);
+			vertInfo.add(info);
+
+			info = new VertexInfo();
+			info.set(graphicsVertices.get(i + 3), nor, col, null);
+			vertInfo.add(info);
+		}
+		builder.part("part1", GL10.GL_TRIANGLES);
+		for (int i = 0; i <= (vertInfo.size - 4); i += 4) {
 
 			builder.triangle(vertInfo.get(i + 2), vertInfo.get(i + 1), vertInfo.get(i));
 			builder.triangle(vertInfo.get(i + 2), vertInfo.get(i + 3),
 					vertInfo.get(i + 1));
+			// builder.rect(vertInfo.get(i), vertInfo.get(i + 1), vertInfo.get(i
+			// + 3),
+			// vertInfo.get(i + 2));
 
 		}
 
-		Mesh mesh = builder.end();
+		mesh = builder.end();
 
 		MeshPart meshPart = new MeshPart();
 		meshPart.id = "SlidePart" + id;
@@ -180,18 +208,44 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		meshPart.indexOffset = 0;
 		meshPart.numVertices = mesh.getNumVertices();
 
+
 		Model m = new Model();
+
+		ModelMesh mMesh = new ModelMesh();
+		// mMesh.attributes = mesh.getVertexAttributes();
 		m.nodes.add(new Node());
 		Material material = new Material();
-		// material.set(TextureAttribute.createDiffuse(texture));
-		m.nodes.get(0).parts.add(new NodePart(meshPart, material));
+		material.set(TextureAttribute.createSpecular(texture));
+		NodePart nodePart = new NodePart(meshPart, material);
+		m.nodes.get(0).parts.add(nodePart);
+		// m.meshes.add(mesh);
+		// m.meshParts.add(meshPart);
+		// m.materials.add(material);
 		instance = new ModelInstance(m);
+
+		out = new Renderable();
+		nodePart.setRenderable(out);
+		shader = new DefaultShader(out);
+		renderContext = new RenderContext(new DefaultTextureBinder(
+				DefaultTextureBinder.WEIGHTED, 1));
+	}
+
+	DefaultShader shader;
+	Renderable out;
+	public RenderContext renderContext;
+	@Override
+	public void reset() {
+		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void reset() {
-		// TODO Auto-generated method stub
+	public void render() {
+		renderContext.begin();
+		shader.begin(GameScreen.camManager.getActiveCamera(), renderContext);
+		shader.render(out);
+		shader.end();
+		renderContext.end();
 
 	}
 
