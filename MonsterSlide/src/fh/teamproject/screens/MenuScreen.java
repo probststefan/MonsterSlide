@@ -22,8 +22,7 @@ public class MenuScreen implements Screen {
 
     private Table invisible;
 
-    public MenuScreen(Game g)
-    {
+    public MenuScreen(Game g) {
         this.actualSite = null;
         this.siteList = new AbstractMenuSite[5];
         this.nameList = new String[5];
@@ -68,7 +67,7 @@ public class MenuScreen implements Screen {
 
         this.invisible.center();
         this.makeSites();
-        this.actualSite = this.siteList[2];
+        this.actualSite = this.siteList[0];
         this.stage.addActor(this.invisible);
         this.invisible.add(this.actualSite);
     }
