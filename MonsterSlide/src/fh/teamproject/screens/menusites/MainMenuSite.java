@@ -24,7 +24,7 @@ public class MainMenuSite extends AbstractMenuSite {
         this.listener[0] = new ButtonListener("Game", menu);
         this.listener[1] = new ButtonListener("Credits", menu);
         this.listener[2] = new ButtonListener("Demo", menu);
-        this.listener[3] = new ButtonListener(null, menu);
+        this.listener[3] = new ButtonListener("", menu);
         this.listener[4] = new ButtonListener("Exit", menu);
         this.buttons = new TextButton[5];
         this.buttons[0] = new TextButton("New Game", skin, "menuButton");

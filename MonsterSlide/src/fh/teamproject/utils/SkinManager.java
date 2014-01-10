@@ -77,9 +77,42 @@ public class SkinManager {
 	}
 	
 	private void setupMenuButtonSkin() {
+	    BitmapFont font = this.generateFont();
+        //Create a Style with the Colors and add fhe font to it
+        TextButtonStyle style = new TextButtonStyle();
+        style.checkedFontColor = new Color(Color.BLUE);
+        style.checkedOverFontColor = new Color(Color.MAGENTA);
+        style.downFontColor = new Color(Color.GREEN);
+        style.fontColor = new Color(Color.BLUE);
+        style.overFontColor = new Color(Color.MAGENTA);
+        style.font = font;
+        SkinManager.skin.add("menuButton", style);
+	}
+	
+	private void setupCreditsTextSkin() {
+	    BitmapFont font = this.generateFont();
+        //Create a Style with the Colors and add fhe font to it
+        TextButtonStyle style = new TextButtonStyle();
+        style.fontColor = new Color(Color.RED);
+        style.overFontColor = new Color(Color.WHITE);
+        style.font = font;
+        SkinManager.skin.add("creditsText", style);
+	}
+	
+	private void setupCreditsHeadLineSkin() {
+	    BitmapFont font = this.generateFont();
+        //Create a Style with the Colors and add fhe font to it
+        TextButtonStyle style = new TextButtonStyle();
+        style.fontColor = new Color(Color.CYAN);
+        style.overFontColor = new Color(Color.CYAN);
+        style.font = font;
+        SkinManager.skin.add("creditsHeadline", style);
+	}
+	
+	private BitmapFont generateFont() {
+	    BitmapFont font;
         //Build the Fontgenerator, Generate the Font and dispose the Generator
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("font/Outage.ttf"));
-        BitmapFont font = null;
         switch(densityAsInt) {
         case 4:
             font = generator.generateFont((int) (12 + Gdx.graphics.getHeight()/20)); 
@@ -102,80 +135,6 @@ public class SkinManager {
             // font size 12 pixels + 1 for every 40 Pixel in the Gdx.graphics.getHeight()
         }
         generator.dispose(); // don't forget to dispose to avoid memory leaks!
-        //Create a Style with the Colors and add fhe font to it
-        TextButtonStyle style = new TextButtonStyle();
-        style.checkedFontColor = new Color(Color.BLUE);
-        style.checkedOverFontColor = new Color(Color.MAGENTA);
-        style.downFontColor = new Color(Color.GREEN);
-        style.fontColor = new Color(Color.BLUE);
-        style.overFontColor = new Color(Color.MAGENTA);
-        style.font = font;
-        SkinManager.skin.add("menuButton", style);
-	}
-	
-	private void setupCreditsTextSkin() {
-        //Build the Fontgenerator, Generate the Font and dispose the Generator
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("font/Outage.ttf"));
-        BitmapFont font = null;
-        switch(densityAsInt) {
-        case 4:
-            font = generator.generateFont((int) (12 + Gdx.graphics.getHeight()/20)); 
-            // font size 12 pixels + 1 for every 20 Pixel in the Gdx.graphics.getHeight()
-            break;
-        case 3:
-            font = generator.generateFont((int) (12 + Gdx.graphics.getHeight()/30)); 
-            // font size 12 pixels + 1 for every 30 Pixel in the Gdx.graphics.getHeight()
-            break;
-        case 2:
-            font = generator.generateFont((int) (12 + Gdx.graphics.getHeight()/50)); 
-            // font size 12 pixels + 1 for every 50 Pixel in the Gdx.graphics.getHeight()
-            break;
-        case 1:
-            font = generator.generateFont((int) (12 + Gdx.graphics.getHeight()/60)); 
-            // font size 12 pixels + 1 for every 60 Pixel in the Gdx.graphics.getHeight()
-            break;
-        default:
-            font = generator.generateFont((int) (12 + Gdx.graphics.getHeight()/40)); 
-            // font size 12 pixels + 1 for every 40 Pixel in the Gdx.graphics.getHeight()
-        }        generator.dispose(); // don't forget to dispose to avoid memory leaks!
-        //Create a Style with the Colors and add fhe font to it
-        TextButtonStyle style = new TextButtonStyle();
-        style.fontColor = new Color(Color.RED);
-        style.overFontColor = new Color(Color.WHITE);
-        style.font = font;
-        SkinManager.skin.add("creditsText", style);
-	}
-	
-	private void setupCreditsHeadLineSkin() {
-        //Build the Fontgenerator, Generate the Font and dispose the Generator
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("font/Outage.ttf"));
-        BitmapFont font = null;
-        switch(densityAsInt) {
-        case 4:
-            font = generator.generateFont((int) (12 + Gdx.graphics.getHeight()/20)); 
-            // font size 12 pixels + 1 for every 20 Pixel in the Gdx.graphics.getHeight()
-            break;
-        case 3:
-            font = generator.generateFont((int) (12 + Gdx.graphics.getHeight()/30)); 
-            // font size 12 pixels + 1 for every 30 Pixel in the Gdx.graphics.getHeight()
-            break;
-        case 2:
-            font = generator.generateFont((int) (12 + Gdx.graphics.getHeight()/50)); 
-            // font size 12 pixels + 1 for every 50 Pixel in the Gdx.graphics.getHeight()
-            break;
-        case 1:
-            font = generator.generateFont((int) (12 + Gdx.graphics.getHeight()/60)); 
-            // font size 12 pixels + 1 for every 60 Pixel in the Gdx.graphics.getHeight()
-            break;
-        default:
-            font = generator.generateFont((int) (12 + Gdx.graphics.getHeight()/40)); 
-            // font size 12 pixels + 1 for every 40 Pixel in the Gdx.graphics.getHeight()
-        }        generator.dispose(); // don't forget to dispose to avoid memory leaks!
-        //Create a Style with the Colors and add fhe font to it
-        TextButtonStyle style = new TextButtonStyle();
-        style.fontColor = new Color(Color.CYAN);
-        style.overFontColor = new Color(Color.CYAN);
-        style.font = font;
-        SkinManager.skin.add("creditsHeadline", style);
-	}
+        return font;
+    }
 }
