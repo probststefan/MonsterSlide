@@ -17,7 +17,8 @@ public class ButtonListener extends ChangeListener{
     
     @Override
 	public void changed(ChangeEvent event, Actor actor) {
-        if (this.name.equals("Game")) {
+        if (this.name.equals("")) {}
+        else if (this.name.equals("Game")) {
 			this.menu.getGame().setScreen(new GameScreen(this.menu.getGame()));
         }
         else if (this.name.equals("Exit")) {
