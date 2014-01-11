@@ -1,5 +1,7 @@
 package fh.teamproject.entities;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
@@ -36,13 +38,14 @@ import fh.teamproject.screens.GameScreen;
 
 public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
-	int width = 40;
+	int width = 10;
 	ShortArray indices = new ShortArray();
 
 	public Vector3 start = new Vector3(), end = new Vector3(), control1 = new Vector3(),
 			control2 = new Vector3();
 	private FloatArray physicsPointCloud;
 	Array<Vector3> bezierPoints = new Array<Vector3>();
+	ArrayList<Vector3> baseCoordinates = new ArrayList<Vector3>();
 
 	private float splitting = 0.25f;
 
@@ -95,32 +98,55 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		Vector3 tmpBezierVec = new Vector3();
 		physicsPointCloud = new FloatArray();
 		float epsilon = 0.001f;
-		// for (float i = 0; i <= (1 + epsilon); i += splitting) {
-		// // Punkte der Bezier Kurve setzen.
-		// bezierCurve.valueAt(tmpBezierVec, i);
-		// pointCloud.add(tmpBezierVec.x);
-		// pointCloud.add(tmpBezierVec.y);
-		// pointCloud.add(tmpBezierVec.z);
-		// // Punkte der anderen Bezier Kurve setzen.
-		// pointCloud.add(tmpBezierVec.x + width);
-		// pointCloud.add(tmpBezierVec.y);
-		// pointCloud.add(tmpBezierVec.z);
-		// }
-		//
+
 		for (float i = 0; i <= (1 + epsilon); i += splitting) {
 			// Punkte der Bezier Kurve setzen.
 			bezierCurve.valueAt(tmpBezierVec, i);
+
+			// Base Koordinaten zu diesem Punkt berechnen und ablegen.
+			this.calcBaseCoordinates(bezierCurve, i);
+
 			physicsPointCloud.add(tmpBezierVec.x);
 			physicsPointCloud.add(tmpBezierVec.y);
 			physicsPointCloud.add(tmpBezierVec.z);
 			bezierPoints.add(new Vector3(tmpBezierVec));
-
 		}
+
 		for (int i = bezierPoints.size - 1; i >= 0; --i) {
 			Vector3 v = bezierPoints.get(i);
-			physicsPointCloud.addAll(v.x + width, v.y, v.z);
+			Vector3 binormal = this.baseCoordinates.get(i);
+			binormal.scl(width);
+			physicsPointCloud
+					.addAll(v.x + binormal.x, v.y + binormal.y, v.z + binormal.z);
 		}
+
 		tmpBezierVec = null;
+	}
+
+	/**
+	 * Die Basis-Koordinaten zu den Punkten in der Spline berechnen.
+	 * 
+	 * @param bezier
+	 * @param t
+	 */
+	private void calcBaseCoordinates(Bezier<Vector3> bezier, float t) {
+		Vector3 derivation = new Vector3();
+
+		// 1. und 2. Ableitung bilden.
+		derivation = bezier.derivativeAt(derivation, t);
+
+		Vector3 tangent = derivation.cpy().nor();
+
+		/*
+		 * Mit dem upVector wird das Problem der springenden Normalen behoben.
+		 * 
+		 * @link http://www.it.hiof.no/~borres/j3d/explain/frames/p-frames.html
+		 */
+		Vector3 upVector = new Vector3(0.0f, 0.0f, 1.0f);
+		Vector3 binormal = derivation.cpy().crs(upVector).nor();
+		Vector3 normal = tangent.crs(binormal);
+
+		this.baseCoordinates.add(normal);
 	}
 
 	private void createModelInstance() {
@@ -128,50 +154,28 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		MeshBuilder builder = new MeshBuilder();
 		builder.begin(new VertexAttributes(new VertexAttribute(Usage.Position, 3,
 				ShaderProgram.POSITION_ATTRIBUTE)));
-		// builder.begin(new VertexAttributes(new
-		// VertexAttribute(Usage.Position, 3,
-		// ShaderProgram.POSITION_ATTRIBUTE)));
-		float uMin = 0, uMax = 1, vMin = 0, vMax = 1;
 
 		Array<Vector3> graphicsVertices = new Array<Vector3>();
+
 		for (int i = 0; i < bezierPoints.size; ++i) {
 			Vector3 v = bezierPoints.get(i);
+			Vector3 binormal = this.baseCoordinates.get(i);
+
 			graphicsVertices.add(new Vector3(v.x, v.y, v.z));
-			graphicsVertices.add(new Vector3(v.x + width, v.y, v.z));
+			graphicsVertices.add(new Vector3(v.x + binormal.x, v.y + binormal.y, v.z
+					+ binormal.z));
 			if ((i == 0) || (i == (bezierPoints.size - 1))) {
 				continue;
 			}
 			graphicsVertices.add(new Vector3(v.x, v.y, v.z));
-			graphicsVertices.add(new Vector3(v.x + width, v.y, v.z));
+			graphicsVertices.add(new Vector3(v.x + binormal.x, v.y + binormal.y, v.z
+					+ binormal.z));
 		}
-
-		// for (int i = 0; i <= (graphicsVertices.size - 4); i += 4) {
-		// VertexInfo info = new VertexInfo();
-		// Color col = null;// Color.BLUE;
-		// Vector3 nor = new Vector3(0f, 1f, 0f);
-		// info.set(graphicsVertices.get(i), nor, col, new Vector2(uMin, vMin));
-		// vertInfo.add(info);
-		//
-		// info = new VertexInfo();
-		// info.set(graphicsVertices.get(i + 1), nor, col, new Vector2(uMax,
-		// vMin));
-		// vertInfo.add(info);
-		//
-		// info = new VertexInfo();
-		// info.set(graphicsVertices.get(i + 2), nor, col, new Vector2(uMin,
-		// vMax));
-		// vertInfo.add(info);
-		//
-		// info = new VertexInfo();
-		// info.set(graphicsVertices.get(i + 3), nor, col, new Vector2(uMax,
-		// vMax));
-		// vertInfo.add(info);
-		// }
 
 		for (int i = 0; i <= (graphicsVertices.size - 4); i += 4) {
 			VertexInfo info = new VertexInfo();
-			Color col = null;// Color.BLUE;
-			Vector3 nor = null;// new Vector3(0f, 1f, 0f);
+			Color col = null; // Color.BLUE;
+			Vector3 nor = null; // new Vector3(0f, 1f, 0f);
 			info.set(graphicsVertices.get(i), nor, col, null);
 			vertInfo.add(info);
 
@@ -187,16 +191,13 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 			info.set(graphicsVertices.get(i + 3), nor, col, null);
 			vertInfo.add(info);
 		}
-		builder.part("part1", GL10.GL_TRIANGLES);
-		for (int i = 0; i <= (vertInfo.size - 4); i += 4) {
 
+		builder.part("part1", GL10.GL_TRIANGLES);
+
+		for (int i = 0; i <= (vertInfo.size - 4); i += 4) {
 			builder.triangle(vertInfo.get(i + 2), vertInfo.get(i + 1), vertInfo.get(i));
 			builder.triangle(vertInfo.get(i + 2), vertInfo.get(i + 3),
 					vertInfo.get(i + 1));
-			// builder.rect(vertInfo.get(i), vertInfo.get(i + 1), vertInfo.get(i
-			// + 3),
-			// vertInfo.get(i + 2));
-
 		}
 
 		mesh = builder.end();
@@ -208,14 +209,18 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		meshPart.indexOffset = 0;
 		meshPart.numVertices = mesh.getNumVertices();
 
-
 		Model m = new Model();
 
 		ModelMesh mMesh = new ModelMesh();
 		// mMesh.attributes = mesh.getVertexAttributes();
 		m.nodes.add(new Node());
 		Material material = new Material();
-		material.set(TextureAttribute.createSpecular(texture));
+
+		TextureAttribute textureAttribute = new TextureAttribute(
+				TextureAttribute.Diffuse, texture);
+		material.set(textureAttribute);
+
+		// material.set(TextureAttribute.createSpecular(texture));
 		NodePart nodePart = new NodePart(meshPart, material);
 		m.nodes.get(0).parts.add(nodePart);
 		// m.meshes.add(mesh);
@@ -233,10 +238,10 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 	DefaultShader shader;
 	Renderable out;
 	public RenderContext renderContext;
+
 	@Override
 	public void reset() {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -246,7 +251,6 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		shader.render(out);
 		shader.end();
 		renderContext.end();
-
 	}
 
 	public float[] getPointCloud() {
