@@ -97,7 +97,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
 		Vector3 tmpBezierVec = new Vector3();
 		physicsPointCloud = new FloatArray();
-		float epsilon = 0.001f;
+		float epsilon = 0.01f;
 
 		for (float i = 0; i <= (1 + epsilon); i += splitting) {
 			// Punkte der Bezier Kurve setzen.

@@ -2,6 +2,8 @@ package fh.teamproject.entities;
 
 import java.util.ArrayList;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.math.Bezier;
@@ -58,6 +60,9 @@ public class Slide implements ISlide {
 
 	@Override
 	public void update(Vector3 playerPosition) {
+		if (Gdx.input.isKeyPressed(Input.Keys.X)) {
+
+		}
 	}
 
 	@Override

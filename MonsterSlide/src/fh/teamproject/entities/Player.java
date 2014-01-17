@@ -19,7 +19,7 @@ import fh.teamproject.utils.debug.Debug;
 public class Player extends CollisionEntity implements IPlayer {
 
 	@Debug(name = "Position", isModifiable = false)
-	public Vector3 position = new Vector3(10f, 5.0f, 10f);
+	public Vector3 position = new Vector3(-5.0f, 0.0f, -5.0f);
 
 	@Debug(name = "Direction", isModifiable = false)
 	public Vector3 direction = new Vector3(0, 0, 1);

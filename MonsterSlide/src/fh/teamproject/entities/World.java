@@ -48,8 +48,8 @@ public class World implements IWorld {
 		dispatcher = new btCollisionDispatcher(collisionConfiguration);
 		solver = new btSequentialImpulseConstraintSolver();
 
-		dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher,
-				broadphase, solver, collisionConfiguration);
+		dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver,
+				collisionConfiguration);
 		dynamicsWorld.setGravity(new Vector3(0, worldGravtiy, 0));
 
 		// Rutsche und Spieler erzeugen.
@@ -66,8 +66,8 @@ public class World implements IWorld {
 		// Bullet update.
 		performanceCounter.tick();
 		performanceCounter.start();
-		dynamicsWorld.stepSimulation(Gdx.graphics.getDeltaTime(),
-				getMaxSubSteps(), getFixedTimeStep());
+		dynamicsWorld.stepSimulation(Gdx.graphics.getDeltaTime(), getMaxSubSteps(),
+				getFixedTimeStep());
 		performanceCounter.stop();
 
 		player.update();
