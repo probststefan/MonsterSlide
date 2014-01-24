@@ -25,7 +25,7 @@ import com.badlogic.gdx.graphics.g3d.utils.MeshBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder.VertexInfo;
 import com.badlogic.gdx.graphics.g3d.utils.RenderContext;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.badlogic.gdx.math.Bezier;
+import com.badlogic.gdx.math.CatmullRomSpline;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.btConvexHullShape;
 import com.badlogic.gdx.utils.Array;
@@ -47,7 +47,9 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 	Array<Vector3> bezierPoints = new Array<Vector3>();
 	ArrayList<Vector3> baseCoordinates = new ArrayList<Vector3>();
 
-	private float splitting = 0.25f;
+	private Vector3[] points;
+
+	private float splitting = 0.01f;
 
 	public Texture texture;
 	public Mesh mesh;
@@ -78,6 +80,12 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		return this;
 	}
 
+	public ISlidePart setCatmullPoints(Vector3[] points) {
+		this.points = points;
+		setup();
+		return this;
+	}
+
 	private void setup() {
 		computePointCloud();
 		createModelInstance();
@@ -91,9 +99,8 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 	}
 
 	private void computePointCloud() {
-		Bezier<Vector3> bezierCurve = new Bezier<Vector3>();
-
-		bezierCurve.set(new Vector3[] { start, control1, control2, end });
+		CatmullRomSpline<Vector3> catmullRom = new CatmullRomSpline<Vector3>();
+		catmullRom.set(this.points, true);
 
 		Vector3 tmpBezierVec = new Vector3();
 		physicsPointCloud = new FloatArray();
@@ -101,10 +108,10 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
 		for (float i = 0; i <= (1 + epsilon); i += splitting) {
 			// Punkte der Bezier Kurve setzen.
-			bezierCurve.valueAt(tmpBezierVec, i);
+			catmullRom.valueAt(tmpBezierVec, i);
 
 			// Base Koordinaten zu diesem Punkt berechnen und ablegen.
-			this.calcBaseCoordinates(bezierCurve, i);
+			this.calcBaseCoordinates(catmullRom, i);
 
 			physicsPointCloud.add(tmpBezierVec.x);
 			physicsPointCloud.add(tmpBezierVec.y);
@@ -129,11 +136,11 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 	 * @param bezier
 	 * @param t
 	 */
-	private void calcBaseCoordinates(Bezier<Vector3> bezier, float t) {
+	private void calcBaseCoordinates(CatmullRomSpline<Vector3> catmullRom, float t) {
 		Vector3 derivation = new Vector3();
 
 		// 1. und 2. Ableitung bilden.
-		derivation = bezier.derivativeAt(derivation, t);
+		derivation = catmullRom.derivativeAt(derivation, t);
 
 		Vector3 tangent = derivation.cpy().nor();
 
@@ -156,6 +163,12 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 				ShaderProgram.POSITION_ATTRIBUTE)));
 
 		Array<Vector3> graphicsVertices = new Array<Vector3>();
+
+		System.out.println(bezierPoints.size);
+
+		for (Vector3 vector3 : bezierPoints) {
+			System.out.println(vector3);
+		}
 
 		for (int i = 0; i < bezierPoints.size; ++i) {
 			Vector3 v = bezierPoints.get(i);

@@ -26,5 +26,4 @@ public class PlayerMotionState extends MotionState {
 		this.player.syncWithBullet();
 	}
 
-
 }

@@ -56,7 +56,10 @@ public class EasySplineGenerator {
 			// points[3] = new Vector3(MathUtils.random(0.0f, this.width), 0.0f,
 			// MathUtils.random(0.0f, this.width));
 
-			points[3] = new Vector3(points[3].x + 50, points[3].y - this.slope, 0);
+			// points[3] = new Vector3(points[3].x + 50, points[3].y -
+			// this.slope, 0);
+			points[3] = new Vector3(points[3].x + 50, MathUtils.random(points[3].y,
+					-50.0f), 0);
 
 			points[2] = new Vector3(MathUtils.random(points[0].x, points[3].x),
 					points[3].y + this.slope / 2.0f, 0.0f);

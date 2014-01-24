@@ -1,19 +1,16 @@
 package fh.teamproject.entities;
 
-import java.util.ArrayList;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
-import com.badlogic.gdx.math.Bezier;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld;
 import com.badlogic.gdx.utils.Array;
 
 import fh.teamproject.interfaces.ISlide;
 import fh.teamproject.interfaces.ISlidePart;
-import fh.teamproject.utils.EasySplineGenerator;
+import fh.teamproject.utils.CatmullSplineGenerator;
 
 /**
  * Diese Klasse uebernimmt die Generierung und Darstellung der Slide. Es wird
@@ -31,18 +28,28 @@ public class Slide implements ISlide {
 	public Slide(btDiscreteDynamicsWorld dynamicsWorld) {
 		this.dynamicsWorld = dynamicsWorld;
 		// addSlidePart();
+		this.addCatmullSlidePart();
 
-		EasySplineGenerator easyGenerator = new EasySplineGenerator(2);
-		ArrayList<Bezier<Vector3>> bezierCurves = easyGenerator.getSplines();
-		ISlidePart tmpBezPart;
+		/*
+		 * EasySplineGenerator easyGenerator = new EasySplineGenerator(2);
+		 * ArrayList<Bezier<Vector3>> bezierCurves = easyGenerator.getSplines();
+		 * ISlidePart tmpBezPart;
+		 * 
+		 * for (Bezier<Vector3> bezier : bezierCurves) { Array<Vector3> points =
+		 * bezier.points; tmpBezPart = pool.obtain().set(points.get(0),
+		 * points.get(3), points.get(1), points.get(2), 0.01f);
+		 * slideParts.add(tmpBezPart);
+		 * dynamicsWorld.addRigidBody(tmpBezPart.getRigidBody()); }
+		 */
+	}
 
-		for (Bezier<Vector3> bezier : bezierCurves) {
-			Array<Vector3> points = bezier.points;
-			tmpBezPart = pool.obtain().set(points.get(0), points.get(3), points.get(1),
-					points.get(2), 0.01f);
-			slideParts.add(tmpBezPart);
-			dynamicsWorld.addRigidBody(tmpBezPart.getRigidBody());
-		}
+	private void addCatmullSlidePart() {
+		CatmullSplineGenerator generator = new CatmullSplineGenerator();
+		generator.generateSlide();
+
+		ISlidePart tmpSlidePart = pool.obtain().setCatmullPoints(generator.getPoints());
+		this.slideParts.add(tmpSlidePart);
+		this.dynamicsWorld.addRigidBody(tmpSlidePart.getRigidBody());
 	}
 
 	@Override
