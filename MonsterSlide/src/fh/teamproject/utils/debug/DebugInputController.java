@@ -1,7 +1,13 @@
 package fh.teamproject.utils.debug;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.Plane;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.collision.Ray;
 
 import fh.teamproject.screens.GameScreen;
 import fh.teamproject.utils.CameraManager.Mode;
@@ -18,22 +24,48 @@ public class DebugInputController extends InputAdapter {
 	public boolean keyDown(int keycode) {
 		switch (keycode) {
 		case Keys.NUM_1:
-			this.gameScreen.camManager.setMode(Mode.CHASE);
+			GameScreen.camManager.setMode(Mode.CHASE);
 			return true;
 		case Keys.NUM_2:
-			this.gameScreen.camManager.setMode(Mode.FREE);
+			GameScreen.camManager.setMode(Mode.FREE);
 			return true;
 		case Keys.P:
-			this.gameScreen.debugDrawer.toggleDebug();
+			gameScreen.debugDrawer.toggleDebug();
 			// Muss gesetzt werden sonst schreibt man weiter in Textfelder.. :/
 			DebugInfoPanel.stage.setKeyboardFocus(null);
 			return true;
 		case Keys.F:
-			this.gameScreen.isPaused = !this.gameScreen.isPaused;
-			this.gameScreen.hud.root.setVisible(!this.gameScreen.hud.root.isVisible());
+			gameScreen.isPaused = !gameScreen.isPaused;
+			gameScreen.hud.root.setVisible(!gameScreen.hud.root.isVisible());
+			return true;
+		case Keys.G:
+			gameScreen.player.getRigidBody().activate(true);
 			return true;
 		}
 
 		return false;
+	}
+
+	@Override
+	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+		if (button == Buttons.LEFT) {
+			Ray ray = GameScreen.camManager.getActiveCamera()
+					.getPickRay(screenX, screenY);
+			Vector3 intersection = new Vector3();
+			new Vector3();
+			boolean isIntersecting = Intersector.intersectRayPlane(ray, new Plane(
+					Vector3.Y, 0f), intersection);
+			if (isIntersecting) {
+				intersection.add(0f, 2f, 0f);
+				// Matrix4 transform =
+				// gameScreen.player.getModelInstance().transform;
+				// transform.setToTranslation(intersection);
+				// gameScreen.player.getRigidBody().setWorldTransform(transform);
+				gameScreen.player.resetAt(intersection);
+				Gdx.app.log("DebugInput", "set to" + intersection);
+
+			}
+		}
+		return super.touchUp(screenX, screenY, pointer, button);
 	}
 }

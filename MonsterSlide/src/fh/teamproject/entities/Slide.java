@@ -24,11 +24,12 @@ public class Slide implements ISlide {
 	Array<ISlidePart> slideParts = new Array<ISlidePart>();
 	btDiscreteDynamicsWorld dynamicsWorld;
 	SlidePartPool pool = new SlidePartPool();
+	Array<SlideBorder> borders = new Array<SlideBorder>();
 
 	public Slide(btDiscreteDynamicsWorld dynamicsWorld) {
 		this.dynamicsWorld = dynamicsWorld;
 		// addSlidePart();
-		this.addCatmullSlidePart();
+		addCatmullSlidePart();
 
 		/*
 		 * EasySplineGenerator easyGenerator = new EasySplineGenerator(2);
@@ -48,8 +49,10 @@ public class Slide implements ISlide {
 		generator.generateSlide();
 
 		ISlidePart tmpSlidePart = pool.obtain().setCatmullPoints(generator.getPoints());
-		this.slideParts.add(tmpSlidePart);
-		this.dynamicsWorld.addRigidBody(tmpSlidePart.getRigidBody());
+		slideParts.add(tmpSlidePart);
+		dynamicsWorld.addRigidBody(tmpSlidePart.getRigidBody());
+		createSlidePartBorders(tmpSlidePart);
+
 	}
 
 	@Override
@@ -62,7 +65,17 @@ public class Slide implements ISlide {
 		bezPart = pool.obtain().set(start, end, control1, control2, 1f);
 		slideParts.add(bezPart);
 		dynamicsWorld.addRigidBody(bezPart.getRigidBody());
+	}
 
+	public void createSlidePartBorders(ISlidePart part) {
+		SlidePart bPart = (SlidePart) part;
+		Vector3 v = null;
+		for (int i = 0; i < bPart.graphicsVertices.size; i += 1) {
+			v = bPart.graphicsVertices.get(i);
+			SlideBorder border = new SlideBorder(v);
+			borders.add(border);
+			dynamicsWorld.addRigidBody(border.getRigidBody());
+		}
 	}
 
 	@Override
@@ -86,6 +99,9 @@ public class Slide implements ISlide {
 	public void render(ModelBatch batch, Environment lights) {
 		for (ISlidePart part : slideParts) {
 			batch.render(part.getModelInstance(), lights);
+		}
+		for (SlideBorder b : borders) {
+			batch.render(b.getModelInstance(), lights);
 		}
 	}
 }

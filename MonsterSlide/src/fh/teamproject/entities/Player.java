@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.btSphereShape;
 
@@ -116,13 +117,13 @@ public class Player extends CollisionEntity implements IPlayer {
 	@Override
 	public void slideLeft() {
 		getRigidBody().applyCentralForce(
-				new Vector3(1, 0, 0).scl(turnIntensity * Gdx.graphics.getDeltaTime()));
+				new Vector3(0, 0, 1).scl(turnIntensity * Gdx.graphics.getDeltaTime()));
 	}
 
 	@Override
 	public void slideRight() {
 		getRigidBody().applyCentralForce(
-				new Vector3(-1, 0, 0).scl(turnIntensity * Gdx.graphics.getDeltaTime()));
+				new Vector3(0, 0, -1).scl(turnIntensity * Gdx.graphics.getDeltaTime()));
 	}
 
 	@Override
@@ -133,5 +134,14 @@ public class Player extends CollisionEntity implements IPlayer {
 	@Override
 	public String toString() {
 		return "Player";
+	}
+
+	public void resetAt(Vector3 position) {
+		Matrix4 transform = getModelInstance().transform;
+		transform.setToTranslation(position);
+		getRigidBody().setWorldTransform(transform);
+		new Vector3();
+		rigidBody.setLinearVelocity(Vector3.X);
+		rigidBody.setAngularVelocity(new Vector3());
 	}
 }
