@@ -44,8 +44,9 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 	public Vector3 start = new Vector3(), end = new Vector3(), control1 = new Vector3(),
 			control2 = new Vector3();
 	private FloatArray physicsPointCloud;
-	Array<Vector3> bezierPoints = new Array<Vector3>();
-	ArrayList<Vector3> baseCoordinates = new ArrayList<Vector3>();
+	public Array<Vector3> bezierPoints = new Array<Vector3>();
+	public ArrayList<Vector3> baseCoordinates = new ArrayList<Vector3>();
+	public Array<Vector3> graphicsVertices = new Array<Vector3>();
 
 	private Vector3[] points;
 
@@ -80,6 +81,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		return this;
 	}
 
+	@Override
 	public ISlidePart setCatmullPoints(Vector3[] points) {
 		this.points = points;
 		setup();
@@ -100,7 +102,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
 	private void computePointCloud() {
 		CatmullRomSpline<Vector3> catmullRom = new CatmullRomSpline<Vector3>();
-		catmullRom.set(this.points, true);
+		catmullRom.set(points, false);
 
 		Vector3 tmpBezierVec = new Vector3();
 		physicsPointCloud = new FloatArray();
@@ -111,7 +113,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 			catmullRom.valueAt(tmpBezierVec, i);
 
 			// Base Koordinaten zu diesem Punkt berechnen und ablegen.
-			this.calcBaseCoordinates(catmullRom, i);
+			calcBaseCoordinates(catmullRom, i);
 
 			physicsPointCloud.add(tmpBezierVec.x);
 			physicsPointCloud.add(tmpBezierVec.y);
@@ -121,10 +123,10 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
 		for (int i = bezierPoints.size - 1; i >= 0; --i) {
 			Vector3 v = bezierPoints.get(i);
-			Vector3 binormal = this.baseCoordinates.get(i);
+			Vector3 binormal = baseCoordinates.get(i);
 			binormal.scl(width);
 			physicsPointCloud
-					.addAll(v.x + binormal.x, v.y + binormal.y, v.z + binormal.z);
+			.addAll(v.x + binormal.x, v.y + binormal.y, v.z + binormal.z);
 		}
 
 		tmpBezierVec = null;
@@ -153,7 +155,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		Vector3 binormal = derivation.cpy().crs(upVector).nor();
 		Vector3 normal = tangent.crs(binormal);
 
-		this.baseCoordinates.add(normal);
+		baseCoordinates.add(normal);
 	}
 
 	private void createModelInstance() {
@@ -162,7 +164,6 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		builder.begin(new VertexAttributes(new VertexAttribute(Usage.Position, 3,
 				ShaderProgram.POSITION_ATTRIBUTE)));
 
-		Array<Vector3> graphicsVertices = new Array<Vector3>();
 
 		System.out.println(bezierPoints.size);
 
@@ -172,7 +173,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
 		for (int i = 0; i < bezierPoints.size; ++i) {
 			Vector3 v = bezierPoints.get(i);
-			Vector3 binormal = this.baseCoordinates.get(i);
+			Vector3 binormal = baseCoordinates.get(i);
 
 			graphicsVertices.add(new Vector3(v.x, v.y, v.z));
 			graphicsVertices.add(new Vector3(v.x + binormal.x, v.y + binormal.y, v.z

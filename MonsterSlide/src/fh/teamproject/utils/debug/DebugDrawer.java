@@ -4,11 +4,20 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.VertexAttributes.Usage;
+import com.badlogic.gdx.graphics.g3d.Material;
+import com.badlogic.gdx.graphics.g3d.Model;
+import com.badlogic.gdx.graphics.g3d.ModelBatch;
+import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
+import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Pool;
 
 import fh.teamproject.entities.SlidePart;
 import fh.teamproject.interfaces.ICameraController;
@@ -21,7 +30,7 @@ public class DebugDrawer {
 	public static boolean isDebug = false;
 	public DebugInfoPanel infoPanel;
 	public BulletDebugDrawer bulletdebugDrawer = null;
-
+	ModelBatch batch = new ModelBatch();
 	private ShapeRenderer renderer;
 
 	public DebugDrawer(GameScreen gameScreen) {
@@ -31,7 +40,7 @@ public class DebugDrawer {
 		infoPanel.showInfo(this.gameScreen.player);
 
 		setDebugMode(btIDebugDraw.DebugDrawModes.DBG_DrawWireframe,
-				gameScreen.camManager.getActiveCamera().combined);
+				GameScreen.camManager.getActiveCamera().combined);
 
 	}
 
@@ -43,7 +52,7 @@ public class DebugDrawer {
 	}
 
 	public void toggleDebug() {
-		DebugDrawer.isDebug=!DebugDrawer.isDebug;
+		DebugDrawer.isDebug = !DebugDrawer.isDebug;
 		infoPanel.root.setVisible(!infoPanel.root.isVisible());
 		Gdx.app.log("Debugger", "" + infoPanel.root.isVisible());
 	}
@@ -55,18 +64,16 @@ public class DebugDrawer {
 			gameScreen.world.getWorld().debugDrawWorld();
 			bulletdebugDrawer.end();
 			Gdx.gl.glDisable(GL10.GL_DEPTH_TEST);
-			setDebugMode(getDebugMode(),
-					gameScreen.camManager.getActiveCamera().combined);
+			setDebugMode(getDebugMode(), GameScreen.camManager.getActiveCamera().combined);
 			Gdx.gl.glEnable(GL10.GL_DEPTH_TEST);
 		}
 	}
 
 	private void renderCameras() {
-		renderer.setProjectionMatrix(gameScreen.camManager.activeCamera
-				.getCamera().combined);
+		renderer.setProjectionMatrix(GameScreen.camManager.activeCamera.getCamera().combined);
 		renderer.begin(ShapeType.Line);
 
-		for (ICameraController cont : gameScreen.camManager.getController()) {
+		for (ICameraController cont : GameScreen.camManager.getController()) {
 			if (cont instanceof DebugCameraController) {
 				continue;
 			}
@@ -76,8 +83,7 @@ public class DebugDrawer {
 			renderer.box(pos.x - 1f, pos.y - 1, pos.z + 1f, 2, 2, 2);
 
 			renderer.setColor(Color.BLUE);
-			renderer.line(camera.position,
-					camera.position.cpy().add(camera.direction));
+			renderer.line(camera.position, camera.position.cpy().add(camera.direction));
 
 			renderer.setColor(Color.RED);
 			renderer.line(camera.position, camera.position.cpy().add(camera.up));
@@ -85,25 +91,48 @@ public class DebugDrawer {
 		renderer.end();
 	}
 
+	Pool<ModelInstance> spherePool = new Pool<ModelInstance>() {
+		Model sphereModel = new ModelBuilder().createSphere(.1f, 0.1f, 0.1f, 4, 4,
+				new Material(ColorAttribute.createDiffuse(Color.WHITE)), Usage.Position);
+
+		@Override
+		protected ModelInstance newObject() {
+			return new ModelInstance(sphereModel);
+		}
+	};
+
 	private void renderSlideParts() {
+		Array<ModelInstance> usedSpheres = new Array<ModelInstance>();
+		batch.begin(GameScreen.camManager.getActiveCamera());
+		ModelInstance tmp;
 		for (ISlidePart part : gameScreen.world.getSlide().getSlideParts()) {
 			SlidePart bPart = (SlidePart) part;
-			renderer.begin(ShapeType.Point);
-			renderer.setColor(Color.RED);
-			renderer.point(bPart.start.x, bPart.start.y, bPart.start.z);
-			renderer.point(bPart.control1.x, bPart.control1.y, bPart.control1.z);
-			renderer.point(bPart.control2.x, bPart.control2.y, bPart.control2.z);
-			renderer.point(bPart.end.x, bPart.end.y, bPart.end.z);
-			renderer.end();
-
-			renderer.begin(ShapeType.Line);
-			renderer.setColor(Color.WHITE);
-			renderer.line(bPart.start, bPart.control1);
-			renderer.line(bPart.control2, bPart.end);
-			renderer.end();
+			/* Graphic Punkte */
+			for (Vector3 v : bPart.graphicsVertices) {
+				tmp = spherePool.obtain();
+				ColorAttribute attr = (ColorAttribute) tmp.materials.first().get(
+						ColorAttribute.Diffuse);
+				attr.color.set(Color.YELLOW);
+				tmp.transform.setToTranslation(v);
+				batch.render(tmp);
+				usedSpheres.add(tmp);
+			}
+			/* Spline Punkte */
+			for (Vector3 v : bPart.bezierPoints) {
+				tmp = spherePool.obtain();
+				tmp.transform.setToTranslation(v);
+				ColorAttribute attr = (ColorAttribute) tmp.materials.first().get(
+						ColorAttribute.Diffuse);
+				attr.color.set(Color.BLUE);
+				batch.render(tmp);
+				usedSpheres.add(tmp);
+			}
 		}
 
+		batch.end();
+		spherePool.freeAll(usedSpheres);
 	}
+
 	public void setDebugMode(final int mode, final Matrix4 projMatrix) {
 		if ((mode == btIDebugDraw.DebugDrawModes.DBG_NoDebug)
 				&& (bulletdebugDrawer == null)) {
@@ -118,7 +147,6 @@ public class DebugDrawer {
 	}
 
 	public int getDebugMode() {
-		return (bulletdebugDrawer == null) ? 0 : bulletdebugDrawer
-				.getDebugMode();
+		return (bulletdebugDrawer == null) ? 0 : bulletdebugDrawer.getDebugMode();
 	}
 }
