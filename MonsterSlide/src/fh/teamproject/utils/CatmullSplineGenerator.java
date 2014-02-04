@@ -48,7 +48,7 @@ public class CatmullSplineGenerator {
 			resultSet[i] = new Vector2(dataSet.get(i), dataSet.get(i * 2 + 1));
 		}
 
-		resultSet[0] = new Vector2(-10.0f, -10.0f);
+		// Den Startpunkt auf 0 setzen, damit wir die Spline auch finden.
 		resultSet[1] = new Vector2(0.0f, 0.0f);
 
 		int pushIterations = 10;
