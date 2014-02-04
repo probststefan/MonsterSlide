@@ -28,22 +28,23 @@ public class CameraManager {
 		DebugCameraController debugCamera = new DebugCameraController(
 				new PerspectiveCamera(67, Gdx.graphics.getWidth(),
 						Gdx.graphics.getHeight()));
+		debugCamera.getCamera().far = 1000f;
 		ChaseCameraController chaseCamContr = new ChaseCameraController(
 				new PerspectiveCamera(67, Gdx.graphics.getWidth(),
 						Gdx.graphics.getHeight()), gameScreen.player);
-		this.addCamera(debugCamera, Mode.FREE);
-		this.addCamera(chaseCamContr, Mode.CHASE);
+		addCamera(debugCamera, Mode.FREE);
+		addCamera(chaseCamContr, Mode.CHASE);
 	}
 
 	public void update() {
 		// this.activeCamera.update();
-		for (ICameraController c : this.cameras.values()) {
+		for (ICameraController c : cameras.values()) {
 			c.update();
 		}
 	}
 
 	public void addCamera(ICameraController controller, Mode mode) {
-		this.cameras.put(mode, controller);
+		cameras.put(mode, controller);
 	}
 
 	public void setMode(Mode mode) {
@@ -62,20 +63,20 @@ public class CameraManager {
 			// this.activeCamera.getCamera().update(true);
 		} else {
 		}
-		this.activeCamera = this.cameras.get(mode);
+		activeCamera = cameras.get(mode);
 	}
 
 	public Camera getActiveCamera() {
-		return this.activeCamera.getCamera();
+		return activeCamera.getCamera();
 	}
 
 	public ICameraController getController(Mode mode) {
 
-		return this.cameras.get(mode);
+		return cameras.get(mode);
 	}
 
 	public void setViewport(float width, float height) {
-		for (ICameraController c : this.cameras.values()) {
+		for (ICameraController c : cameras.values()) {
 			c.getCamera().viewportWidth = width;
 			c.getCamera().viewportHeight = height;
 			c.getCamera().update();
@@ -83,7 +84,7 @@ public class CameraManager {
 	}
 
 	public Values<ICameraController> getController() {
-		return this.cameras.values();
+		return cameras.values();
 	}
 
 	public LinkedList<Camera> getCameras() {
