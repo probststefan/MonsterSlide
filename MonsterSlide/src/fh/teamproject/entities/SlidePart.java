@@ -38,7 +38,6 @@ import fh.teamproject.screens.GameScreen;
 
 public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
-	int width = 10;
 	ShortArray indices = new ShortArray();
 
 	public Vector3 start = new Vector3(), end = new Vector3(), control1 = new Vector3(),
@@ -129,7 +128,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 			Vector3 v = bezierPoints.get(i);
 			Vector3 binormal = baseCoordinates.get(i);
 
-			binormal.scl(width);
+			binormal.scl(GameScreen.settings.SLIDE_WIDTH);
 			physicsPointCloud
 					.addAll(v.x + binormal.x, v.y + binormal.y, v.z + binormal.z);
 		}

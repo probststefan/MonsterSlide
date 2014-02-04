@@ -15,6 +15,7 @@ import com.badlogic.gdx.physics.bullet.collision.btSphereShape;
 import fh.teamproject.controller.player.pc.InputHandling;
 import fh.teamproject.interfaces.IPlayer;
 import fh.teamproject.physics.PlayerMotionState;
+import fh.teamproject.screens.GameScreen;
 import fh.teamproject.utils.debug.Debug;
 
 public class Player extends CollisionEntity implements IPlayer {
@@ -70,7 +71,7 @@ public class Player extends CollisionEntity implements IPlayer {
 		// Bullet-Eigenschaften setzen.
 		setCollisionShape(new btSphereShape(radius));
 		setLocalInertia(new Vector3(0, 0, 0));
-		setMass(100.0f); // Masse der Sphere.
+		setMass(GameScreen.settings.PLAYER_MASS); // Masse der Sphere.
 		createMotionState();
 		createRigidBody();
 		// Damit rutscht die Sphere nur noch und rollt nicht mehr.
