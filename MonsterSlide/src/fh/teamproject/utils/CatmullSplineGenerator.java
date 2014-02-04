@@ -6,6 +6,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.FloatArray;
 
+import fh.teamproject.screens.GameScreen;
+
 public class CatmullSplineGenerator {
 
 	private ConvexHull convexHull;
@@ -21,6 +23,22 @@ public class CatmullSplineGenerator {
 		for (int i = 0; i < this.resultSet.length; i++) {
 			result[i] = new Vector3(this.resultSet[i].x, 0.0f, this.resultSet[i].y);
 		}
+
+		return result;
+	}
+
+	/**
+	 * Liefert Torsten eine gerade, rutschbare Strecke.
+	 * 
+	 * @return Vector3[]
+	 */
+	public Vector3[] getPlankPoints() {
+		Vector3[] result = new Vector3[4];
+
+		result[0] = new Vector3(-10.0f, 0.0f, 0.0f);
+		result[1] = new Vector3(0.0f, 0.0f, 0.0f);
+		result[2] = new Vector3(GameScreen.settings.DEBUG_HILL_SLOPE, 0.0f, 0.0f);
+		result[3] = new Vector3(GameScreen.settings.DEBUG_HILL_SLOPE + 40.0f, 0.0f, 0.0f);
 
 		return result;
 	}
