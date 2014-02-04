@@ -14,13 +14,11 @@ import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.Renderable;
-import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
+import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.model.MeshPart;
 import com.badlogic.gdx.graphics.g3d.model.Node;
 import com.badlogic.gdx.graphics.g3d.model.NodePart;
-import com.badlogic.gdx.graphics.g3d.model.data.ModelMesh;
 import com.badlogic.gdx.graphics.g3d.shaders.DefaultShader;
-import com.badlogic.gdx.graphics.g3d.utils.DefaultTextureBinder;
 import com.badlogic.gdx.graphics.g3d.utils.MeshBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder.VertexInfo;
 import com.badlogic.gdx.graphics.g3d.utils.RenderContext;
@@ -126,7 +124,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 			Vector3 binormal = baseCoordinates.get(i);
 			binormal.scl(width);
 			physicsPointCloud
-					.addAll(v.x + binormal.x, v.y + binormal.y, v.z + binormal.z);
+			.addAll(v.x + binormal.x, v.y + binormal.y, v.z + binormal.z);
 		}
 
 		tmpBezierVec = null;
@@ -181,7 +179,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
 		for (int i = 0; i <= (graphicsVertices.size - 4); i += 4) {
 			VertexInfo info = new VertexInfo();
-			Color col = null; // Color.BLUE;
+			Color col = Color.BLUE;
 			Vector3 nor = null; // new Vector3(0f, 1f, 0f);
 			info.set(graphicsVertices.get(i), nor, col, null);
 			vertInfo.add(info);
@@ -217,29 +215,13 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		meshPart.numVertices = mesh.getNumVertices();
 
 		Model m = new Model();
-
-		ModelMesh mMesh = new ModelMesh();
-		// mMesh.attributes = mesh.getVertexAttributes();
 		m.nodes.add(new Node());
+
 		Material material = new Material();
-
-		TextureAttribute textureAttribute = new TextureAttribute(
-				TextureAttribute.Diffuse, texture);
-		material.set(textureAttribute);
-
-		// material.set(TextureAttribute.createSpecular(texture));
+		material.set(ColorAttribute.createDiffuse(Color.BLUE));
 		NodePart nodePart = new NodePart(meshPart, material);
 		m.nodes.get(0).parts.add(nodePart);
-		// m.meshes.add(mesh);
-		// m.meshParts.add(meshPart);
-		// m.materials.add(material);
 		instance = new ModelInstance(m);
-
-		out = new Renderable();
-		nodePart.setRenderable(out);
-		shader = new DefaultShader(out);
-		renderContext = new RenderContext(new DefaultTextureBinder(
-				DefaultTextureBinder.WEIGHTED, 1));
 	}
 
 	DefaultShader shader;
