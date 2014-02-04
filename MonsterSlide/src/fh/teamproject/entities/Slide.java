@@ -10,6 +10,7 @@ import com.badlogic.gdx.utils.Array;
 
 import fh.teamproject.interfaces.ISlide;
 import fh.teamproject.interfaces.ISlidePart;
+import fh.teamproject.screens.GameScreen;
 import fh.teamproject.utils.CatmullSplineGenerator;
 
 /**
@@ -28,43 +29,23 @@ public class Slide implements ISlide {
 
 	public Slide(btDiscreteDynamicsWorld dynamicsWorld) {
 		this.dynamicsWorld = dynamicsWorld;
-		// addSlidePart();
 		addCatmullSlidePart();
-
-		/*
-		 * EasySplineGenerator easyGenerator = new EasySplineGenerator(2);
-		 * ArrayList<Bezier<Vector3>> bezierCurves = easyGenerator.getSplines();
-		 * ISlidePart tmpBezPart;
-		 * 
-		 * for (Bezier<Vector3> bezier : bezierCurves) { Array<Vector3> points =
-		 * bezier.points; tmpBezPart = pool.obtain().set(points.get(0),
-		 * points.get(3), points.get(1), points.get(2), 0.01f);
-		 * slideParts.add(tmpBezPart);
-		 * dynamicsWorld.addRigidBody(tmpBezPart.getRigidBody()); }
-		 */
 	}
 
 	private void addCatmullSlidePart() {
 		CatmullSplineGenerator generator = new CatmullSplineGenerator();
 		generator.generateSlide();
 
-		ISlidePart tmpSlidePart = pool.obtain().setCatmullPoints(generator.getPoints());
+		ISlidePart tmpSlidePart;
+		if (GameScreen.settings.DEBUG_HILL) {
+			tmpSlidePart = pool.obtain().setCatmullPoints(generator.getPlankPoints());
+		} else {
+			tmpSlidePart = pool.obtain().setCatmullPoints(generator.getPoints());
+		}
+
 		slideParts.add(tmpSlidePart);
 		dynamicsWorld.addRigidBody(tmpSlidePart.getRigidBody());
 		// createSlidePartBorders(tmpSlidePart);
-
-	}
-
-	@Override
-	public void addSlidePart() {
-		ISlidePart bezPart;
-		Vector3 start = new Vector3(-5f, 0.0f, -5.0f);
-		Vector3 control1 = new Vector3(-5.0f, -10.0f, -5.0f);
-		Vector3 control2 = new Vector3(0.0f, -10.0f, 60.0f);
-		Vector3 end = new Vector3(0.0f, 0.0f, 60.0f);
-		bezPart = pool.obtain().set(start, end, control1, control2, 1f);
-		slideParts.add(bezPart);
-		dynamicsWorld.addRigidBody(bezPart.getRigidBody());
 	}
 
 	public void createSlidePartBorders(ISlidePart part) {
@@ -103,5 +84,11 @@ public class Slide implements ISlide {
 		for (SlideBorder b : borders) {
 			batch.render(b.getModelInstance(), lights);
 		}
+	}
+
+	@Override
+	public void addSlidePart() {
+		// TODO Auto-generated method stub
+
 	}
 }
