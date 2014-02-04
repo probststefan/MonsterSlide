@@ -27,45 +27,90 @@ public class CatmullSplineGenerator {
 
 	public void generateSlide() {
 		// http://bordeen.blogspot.de/2013/12/how-to-generate-procedural-racetracks.html
-		int pointCount = MathUtils.random(10, 20);
+		int pointCount = MathUtils.random(10, 15);
+		System.out.println("Anzahl Punkte: " + pointCount);
 
-		pointCount = 5;
 		float[] points = new float[pointCount * 2];
 
-		points[0] = -10.0f;
-		points[1] = 10.0f;
+		float x, y;
+		for (int i = 0; i < points.length; i += 2) {
+			x = MathUtils.random(20.0f, 200);
+			y = MathUtils.random(20.0f, 200);
 
-		points[2] = 20.0f;
-		points[3] = 10.0f;
-
-		points[4] = 40.0f;
-		points[5] = 40.0f;
-
-		points[6] = 80.0f;
-		points[7] = 80.0f;
-
-		/*
-		 * float[] points = new float[pointCount * 2 + 2];
-		 * 
-		 * points[0] = 0.0f; points[1] = 0.0f;
-		 * 
-		 * for (int i = 1, j = 1; i < pointCount; ++i, j += 2) { float x =
-		 * MathUtils.random(0.0f, Gdx.graphics.getWidth()); float y =
-		 * MathUtils.random(0.0f, Gdx.graphics.getHeight());
-		 * 
-		 * points[j] = x; points[j + 1] = y; }
-		 */
+			points[i] = x;
+			points[i + 1] = y;
+		}
 
 		FloatArray dataSet = convexHull.computePolygon(points, false, false);
 
 		resultSet = new Vector2[dataSet.size / 2];
-		for (int i = 0, j = 0; i < dataSet.size; i += 2, j++) {
-			resultSet[j] = new Vector2(dataSet.get(i), dataSet.get(i + 1));
+
+		for (int i = 0; i < resultSet.length; i++) {
+			resultSet[i] = new Vector2(dataSet.get(i), dataSet.get(i * 2 + 1));
 		}
 
-		int pushIterations = 3;
+		resultSet[0] = new Vector2(-10.0f, -10.0f);
+		resultSet[1] = new Vector2(0.0f, 0.0f);
+
+		int pushIterations = 10;
 		for (int i = 0; i < pushIterations; ++i) {
+			this.fixAngles(resultSet);
 			this.pushApart(resultSet);
+		}
+	}
+
+	public void fixAngles(Vector2[] dataSet) {
+		for (int i = 0; i < dataSet.length; ++i) {
+			int previous = (i - 1 < 0) ? dataSet.length - 1 : i - 1;
+			int next = (i + 1) % dataSet.length;
+			float px = dataSet[i].x - dataSet[previous].x;
+			float py = dataSet[i].y - dataSet[previous].y;
+			float pl = (float) Math.sqrt(px * px + py * py);
+			px /= pl;
+			py /= pl;
+
+			float nx = dataSet[i].x - dataSet[next].x;
+			float ny = dataSet[i].y - dataSet[next].y;
+			nx = -nx;
+			ny = -ny;
+			float nl = (float) Math.sqrt(nx * nx + ny * ny);
+			nx /= nl;
+			ny /= nl;
+			// I got a vector going to the next and to the previous points,
+			// normalised.
+
+			float a = (float) MathUtils.atan2(px * ny - py * nx, px * nx + py * ny); // perp
+																						// dot
+																						// product
+																						// between
+																						// the
+																						// previous
+																						// and
+																						// next
+																						// point.
+																						// Google
+																						// it
+																						// you
+																						// should
+																						// learn
+																						// about
+																						// it!
+
+			if (Math.abs(a * MathUtils.radDeg) <= 100)
+				continue;
+
+			float nA = 100 * Math.signum(a) * MathUtils.degRad;
+			float diff = nA - a;
+			float cos = (float) Math.cos(diff);
+			float sin = (float) Math.sin(diff);
+			float newX = nx * cos - ny * sin;
+			float newY = nx * sin + ny * cos;
+			newX *= nl;
+			newY *= nl;
+			dataSet[next].x = dataSet[i].x + newX;
+			dataSet[next].y = dataSet[i].y + newY;
+			// I got the difference between the current angle and 100degrees,
+			// and built a new vector that puts the next point at 100 degrees.
 		}
 	}
 
