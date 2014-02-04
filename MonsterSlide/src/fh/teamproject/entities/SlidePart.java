@@ -51,6 +51,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 	private Vector3[] points;
 
 	private float splitting = 0.01f;
+	private float down = 0.0f;
 
 	public Texture texture;
 	public Mesh mesh;
@@ -115,6 +116,9 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 			// Base Koordinaten zu diesem Punkt berechnen und ablegen.
 			calcBaseCoordinates(catmullRom, i);
 
+			tmpBezierVec.y = tmpBezierVec.y - down;
+			down += 1.0f;
+
 			physicsPointCloud.add(tmpBezierVec.x);
 			physicsPointCloud.add(tmpBezierVec.y);
 			physicsPointCloud.add(tmpBezierVec.z);
@@ -124,6 +128,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		for (int i = bezierPoints.size - 1; i >= 0; --i) {
 			Vector3 v = bezierPoints.get(i);
 			Vector3 binormal = baseCoordinates.get(i);
+
 			binormal.scl(width);
 			physicsPointCloud
 					.addAll(v.x + binormal.x, v.y + binormal.y, v.z + binormal.z);

@@ -51,7 +51,7 @@ public class Slide implements ISlide {
 		ISlidePart tmpSlidePart = pool.obtain().setCatmullPoints(generator.getPoints());
 		slideParts.add(tmpSlidePart);
 		dynamicsWorld.addRigidBody(tmpSlidePart.getRigidBody());
-		createSlidePartBorders(tmpSlidePart);
+		// createSlidePartBorders(tmpSlidePart);
 
 	}
 
