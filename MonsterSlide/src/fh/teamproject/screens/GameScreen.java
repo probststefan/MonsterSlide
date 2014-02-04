@@ -12,26 +12,30 @@ import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
+import com.badlogic.gdx.utils.Json;
 
 import fh.teamproject.controller.player.android.SwipeController;
 import fh.teamproject.entities.Player;
-import fh.teamproject.entities.SlidePart;
 import fh.teamproject.entities.World;
 import fh.teamproject.hud.Hud;
 import fh.teamproject.utils.CameraManager;
 import fh.teamproject.utils.CameraManager.Mode;
+import fh.teamproject.utils.Settings;
 import fh.teamproject.utils.debug.DebugDrawer;
 import fh.teamproject.utils.debug.DebugInfoPanel;
 import fh.teamproject.utils.debug.DebugInputController;
 
 public class GameScreen implements Screen {
+
+	public static CameraManager camManager;
+	public static Settings settings;
+
 	// DEBUG
 	private final boolean showFps = true;
 	public boolean isPaused = false;
 	public DebugDrawer debugDrawer;
 	// Controller
 	public SwipeController swipeController;
-	public static CameraManager camManager;
 
 	// Rendering
 	public ModelBatch batch;
@@ -47,9 +51,11 @@ public class GameScreen implements Screen {
 	public Hud hud;
 	public Game game;
 
-	SlidePart bezPart;
+
 	public GameScreen(Game game) {
 		this.game = game;
+		GameScreen.settings = new Json().fromJson(Settings.class,
+				Gdx.files.internal("settings.json"));
 		world = new World(this);
 		player = (Player) world.getPlayer();
 
