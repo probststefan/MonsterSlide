@@ -126,7 +126,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 			Vector3 binormal = baseCoordinates.get(i);
 			binormal.scl(width);
 			physicsPointCloud
-			.addAll(v.x + binormal.x, v.y + binormal.y, v.z + binormal.z);
+					.addAll(v.x + binormal.x, v.y + binormal.y, v.z + binormal.z);
 		}
 
 		tmpBezierVec = null;
@@ -151,11 +151,11 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		 * 
 		 * @link http://www.it.hiof.no/~borres/j3d/explain/frames/p-frames.html
 		 */
-		Vector3 upVector = new Vector3(0.0f, 0.0f, 1.0f);
+		Vector3 upVector = new Vector3(0.0f, -1.0f, 0.0f);
 		Vector3 binormal = derivation.cpy().crs(upVector).nor();
-		Vector3 normal = tangent.crs(binormal);
+		// Vector3 normal = tangent.crs(binormal);
 
-		baseCoordinates.add(normal);
+		baseCoordinates.add(binormal);
 	}
 
 	private void createModelInstance() {
@@ -163,13 +163,6 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		MeshBuilder builder = new MeshBuilder();
 		builder.begin(new VertexAttributes(new VertexAttribute(Usage.Position, 3,
 				ShaderProgram.POSITION_ATTRIBUTE)));
-
-
-		System.out.println(bezierPoints.size);
-
-		for (Vector3 vector3 : bezierPoints) {
-			System.out.println(vector3);
-		}
 
 		for (int i = 0; i < bezierPoints.size; ++i) {
 			Vector3 v = bezierPoints.get(i);

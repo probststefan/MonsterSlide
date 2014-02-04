@@ -28,7 +28,6 @@ public class CatmullSplineGenerator {
 	public void generateSlide() {
 		// http://bordeen.blogspot.de/2013/12/how-to-generate-procedural-racetracks.html
 		int pointCount = MathUtils.random(10, 15);
-		System.out.println("Anzahl Punkte: " + pointCount);
 
 		float[] points = new float[pointCount * 2];
 
