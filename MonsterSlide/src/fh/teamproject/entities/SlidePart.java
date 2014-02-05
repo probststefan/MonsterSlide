@@ -13,17 +13,15 @@ import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import com.badlogic.gdx.graphics.g3d.Renderable;
-import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
+import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.model.MeshPart;
 import com.badlogic.gdx.graphics.g3d.model.Node;
 import com.badlogic.gdx.graphics.g3d.model.NodePart;
-import com.badlogic.gdx.graphics.g3d.shaders.DefaultShader;
 import com.badlogic.gdx.graphics.g3d.utils.MeshBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder.VertexInfo;
-import com.badlogic.gdx.graphics.g3d.utils.RenderContext;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.CatmullRomSpline;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.btConvexHullShape;
 import com.badlogic.gdx.utils.Array;
@@ -164,7 +162,8 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		Array<VertexInfo> vertInfo = new Array<VertexInfo>();
 		MeshBuilder builder = new MeshBuilder();
 		builder.begin(new VertexAttributes(new VertexAttribute(Usage.Position, 3,
-				ShaderProgram.POSITION_ATTRIBUTE)));
+				ShaderProgram.POSITION_ATTRIBUTE), new VertexAttribute(
+						Usage.TextureCoordinates, 2, ShaderProgram.TEXCOORD_ATTRIBUTE)));
 
 		for (int i = 0; i < bezierPoints.size; ++i) {
 			Vector3 v = bezierPoints.get(i);
@@ -185,19 +184,21 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 			VertexInfo info = new VertexInfo();
 			Color col = Color.BLUE;
 			Vector3 nor = null; // new Vector3(0f, 1f, 0f);
-			info.set(graphicsVertices.get(i), nor, col, null);
+
+			info.set(graphicsVertices.get(i), nor, col, new Vector2(1, 0));
 			vertInfo.add(info);
 
 			info = new VertexInfo();
-			info.set(graphicsVertices.get(i + 1), nor, col, null);
+			info.set(graphicsVertices.get(i + 1), nor, col, new Vector2(1, 1));
 			vertInfo.add(info);
 
 			info = new VertexInfo();
-			info.set(graphicsVertices.get(i + 2), nor, col, null);
+
+			info.set(graphicsVertices.get(i + 2), nor, col, new Vector2(0, 0));
 			vertInfo.add(info);
 
 			info = new VertexInfo();
-			info.set(graphicsVertices.get(i + 3), nor, col, null);
+			info.set(graphicsVertices.get(i + 3), nor, col, new Vector2(0, 1));
 			vertInfo.add(info);
 		}
 
@@ -222,31 +223,26 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		m.nodes.add(new Node());
 
 		Material material = new Material();
-		material.set(ColorAttribute.createDiffuse(Color.BLUE));
+		// material.set(ColorAttribute.createDiffuse(Color.BLUE));
+		material.set(TextureAttribute.createDiffuse(new Texture(Gdx.files
+				.internal("data/floor.jpg"))));
 		NodePart nodePart = new NodePart(meshPart, material);
 		m.nodes.get(0).parts.add(nodePart);
 		instance = new ModelInstance(m);
 	}
-
-	DefaultShader shader;
-	Renderable out;
-	public RenderContext renderContext;
 
 	@Override
 	public void reset() {
 		// TODO Auto-generated method stub
 	}
 
-	@Override
-	public void render() {
-		renderContext.begin();
-		shader.begin(GameScreen.camManager.getActiveCamera(), renderContext);
-		shader.render(out);
-		shader.end();
-		renderContext.end();
-	}
-
 	public float[] getPointCloud() {
 		return physicsPointCloud.toArray();
+	}
+
+	@Override
+	public void render() {
+		// TODO Auto-generated method stub
+
 	}
 }

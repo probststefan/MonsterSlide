@@ -36,7 +36,7 @@ public class Player extends CollisionEntity implements IPlayer {
 	public float MAX_SPEED = 50;
 
 	@Debug(name = "Acceleration", isModifiable = true)
-	public float acceleration = 16000f;
+	public float acceleration = 160000;
 
 	@Debug(name = "Radius", isModifiable = false)
 	public float radius = 1f;
