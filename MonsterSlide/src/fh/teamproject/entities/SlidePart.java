@@ -116,7 +116,10 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 			if (i == 0) {
 				startPoints[0] = tmpBezierVec;
 			}
+
 		}
+
+		startPoints[0] = vertices.get(0);
 
 		for (int i = vertices.size - 1; i >= 0; --i) {
 			Vector3 v = vertices.get(i);
@@ -238,7 +241,6 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 	public void reset() {
 		// TODO Auto-generated method stub
 	}
-
 
 	@Override
 	public void render() {

@@ -53,13 +53,16 @@ public class Slide implements ISlide {
 	}
 
 	/**
-	 * Liefert den Startpunkt der Slide.
+	 * Liefert den Startpunkt der Slide. Damit kann der Spieler oben in der
+	 * Mitte der Slide abgesetzt werden.
 	 * 
 	 * @return Vector3
 	 */
 	public Vector3 getStartPosition() {
-		this.tmpSlidePart.getStartPoints();
-		return new Vector3(0.0f, 0.0f, 0.0f);
+		Vector3[] startPoints = this.tmpSlidePart.getStartPoints();
+
+		startPoints[0].add(startPoints[1]);
+		return startPoints[0].scl(0.5f);
 	}
 
 	@Override
