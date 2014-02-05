@@ -74,6 +74,7 @@ public class GameScreen implements Screen {
 		debugDrawer = new DebugDrawer(this);
 
 		hud = new Hud(this);
+		hud.generateSlideOverview();
 
 		// Input
 		DebugInputController debugInput = new DebugInputController(this);

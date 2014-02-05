@@ -108,7 +108,7 @@ public class DebugDrawer {
 		for (ISlidePart part : gameScreen.world.getSlide().getSlideParts()) {
 			SlidePart bPart = (SlidePart) part;
 			/* Graphic Punkte */
-			for (Vector3 v : bPart.graphicsVertices) {
+			for (Vector3 v : bPart.getGraphicVertices()) {
 				tmp = spherePool.obtain();
 				ColorAttribute attr = (ColorAttribute) tmp.materials.first().get(
 						ColorAttribute.Diffuse);
@@ -119,7 +119,7 @@ public class DebugDrawer {
 			}
 
 			/* Spline Punkte */
-			for (Vector3 v : bPart.bezierPoints) {
+			for (Vector3 v : bPart.getVertices()) {
 				tmp = spherePool.obtain();
 				tmp.transform.setToTranslation(v);
 				ColorAttribute attr = (ColorAttribute) tmp.materials.first().get(

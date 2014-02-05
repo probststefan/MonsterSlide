@@ -36,7 +36,6 @@ public class DebugInputController extends InputAdapter {
 			return true;
 		case Keys.F:
 			gameScreen.isPaused = !gameScreen.isPaused;
-			gameScreen.hud.root.setVisible(!gameScreen.hud.root.isVisible());
 			return true;
 		case Keys.G:
 			gameScreen.player.getRigidBody().activate(true);
