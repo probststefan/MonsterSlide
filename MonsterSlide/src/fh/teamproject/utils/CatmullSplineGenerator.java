@@ -17,6 +17,11 @@ public class CatmullSplineGenerator {
 		this.convexHull = new ConvexHull();
 	}
 
+	/**
+	 * Liefert alle Punkte.
+	 * 
+	 * @return Vector3[] result
+	 */
 	public Vector3[] getPoints() {
 		Vector3[] result = new Vector3[this.resultSet.length];
 
@@ -25,6 +30,15 @@ public class CatmullSplineGenerator {
 		}
 
 		return result;
+	}
+
+	/**
+	 * Liefert den Startpunkt der Rutschbahn.
+	 * 
+	 * @return Vector3
+	 */
+	public Vector3 getStartPoint() {
+		return new Vector3(this.resultSet[1].x, 0.0f, this.resultSet[1].y);
 	}
 
 	/**
