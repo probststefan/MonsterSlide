@@ -107,11 +107,9 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 			physicsPointCloud.add(tmpBezierVec.y);
 			physicsPointCloud.add(tmpBezierVec.z);
 			bezierPoints.add(new Vector3(tmpBezierVec));
-
-			if (i == 0) {
-				this.startPoints[0] = tmpBezierVec;
-			}
 		}
+
+		this.startPoints[0] = bezierPoints.get(0);
 
 		for (int i = bezierPoints.size - 1; i >= 0; --i) {
 			Vector3 v = bezierPoints.get(i);
