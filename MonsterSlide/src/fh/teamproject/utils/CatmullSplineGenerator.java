@@ -54,8 +54,8 @@ public class CatmullSplineGenerator {
 		return result;
 	}
 
-	float width = 200;
-	float height = 200;
+	float width = GameScreen.settings.SLIDE_DIMENSION;
+	float height = GameScreen.settings.SLIDE_DIMENSION;
 
 	public void generateSlide() {
 		// http://bordeen.blogspot.de/2013/12/how-to-generate-procedural-racetracks.html
