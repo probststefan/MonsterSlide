@@ -59,6 +59,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 	public Texture texture;
 	public Mesh mesh;
 
+
 	public SlidePart() {
 		catmullRom = new CatmullRomSpline<Vector3>();
 		texture = new Texture(Gdx.files.internal("data/floor.jpg"));
@@ -127,11 +128,10 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 			vertices.add(new Vector3(tmpBezierVec));
 
 			if (i == 0) {
-				startPoints[0] = tmpBezierVec;
+				startPoints[0] = tmpBezierVec.cpy();
 			}
 		}
-
-		startPoints[0] = vertices.get(0);
+		startPoints[0] = vertices.get(0).cpy();
 
 		for (int i = vertices.size - 1; i >= 0; --i) {
 			Vector3 v = vertices.get(i);

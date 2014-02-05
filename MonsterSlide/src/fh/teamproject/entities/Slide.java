@@ -1,7 +1,5 @@
 package fh.teamproject.entities;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.math.Vector3;
@@ -47,9 +45,6 @@ public class Slide implements ISlide {
 
 	@Override
 	public void update(Vector3 playerPosition) {
-		if (Gdx.input.isKeyPressed(Input.Keys.X)) {
-
-		}
 	}
 
 	/**
@@ -59,7 +54,7 @@ public class Slide implements ISlide {
 	 * @return Vector3
 	 */
 	public Vector3 getStartPosition() {
-		Vector3[] startPoints = this.tmpSlidePart.getStartPoints();
+		Vector3[] startPoints = tmpSlidePart.getStartPoints();
 
 		Vector3 tmpVec = startPoints[0].add(startPoints[1]);
 		return tmpVec.crs(new Vector3(0.0f, 1.0f, 0.0f)).add(tmpVec).scl(0.5f);
