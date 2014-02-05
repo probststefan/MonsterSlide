@@ -33,15 +33,6 @@ public class CatmullSplineGenerator {
 	}
 
 	/**
-	 * Liefert den Startpunkt der Rutschbahn.
-	 * 
-	 * @return Vector3
-	 */
-	public Vector3 getStartPoint() {
-		return new Vector3(this.resultSet[1].x, 0.0f, this.resultSet[1].y);
-	}
-
-	/**
 	 * Liefert Torsten eine gerade, rutschbare Strecke.
 	 * 
 	 * @return Vector3[]

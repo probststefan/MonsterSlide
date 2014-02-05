@@ -26,26 +26,12 @@ public class Slide implements ISlide {
 	btDiscreteDynamicsWorld dynamicsWorld;
 	SlidePartPool pool = new SlidePartPool();
 	Array<SlideBorder> borders = new Array<SlideBorder>();
+	private CatmullSplineGenerator generator;
+	private ISlidePart tmpSlidePart;
 
 	public Slide(btDiscreteDynamicsWorld dynamicsWorld) {
 		this.dynamicsWorld = dynamicsWorld;
 		addCatmullSlidePart();
-	}
-
-	private void addCatmullSlidePart() {
-		CatmullSplineGenerator generator = new CatmullSplineGenerator();
-		generator.generateSlide();
-
-		ISlidePart tmpSlidePart;
-		if (GameScreen.settings.DEBUG_HILL) {
-			tmpSlidePart = pool.obtain().setCatmullPoints(generator.getPlankPoints());
-		} else {
-			tmpSlidePart = pool.obtain().setCatmullPoints(generator.getPoints());
-		}
-
-		slideParts.add(tmpSlidePart);
-		dynamicsWorld.addRigidBody(tmpSlidePart.getRigidBody());
-		// createSlidePartBorders(tmpSlidePart);
 	}
 
 	public void createSlidePartBorders(ISlidePart part) {
@@ -64,6 +50,16 @@ public class Slide implements ISlide {
 		if (Gdx.input.isKeyPressed(Input.Keys.X)) {
 
 		}
+	}
+
+	/**
+	 * Liefert den Startpunkt der Slide.
+	 * 
+	 * @return Vector3
+	 */
+	public Vector3 getStartPosition() {
+		this.tmpSlidePart.getStartPoints();
+		return new Vector3(0.0f, 0.0f, 0.0f);
 	}
 
 	@Override
@@ -90,5 +86,20 @@ public class Slide implements ISlide {
 	public void addSlidePart() {
 		// TODO Auto-generated method stub
 
+	}
+
+	private void addCatmullSlidePart() {
+		generator = new CatmullSplineGenerator();
+		generator.generateSlide();
+
+		if (GameScreen.settings.DEBUG_HILL) {
+			tmpSlidePart = pool.obtain().setCatmullPoints(generator.getPlankPoints());
+		} else {
+			tmpSlidePart = pool.obtain().setCatmullPoints(generator.getPoints());
+		}
+
+		slideParts.add(tmpSlidePart);
+		dynamicsWorld.addRigidBody(tmpSlidePart.getRigidBody());
+		// createSlidePartBorders(tmpSlidePart);
 	}
 }

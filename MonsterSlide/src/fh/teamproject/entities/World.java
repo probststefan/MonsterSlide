@@ -54,7 +54,7 @@ public class World implements IWorld {
 
 		// Rutsche und Spieler erzeugen.
 		slide = new Slide(dynamicsWorld);
-		player = new Player();
+		player = new Player(slide.getStartPosition());
 		PlayerTickCallback playerCallback = new PlayerTickCallback(player);
 		playerCallback.attach(dynamicsWorld, false);
 
