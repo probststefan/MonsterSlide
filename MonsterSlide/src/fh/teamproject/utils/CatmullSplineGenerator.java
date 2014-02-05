@@ -38,7 +38,13 @@ public class CatmullSplineGenerator {
 		result[0] = new Vector3(-10.0f, 0.0f, 0.0f);
 		result[1] = new Vector3(0.0f, 0.0f, 0.0f);
 		result[2] = new Vector3(GameScreen.settings.DEBUG_HILL_SLOPE, 0.0f, 0.0f);
-		result[3] = new Vector3(GameScreen.settings.DEBUG_HILL_SLOPE + 40.0f, 0.0f, 0.0f);
+
+		if (GameScreen.settings.DEBUG_HILL_SLOPE == 0.0f) {
+			result[3] = new Vector3(GameScreen.settings.DEBUG_HILL_SLOPE, 0.0f, 0.0f);
+		} else {
+			result[3] = new Vector3(GameScreen.settings.DEBUG_HILL_SLOPE + 40.0f, 0.0f,
+					0.0f);
+		}
 
 		return result;
 	}
