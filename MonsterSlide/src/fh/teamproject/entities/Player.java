@@ -55,13 +55,13 @@ public class Player extends CollisionEntity implements IPlayer {
 
 	public Player() {
 		super();
-		this.buildPlayer();
+		buildPlayer();
 	}
 
 	public Player(Vector3 position) {
 		super();
 		this.position = position;
-		this.buildPlayer();
+		buildPlayer();
 	}
 
 	@Override
@@ -127,7 +127,6 @@ public class Player extends CollisionEntity implements IPlayer {
 		Matrix4 transform = getModelInstance().transform;
 		transform.setToTranslation(position);
 		getRigidBody().setWorldTransform(transform);
-		new Vector3();
 		rigidBody.setLinearVelocity(Vector3.X);
 		rigidBody.setAngularVelocity(new Vector3());
 	}
@@ -137,7 +136,9 @@ public class Player extends CollisionEntity implements IPlayer {
 
 		// Grafische Darstellung erstellen.
 		ModelBuilder builder = new ModelBuilder();
-		Material material = new Material(ColorAttribute.createDiffuse(Color.GREEN));
+
+		Material material = new Material(ColorAttribute.createDiffuse(new Color(1f, 1f,
+				1f, 1f)));
 		// Durchmesser der Sphere berechnen.
 		float diameter = radius * 2;
 		Model m = builder.createSphere(diameter, diameter, diameter, 16, 16, material,

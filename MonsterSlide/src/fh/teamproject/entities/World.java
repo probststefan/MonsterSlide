@@ -69,7 +69,6 @@ public class World implements IWorld {
 		dynamicsWorld.stepSimulation(Gdx.graphics.getDeltaTime(), getMaxSubSteps(),
 				getFixedTimeStep());
 		performanceCounter.stop();
-
 		player.update();
 	}
 
