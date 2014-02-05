@@ -61,8 +61,8 @@ public class Slide implements ISlide {
 	public Vector3 getStartPosition() {
 		Vector3[] startPoints = this.tmpSlidePart.getStartPoints();
 
-		startPoints[0].add(startPoints[1]);
-		return startPoints[0].scl(0.5f);
+		Vector3 tmpVec = startPoints[0].add(startPoints[1]);
+		return tmpVec.crs(new Vector3(0.0f, 1.0f, 0.0f)).add(tmpVec).scl(0.5f);
 	}
 
 	@Override

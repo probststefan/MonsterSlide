@@ -92,7 +92,7 @@ public class DebugDrawer {
 	}
 
 	Pool<ModelInstance> spherePool = new Pool<ModelInstance>() {
-		Model sphereModel = new ModelBuilder().createSphere(.1f, 0.1f, 0.1f, 4, 4,
+		Model sphereModel = new ModelBuilder().createSphere(1.5f, 1.5f, 1.5f, 4, 4,
 				new Material(ColorAttribute.createDiffuse(Color.WHITE)), Usage.Position);
 
 		@Override
@@ -114,9 +114,10 @@ public class DebugDrawer {
 						ColorAttribute.Diffuse);
 				attr.color.set(Color.YELLOW);
 				tmp.transform.setToTranslation(v);
-				batch.render(tmp);
+				// batch.render(tmp);
 				usedSpheres.add(tmp);
 			}
+
 			/* Spline Punkte */
 			for (Vector3 v : bPart.bezierPoints) {
 				tmp = spherePool.obtain();
