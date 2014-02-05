@@ -17,6 +17,11 @@ public class CatmullSplineGenerator {
 		convexHull = new ConvexHull();
 	}
 
+	/**
+	 * Liefert alle Punkte.
+	 * 
+	 * @return Vector3[] result
+	 */
 	public Vector3[] getPoints() {
 		Vector3[] result = new Vector3[resultSet.length];
 

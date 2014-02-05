@@ -44,6 +44,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 	public Array<Vector3> graphicsVertices = new Array<Vector3>();
 
 	private Vector3[] points;
+	private Vector3[] startPoints;
 
 	private float splitting = 0.01f;
 	private float down = 0.0f;
@@ -55,33 +56,21 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		texture = new Texture(Gdx.files.internal("data/floor.jpg"));
 	}
 
-	public SlidePart(Vector3 start, Vector3 end, Vector3 control1, Vector3 control2,
-			float splitting) {
-		this.start.set(start);
-		this.end.set(end);
-		this.control1.set(control1);
-		this.control2.set(control2);
-		this.splitting = splitting;
-		setup();
-	}
-
-	@Override
-	public ISlidePart set(Vector3 start, Vector3 end, Vector3 control1, Vector3 control2,
-			float splitting) {
-		this.start.set(start);
-		this.end.set(end);
-		this.control1.set(control1);
-		this.control2.set(control2);
-		this.splitting = splitting;
-		setup();
-		return this;
-	}
-
 	@Override
 	public ISlidePart setCatmullPoints(Vector3[] points) {
 		this.points = points;
+		this.startPoints = new Vector3[2];
 		setup();
 		return this;
+	}
+
+	/**
+	 * Liefert den Startpunkt der Rutschbahn.
+	 * 
+	 * @return Vector3
+	 */
+	public Vector3[] getStartPoints() {
+		return this.startPoints;
 	}
 
 	private void setup() {
@@ -118,6 +107,10 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 			physicsPointCloud.add(tmpBezierVec.y);
 			physicsPointCloud.add(tmpBezierVec.z);
 			bezierPoints.add(new Vector3(tmpBezierVec));
+
+			if (i == 0) {
+				this.startPoints[0] = tmpBezierVec;
+			}
 		}
 
 		for (int i = bezierPoints.size - 1; i >= 0; --i) {
@@ -126,7 +119,12 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
 			binormal.scl(GameScreen.settings.SLIDE_WIDTH);
 			physicsPointCloud
-			.addAll(v.x + binormal.x, v.y + binormal.y, v.z + binormal.z);
+					.addAll(v.x + binormal.x, v.y + binormal.y, v.z + binormal.z);
+
+			if (i == 0) {
+				this.startPoints[1] = new Vector3(v.x + binormal.x, v.y + binormal.y, v.z
+						+ binormal.z);
+			}
 		}
 
 		tmpBezierVec = null;
@@ -144,7 +142,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		// 1. und 2. Ableitung bilden.
 		derivation = catmullRom.derivativeAt(derivation, t);
 
-		Vector3 tangent = derivation.cpy().nor();
+		// Vector3 tangent = derivation.cpy().nor();
 
 		/*
 		 * Mit dem upVector wird das Problem der springenden Normalen behoben.
@@ -163,7 +161,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		MeshBuilder builder = new MeshBuilder();
 		builder.begin(new VertexAttributes(new VertexAttribute(Usage.Position, 3,
 				ShaderProgram.POSITION_ATTRIBUTE), new VertexAttribute(
-						Usage.TextureCoordinates, 2, ShaderProgram.TEXCOORD_ATTRIBUTE)));
+				Usage.TextureCoordinates, 2, ShaderProgram.TEXCOORD_ATTRIBUTE)));
 
 		for (int i = 0; i < bezierPoints.size; ++i) {
 			Vector3 v = bezierPoints.get(i);

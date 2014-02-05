@@ -55,30 +55,13 @@ public class Player extends CollisionEntity implements IPlayer {
 
 	public Player() {
 		super();
+		this.buildPlayer();
+	}
 
-		inputHandling = new InputHandling(this);
-
-		// Grafische Darstellung erstellen.
-		ModelBuilder builder = new ModelBuilder();
-		Material material = new Material(ColorAttribute.createDiffuse(Color.GREEN));
-		// Durchmesser der Sphere berechnen.
-		float diameter = radius * 2;
-		Model m = builder.createSphere(diameter, diameter, diameter, 16, 16, material,
-				Usage.Position | Usage.Normal);
-
-		instance = new ModelInstance(m, position);
-
-		// Bullet-Eigenschaften setzen.
-		setCollisionShape(new btSphereShape(radius));
-		setLocalInertia(new Vector3(0, 0, 0));
-		setMass(GameScreen.settings.PLAYER_MASS); // Masse der Sphere.
-		createMotionState();
-		createRigidBody();
-		// Damit rutscht die Sphere nur noch und rollt nicht mehr.
-		// getRigidBody().setAngularFactor(0);
-
-		setEntityWorldTransform(instance.transform);
-
+	public Player(Vector3 position) {
+		super();
+		this.position = position;
+		this.buildPlayer();
 	}
 
 	@Override
@@ -147,5 +130,30 @@ public class Player extends CollisionEntity implements IPlayer {
 		new Vector3();
 		rigidBody.setLinearVelocity(Vector3.X);
 		rigidBody.setAngularVelocity(new Vector3());
+	}
+
+	private void buildPlayer() {
+		inputHandling = new InputHandling(this);
+
+		// Grafische Darstellung erstellen.
+		ModelBuilder builder = new ModelBuilder();
+		Material material = new Material(ColorAttribute.createDiffuse(Color.GREEN));
+		// Durchmesser der Sphere berechnen.
+		float diameter = radius * 2;
+		Model m = builder.createSphere(diameter, diameter, diameter, 16, 16, material,
+				Usage.Position | Usage.Normal);
+
+		instance = new ModelInstance(m, position);
+
+		// Bullet-Eigenschaften setzen.
+		setCollisionShape(new btSphereShape(radius));
+		setLocalInertia(new Vector3(0, 0, 0));
+		setMass(GameScreen.settings.PLAYER_MASS); // Masse der Sphere.
+		createMotionState();
+		createRigidBody();
+		// Damit rutscht die Sphere nur noch und rollt nicht mehr.
+		// getRigidBody().setAngularFactor(0);
+
+		setEntityWorldTransform(instance.transform);
 	}
 }
