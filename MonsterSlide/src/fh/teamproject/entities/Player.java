@@ -137,7 +137,7 @@ public class Player extends CollisionEntity implements IPlayer {
 
 		// Grafische Darstellung erstellen.
 		ModelBuilder builder = new ModelBuilder();
-		Material material = new Material(ColorAttribute.createDiffuse(Color.GREEN));
+		Material material = new Material(ColorAttribute.createDiffuse(Color.CLEAR));
 		// Durchmesser der Sphere berechnen.
 		float diameter = radius * 2;
 		Model m = builder.createSphere(diameter, diameter, diameter, 16, 16, material,

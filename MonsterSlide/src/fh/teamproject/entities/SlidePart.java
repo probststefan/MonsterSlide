@@ -23,7 +23,8 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.CatmullRomSpline;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.physics.bullet.collision.btConvexHullShape;
+import com.badlogic.gdx.physics.bullet.collision.btBvhTriangleMeshShape;
+import com.badlogic.gdx.physics.bullet.collision.btTriangleMesh;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.FloatArray;
 import com.badlogic.gdx.utils.Pool.Poolable;
@@ -39,7 +40,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 	 * Die abgeleiteten Punkte der Spline für Rendering und Physik basierend auf
 	 * einem splitting
 	 */
-	public Array<Vector3> vertices = new Array<Vector3>();
+	private Array<Vector3> vertices = new Array<Vector3>();
 	/* Das Splitting mit dem die Spline diskretisiert wird */
 	private float splitting = 0.01f;
 	/* Die Punkte zur Erstellung der konvexen Hülle als Polygon angeordnet */
@@ -84,11 +85,23 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 	private void setup() {
 		computePointCloud();
 		createModelInstance();
-		btConvexHullShape collisionShape = new btConvexHullShape();
-		for (int i = 0; i < physicsPointCloud.size; i += 3) {
-			collisionShape.addPoint(new Vector3(physicsPointCloud.get(i),
-					physicsPointCloud.get(i + 1), physicsPointCloud.get(i + 2)));
+		btTriangleMesh tetraMesh = new btTriangleMesh();
+
+		for (int i = 0; i <= (graphicsVertices.size - 4); i += 4) {
+			tetraMesh.addTriangle(graphicsVertices.get(i + 2),
+					graphicsVertices.get(i + 1), graphicsVertices.get(i));
+			tetraMesh.addTriangle(graphicsVertices.get(i + 2),
+					graphicsVertices.get(i + 3), graphicsVertices.get(i + 1));
 		}
+
+		btBvhTriangleMeshShape collisionShape = new btBvhTriangleMeshShape(tetraMesh,
+				false);
+
+		// btConvexHullShape collisionShape = new btConvexHullShape();
+		// for (int i = 0; i < physicsPointCloud.size; i += 3) {
+		// collisionShape.addPoint(new Vector3(physicsPointCloud.get(i),
+		// physicsPointCloud.get(i + 1), physicsPointCloud.get(i + 2)));
+		// }
 		setCollisionShape(collisionShape);
 		createRigidBody();
 	}
@@ -116,7 +129,6 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 			if (i == 0) {
 				startPoints[0] = tmpBezierVec;
 			}
-
 		}
 
 		startPoints[0] = vertices.get(0);
@@ -127,7 +139,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
 			binormal.scl(GameScreen.settings.SLIDE_WIDTH);
 			physicsPointCloud
-			.addAll(v.x + binormal.x, v.y + binormal.y, v.z + binormal.z);
+					.addAll(v.x + binormal.x, v.y + binormal.y, v.z + binormal.z);
 
 			if (i == 0) {
 				startPoints[1] = new Vector3(v.x + binormal.x, v.y + binormal.y, v.z
@@ -169,7 +181,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		MeshBuilder builder = new MeshBuilder();
 		builder.begin(new VertexAttributes(new VertexAttribute(Usage.Position, 3,
 				ShaderProgram.POSITION_ATTRIBUTE), new VertexAttribute(
-						Usage.TextureCoordinates, 2, ShaderProgram.TEXCOORD_ATTRIBUTE)));
+				Usage.TextureCoordinates, 2, ShaderProgram.TEXCOORD_ATTRIBUTE)));
 
 		for (int i = 0; i < vertices.size; ++i) {
 			Vector3 v = vertices.get(i);
