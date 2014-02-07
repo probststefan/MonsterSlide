@@ -60,6 +60,7 @@ public class World implements IWorld {
 
 		// Spieler zur Bullet-Welt hinzufuegen.
 		dynamicsWorld.addRigidBody(player.getRigidBody());
+
 	}
 
 	public void update() {

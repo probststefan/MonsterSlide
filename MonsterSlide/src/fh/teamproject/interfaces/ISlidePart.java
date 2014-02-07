@@ -33,12 +33,14 @@ public interface ISlidePart extends ICollisionEntity {
 	 * 
 	 * @return Liste der ursprünglichen Vertices
 	 */
-	public Array<Vector3> getVertices();
+	public Array<Vector3> getInterpolatedVertices();
 
 	/**
 	 * Gibt die Kontrollpunkte der SlidePart zurück
 	 * 
 	 * @return
 	 */
-	public Vector3[] getControlVertices();
+	public Array<Vector3> getControlPoints();
+
+	public ISlidePart setControlPoints(Array<Vector3> controlPoints);
 }

@@ -36,6 +36,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
 	/* Die CatmullRomSpline von der alles abgeleitet wird */
 	private CatmullRomSpline<Vector3> catmullRom;
+	Array<Vector3> controlPoints;
 	/*
 	 * Die abgeleiteten Punkte der Spline für Rendering und Physik basierend auf
 	 * einem splitting
@@ -54,13 +55,12 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 	public ArrayList<Vector3> baseCoordinates = new ArrayList<Vector3>();
 
 	private Vector3[] startPoints;
-	private float down = 0.0f;
 
 	public Texture texture;
 	public Mesh mesh;
 
-
 	public SlidePart() {
+		controlPoints = new Array<Vector3>();
 		catmullRom = new CatmullRomSpline<Vector3>();
 		texture = new Texture(Gdx.files.internal("data/floor.jpg"));
 	}
@@ -70,6 +70,18 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		startPoints = new Vector3[2];
 		catmullRom.set(points, false);
 		setup();
+		return this;
+	}
+
+	@Override
+	public ISlidePart setControlPoints(Array<Vector3> controlPoints) {
+		startPoints = new Vector3[2];
+		this.controlPoints = controlPoints;
+		catmullRom.set(controlPoints.items, false);
+		setup();
+		startPoints[0] = graphicsVertices.get(0).cpy();
+		startPoints[1] = graphicsVertices.get(1).cpy();
+
 		return this;
 	}
 
@@ -98,11 +110,6 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		btBvhTriangleMeshShape collisionShape = new btBvhTriangleMeshShape(tetraMesh,
 				false);
 
-		// btConvexHullShape collisionShape = new btConvexHullShape();
-		// for (int i = 0; i < physicsPointCloud.size; i += 3) {
-		// collisionShape.addPoint(new Vector3(physicsPointCloud.get(i),
-		// physicsPointCloud.get(i + 1), physicsPointCloud.get(i + 2)));
-		// }
 		setCollisionShape(collisionShape);
 		createRigidBody();
 	}
@@ -119,19 +126,13 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 			// Base Koordinaten zu diesem Punkt berechnen und ablegen.
 			calcBaseCoordinates(catmullRom, i);
 
-			tmpBezierVec.y = tmpBezierVec.y - down;
-			down += 1.0f;
-
 			physicsPointCloud.add(tmpBezierVec.x);
 			physicsPointCloud.add(tmpBezierVec.y);
 			physicsPointCloud.add(tmpBezierVec.z);
 			vertices.add(new Vector3(tmpBezierVec));
 
-			if (i == 0) {
-				startPoints[0] = tmpBezierVec.cpy();
-			}
 		}
-		startPoints[0] = vertices.get(0).cpy();
+
 
 		for (int i = vertices.size - 1; i >= 0; --i) {
 			Vector3 v = vertices.get(i);
@@ -139,7 +140,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
 			binormal.scl(GameScreen.settings.SLIDE_WIDTH);
 			physicsPointCloud
-					.addAll(v.x + binormal.x, v.y + binormal.y, v.z + binormal.z);
+			.addAll(v.x + binormal.x, v.y + binormal.y, v.z + binormal.z);
 
 			if (i == 0) {
 				startPoints[1] = new Vector3(v.x + binormal.x, v.y + binormal.y, v.z
@@ -181,7 +182,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		MeshBuilder builder = new MeshBuilder();
 		builder.begin(new VertexAttributes(new VertexAttribute(Usage.Position, 3,
 				ShaderProgram.POSITION_ATTRIBUTE), new VertexAttribute(
-				Usage.TextureCoordinates, 2, ShaderProgram.TEXCOORD_ATTRIBUTE)));
+						Usage.TextureCoordinates, 2, ShaderProgram.TEXCOORD_ATTRIBUTE)));
 
 		for (int i = 0; i < vertices.size; ++i) {
 			Vector3 v = vertices.get(i);
@@ -266,13 +267,13 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 	}
 
 	@Override
-	public Array<Vector3> getVertices() {
+	public Array<Vector3> getInterpolatedVertices() {
 		return vertices;
 	}
 
 	@Override
-	public Vector3[] getControlVertices() {
-		return catmullRom.controlPoints;
+	public Array<Vector3> getControlPoints() {
+		return controlPoints;
 	}
 
 	@Override

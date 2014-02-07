@@ -10,6 +10,7 @@ import fh.teamproject.interfaces.ISlide;
 import fh.teamproject.interfaces.ISlidePart;
 import fh.teamproject.screens.GameScreen;
 import fh.teamproject.utils.CatmullSplineGenerator;
+import fh.teamproject.utils.SlideGenerator;
 
 /**
  * Diese Klasse uebernimmt die Generierung und Darstellung der Slide. Es wird
@@ -19,6 +20,7 @@ import fh.teamproject.utils.CatmullSplineGenerator;
  * 
  */
 public class Slide implements ISlide {
+	private static SlideGenerator slideGenerator = new SlideGenerator();
 
 	Array<ISlidePart> slideParts = new Array<ISlidePart>();
 	btDiscreteDynamicsWorld dynamicsWorld;
@@ -26,10 +28,10 @@ public class Slide implements ISlide {
 	Array<SlideBorder> borders = new Array<SlideBorder>();
 	private CatmullSplineGenerator generator;
 	private ISlidePart tmpSlidePart;
-
 	public Slide(btDiscreteDynamicsWorld dynamicsWorld) {
 		this.dynamicsWorld = dynamicsWorld;
-		addCatmullSlidePart();
+		// addCatmullSlidePart();
+		addSlidePart();
 	}
 
 	public void createSlidePartBorders(ISlidePart part) {
@@ -82,8 +84,11 @@ public class Slide implements ISlide {
 
 	@Override
 	public void addSlidePart() {
-		// TODO Auto-generated method stub
+		tmpSlidePart = pool.obtain().setControlPoints(
+				Slide.slideGenerator.generateControlPoints());
 
+		slideParts.add(tmpSlidePart);
+		dynamicsWorld.addRigidBody(tmpSlidePart.getRigidBody());
 	}
 
 	private void addCatmullSlidePart() {
