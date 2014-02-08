@@ -147,7 +147,8 @@ public class Player extends CollisionEntity implements IPlayer {
 		instance = new ModelInstance(m, position);
 
 		// Bullet-Eigenschaften setzen.
-		setCollisionShape(new btSphereShape(radius));
+		btSphereShape sphereShape = new btSphereShape(radius);
+		setCollisionShape(sphereShape);
 		setLocalInertia(new Vector3(0, 0, 0));
 		setMass(GameScreen.settings.PLAYER_MASS); // Masse der Sphere.
 		createMotionState();

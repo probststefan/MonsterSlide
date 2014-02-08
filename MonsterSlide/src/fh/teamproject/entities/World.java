@@ -17,6 +17,7 @@ import fh.teamproject.interfaces.IPlayer;
 import fh.teamproject.interfaces.ISlide;
 import fh.teamproject.interfaces.IWorld;
 import fh.teamproject.physics.PlayerTickCallback;
+import fh.teamproject.physics.TriangleMeshCollisionFixer;
 import fh.teamproject.screens.GameScreen;
 import fh.teamproject.screens.MenuScreen;
 
@@ -36,6 +37,8 @@ public class World implements IWorld {
 	private float fixedTimeStep = 1f / 60f;
 	private float worldGravtiy = -9.81f;
 
+	private TriangleMeshCollisionFixer myContactListener;
+
 	public PerformanceCounter performanceCounter = new PerformanceCounter(this.getClass()
 			.getSimpleName());
 	GameScreen gameScreen;
@@ -50,16 +53,29 @@ public class World implements IWorld {
 
 		dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver,
 				collisionConfiguration);
+
+		dynamicsWorld.getSolverInfo().setSplitImpulse(1);
+		dynamicsWorld.getSolverInfo().setSplitImpulsePenetrationThreshold(1e30f);
+		dynamicsWorld.getSolverInfo().setMaxErrorReduction(1e30f);
+		dynamicsWorld.getSolverInfo().setErp(1.0f);
+		dynamicsWorld.getSolverInfo().setErp(1.0f);
+
 		dynamicsWorld.setGravity(new Vector3(0, worldGravtiy, 0));
 
 		// Rutsche und Spieler erzeugen.
 		slide = new Slide(dynamicsWorld);
+		slide.getSlideParts().get(0).getRigidBody().setContactCallbackFlag(2);
 		player = new Player(slide.getStartPosition());
+		player.getRigidBody().setContactCallbackFlag(4);
 		PlayerTickCallback playerCallback = new PlayerTickCallback(player);
 		playerCallback.attach(dynamicsWorld, false);
 
 		// Spieler zur Bullet-Welt hinzufuegen.
 		dynamicsWorld.addRigidBody(player.getRigidBody());
+
+		// ContactListener initialisieren.
+		this.myContactListener = new TriangleMeshCollisionFixer();
+		this.myContactListener.enable();
 	}
 
 	public void update() {

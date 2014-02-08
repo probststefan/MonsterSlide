@@ -3,6 +3,7 @@ package fh.teamproject.entities;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.bullet.collision.btCollisionObject;
 import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld;
 import com.badlogic.gdx.utils.Array;
 
@@ -95,6 +96,10 @@ public class Slide implements ISlide {
 		} else {
 			tmpSlidePart = pool.obtain().setCatmullPoints(generator.getPoints());
 		}
+
+		tmpSlidePart.getRigidBody().setCollisionFlags(
+				tmpSlidePart.getRigidBody().getCollisionFlags()
+						| btCollisionObject.CollisionFlags.CF_CUSTOM_MATERIAL_CALLBACK);
 
 		slideParts.add(tmpSlidePart);
 		dynamicsWorld.addRigidBody(tmpSlidePart.getRigidBody());

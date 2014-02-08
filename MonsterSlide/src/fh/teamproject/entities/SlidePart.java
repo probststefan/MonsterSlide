@@ -23,7 +23,9 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.CatmullRomSpline;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.bullet.collision.Collision;
 import com.badlogic.gdx.physics.bullet.collision.btBvhTriangleMeshShape;
+import com.badlogic.gdx.physics.bullet.collision.btTriangleInfoMap;
 import com.badlogic.gdx.physics.bullet.collision.btTriangleMesh;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.FloatArray;
@@ -59,6 +61,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 	public Texture texture;
 	public Mesh mesh;
 
+	private btTriangleInfoMap triangleInfoMap;
 
 	public SlidePart() {
 		catmullRom = new CatmullRomSpline<Vector3>();
@@ -90,19 +93,23 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
 		for (int i = 0; i <= (graphicsVertices.size - 4); i += 4) {
 			tetraMesh.addTriangle(graphicsVertices.get(i + 2),
-					graphicsVertices.get(i + 1), graphicsVertices.get(i));
-			tetraMesh.addTriangle(graphicsVertices.get(i + 2),
-					graphicsVertices.get(i + 3), graphicsVertices.get(i + 1));
+					graphicsVertices.get(i + 1), graphicsVertices.get(i), true);
+
+			tetraMesh.addTriangle(graphicsVertices.get(i + 3),
+					graphicsVertices.get(i + 2), graphicsVertices.get(i + 1), true);
 		}
 
 		btBvhTriangleMeshShape collisionShape = new btBvhTriangleMeshShape(tetraMesh,
-				false);
+				true);
 
-		// btConvexHullShape collisionShape = new btConvexHullShape();
-		// for (int i = 0; i < physicsPointCloud.size; i += 3) {
-		// collisionShape.addPoint(new Vector3(physicsPointCloud.get(i),
-		// physicsPointCloud.get(i + 1), physicsPointCloud.get(i + 2)));
-		// }
+		triangleInfoMap = new btTriangleInfoMap();
+		// now you can adjust some thresholds in triangleInfoMap if needed.
+
+		// btGenerateInternalEdgeInfo fills in the btTriangleInfoMap and stores
+		// it as a user pointer of collisionShape
+		// (collisionShape->setUserPointer(triangleInfoMap))
+		Collision.btGenerateInternalEdgeInfo(collisionShape, triangleInfoMap);
+
 		setCollisionShape(collisionShape);
 		createRigidBody();
 	}

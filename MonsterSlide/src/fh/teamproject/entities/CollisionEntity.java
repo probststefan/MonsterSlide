@@ -58,6 +58,8 @@ public abstract class CollisionEntity extends Entitiy implements ICollisionEntit
 		rigidBodyInfo = new btRigidBodyConstructionInfo(mass, motionState,
 				collisionShape, localInertia);
 
+		// rigidBody.setFriction(.0f);
+
 		rigidBody = new btRigidBody(rigidBodyInfo);
 	}
 
