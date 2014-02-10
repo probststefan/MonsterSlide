@@ -57,6 +57,7 @@ public class World implements IWorld {
 		dynamicsWorld.setGravity(new Vector3(0, worldGravtiy, 0));
 
 		// Rutsche und Spieler erzeugen.
+
 		slide = new Slide(dynamicsWorld);
 		slide.getSlideParts().get(0).getRigidBody().setContactCallbackFlag(2);
 		player = new Player(slide.getStartPosition());
