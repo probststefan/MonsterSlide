@@ -13,7 +13,6 @@ import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.model.MeshPart;
 import com.badlogic.gdx.graphics.g3d.model.Node;
 import com.badlogic.gdx.graphics.g3d.model.NodePart;
@@ -57,6 +56,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 	public Array<Vector3> graphicsVertices = new Array<Vector3>();
 	/* */
 	public ArrayList<Vector3> baseCoordinates = new ArrayList<Vector3>();
+	public ArrayList<Vector3> baseNormalCoordinates = new ArrayList<Vector3>();
 
 	private Vector3[] startPoints;
 
@@ -138,7 +138,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		Vector3 tmpBezierVec = new Vector3();
 		physicsPointCloud = new FloatArray();
 		/* Der SlidePart wird im Abstand von jeweils 1 Meter diskretisiert */
-		splitting = 1f / GameScreen.settings.SLIDE_LENGTH;
+		splitting = 1f / GameScreen.settings.SLIDE_LENGTH * 5.0f;
 		float epsilon = 0.01f;
 
 		for (float i = 0; i <= (1 + epsilon); i += splitting) {
@@ -184,7 +184,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		// 1. und 2. Ableitung bilden.
 		derivation = catmullRom.derivativeAt(derivation, t);
 
-		// Vector3 tangent = derivation.cpy().nor();
+		Vector3 tangent = derivation.cpy().nor();
 
 		/*
 		 * Mit dem upVector wird das Problem der springenden Normalen behoben.
@@ -193,8 +193,9 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		 */
 		Vector3 upVector = new Vector3(0.0f, -1.0f, 0.0f);
 		Vector3 binormal = derivation.cpy().crs(upVector).nor();
-		// Vector3 normal = tangent.crs(binormal);
+		Vector3 normal = tangent.crs(binormal);
 
+		baseNormalCoordinates.add(normal);
 		baseCoordinates.add(binormal);
 	}
 
@@ -202,8 +203,11 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		Array<VertexInfo> vertInfo = new Array<VertexInfo>();
 		MeshBuilder builder = new MeshBuilder();
 		builder.begin(new VertexAttributes(new VertexAttribute(Usage.Position, 3,
-				ShaderProgram.POSITION_ATTRIBUTE), new VertexAttribute(
-				Usage.TextureCoordinates, 2, ShaderProgram.TEXCOORD_ATTRIBUTE)));
+				ShaderProgram.POSITION_ATTRIBUTE), new VertexAttribute(Usage.Color, 4,
+				ShaderProgram.COLOR_ATTRIBUTE), new VertexAttribute(Usage.Normal, 3,
+				ShaderProgram.NORMAL_ATTRIBUTE)));
+		// , new VertexAttribute(
+		// Usage.TextureCoordinates, 2, ShaderProgram.TEXCOORD_ATTRIBUTE)
 
 		for (int i = 0; i < vertices.size; ++i) {
 			Vector3 v = vertices.get(i);
@@ -225,20 +229,26 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 			Color col = Color.BLUE;
 			Vector3 nor = null; // new Vector3(0f, 1f, 0f);
 
-			info.set(graphicsVertices.get(i), nor, col, new Vector2(1, 0));
+			info.set(graphicsVertices.get(i), baseNormalCoordinates.get(i / 4), col,
+					new Vector2(1, 0));
 			vertInfo.add(info);
 
 			info = new VertexInfo();
-			info.set(graphicsVertices.get(i + 1), nor, col, new Vector2(1, 1));
+			col = Color.RED;
+			info.set(graphicsVertices.get(i + 1), baseNormalCoordinates.get(i / 4), col,
+					new Vector2(1, 1));
 			vertInfo.add(info);
 
 			info = new VertexInfo();
-
-			info.set(graphicsVertices.get(i + 2), nor, col, new Vector2(0, 0));
+			col = Color.GREEN;
+			info.set(graphicsVertices.get(i + 2), baseNormalCoordinates.get(i / 4), col,
+					new Vector2(0, 0));
 			vertInfo.add(info);
 
 			info = new VertexInfo();
-			info.set(graphicsVertices.get(i + 3), nor, col, new Vector2(0, 1));
+			col = Color.YELLOW;
+			info.set(graphicsVertices.get(i + 3), baseNormalCoordinates.get(i / 4), col,
+					new Vector2(0, 1));
 			vertInfo.add(info);
 		}
 
@@ -264,8 +274,8 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
 		Material material = new Material();
 		// material.set(ColorAttribute.createDiffuse(Color.BLUE));
-		material.set(TextureAttribute.createDiffuse(new Texture(Gdx.files
-				.internal("data/floor.jpg"))));
+		// material.set(TextureAttribute.createDiffuse(new Texture(Gdx.files
+		// .internal("data/floor.jpg"))));
 		NodePart nodePart = new NodePart(meshPart, material);
 		m.nodes.get(0).parts.add(nodePart);
 		instance = new ModelInstance(m);
