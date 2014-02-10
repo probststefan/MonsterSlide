@@ -47,7 +47,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 	 */
 	private Array<Vector3> vertices = new Array<Vector3>();
 	/* Das Splitting mit dem die Spline diskretisiert wird */
-	private float splitting = 0.01f;
+	private float splitting;
 	/* Die Punkte zur Erstellung der konvexen Hülle als Polygon angeordnet */
 	private FloatArray physicsPointCloud;
 	/*
@@ -137,6 +137,8 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 	private void computePointCloud() {
 		Vector3 tmpBezierVec = new Vector3();
 		physicsPointCloud = new FloatArray();
+		/* Der SlidePart wird im Abstand von jeweils 1 Meter diskretisiert */
+		splitting = 1f / GameScreen.settings.SLIDE_LENGTH;
 		float epsilon = 0.01f;
 
 		for (float i = 0; i <= (1 + epsilon); i += splitting) {

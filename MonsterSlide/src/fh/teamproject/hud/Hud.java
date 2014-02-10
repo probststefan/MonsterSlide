@@ -23,7 +23,7 @@ import fh.teamproject.utils.SkinManager;
 public class Hud {
 
 	public Stage stage;
-	public Table root;
+	public Table hud, pause;
 
 	Skin skin;
 	GameScreen gameScreen;
@@ -36,23 +36,30 @@ public class Hud {
 		this.gameScreen = gameScreen;
 		listener = new HudEventListener(gameScreen);
 		stage = new Stage();
-		root = new Table();
-		root.defaults().expand();
-		root.setFillParent(true);
-		root.add(mapOverview).top().left();
-		stage.addActor(root);
-		root.debug(Debug.all);
+		hud = new Table().top().left();
+		hud.setFillParent(true);
+		hud.defaults();
+		hud.add(mapOverview).top().left();
+		stage.addActor(hud);
+		hud.debug(Debug.all);
 
-		Table pause = new Table();
+		pause = new Table();
+		pause.setFillParent(true);
 		Button tmp = new Button(new Label("Reset", skin, "debug"), skin, "debug");
 		tmp.setName("reset");
 		tmp.addListener(listener);
 		pause.add(tmp);
-
+		stage.addActor(pause);
+		pause.setVisible(false);
+		pause.debug(Debug.all);
 	}
 
 	public void setViewport(float width, float height) {
 		stage.setViewport(width, height);
+	}
+
+	public void togglePauseMenu() {
+		pause.setVisible(!pause.isVisible());
 	}
 
 	public void update() {
@@ -60,8 +67,8 @@ public class Hud {
 	}
 
 	public void render() {
-		Table.drawDebug(stage);
 		stage.draw();
+		Table.drawDebug(stage);
 	}
 
 	public void generateSlideOverview() {
