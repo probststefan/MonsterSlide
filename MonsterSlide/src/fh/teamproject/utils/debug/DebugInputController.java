@@ -34,6 +34,9 @@ public class DebugInputController extends InputAdapter {
 			// Muss gesetzt werden sonst schreibt man weiter in Textfelder.. :/
 			DebugInfoPanel.stage.setKeyboardFocus(null);
 			return true;
+		case Keys.ESCAPE:
+			gameScreen.hud.togglePauseMenu();
+			return true;
 		case Keys.F:
 			gameScreen.isPaused = !gameScreen.isPaused;
 			return true;
