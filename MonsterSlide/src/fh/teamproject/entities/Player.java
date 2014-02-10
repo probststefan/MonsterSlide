@@ -10,7 +10,8 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.physics.bullet.collision.btSphereShape;
+import com.badlogic.gdx.physics.bullet.collision.btCollisionObject;
+import com.badlogic.gdx.physics.bullet.collision.btCylinderShape;
 
 import fh.teamproject.controller.player.pc.InputHandling;
 import fh.teamproject.interfaces.IPlayer;
@@ -134,27 +135,33 @@ public class Player extends CollisionEntity implements IPlayer {
 	private void buildPlayer() {
 		inputHandling = new InputHandling(this);
 
-		// Grafische Darstellung erstellen.
+		// Grafische Darstellung erstellen
 		ModelBuilder builder = new ModelBuilder();
 
 		Material material = new Material(ColorAttribute.createDiffuse(new Color(1f, 1f,
 				1f, 1f)));
 		// Durchmesser der Sphere berechnen.
 		float diameter = radius * 2;
-		Model m = builder.createSphere(diameter, diameter, diameter, 16, 16, material,
+		float height = 0.2f;
+		Model m = builder.createCylinder(diameter, height, diameter, 16, material,
 				Usage.Position | Usage.Normal);
 
 		instance = new ModelInstance(m, position);
 
 		// Bullet-Eigenschaften setzen.
-		btSphereShape sphereShape = new btSphereShape(radius);
-		setCollisionShape(sphereShape);
+		setCollisionShape(new btCylinderShape(new Vector3(radius, height / 2, radius)));
+
 		setLocalInertia(new Vector3(0, 0, 0));
 		setMass(GameScreen.settings.PLAYER_MASS); // Masse der Sphere.
 		createMotionState();
 		createRigidBody();
 		// Damit rutscht die Sphere nur noch und rollt nicht mehr.
-		// getRigidBody().setAngularFactor(0);
+		getRigidBody().setAngularFactor(0);
+		rigidBody.setFriction(0f);
+		// rigidBody.setMassProps(10.0f, new Vector3(0, 0, 0));
+
+		rigidBody.setCollisionFlags(rigidBody.getCollisionFlags()
+				| btCollisionObject.CollisionFlags.CF_CUSTOM_MATERIAL_CALLBACK);
 
 		setEntityWorldTransform(instance.transform);
 	}

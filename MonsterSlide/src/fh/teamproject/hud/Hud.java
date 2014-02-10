@@ -70,7 +70,7 @@ public class Hud {
 				(int) GameScreen.settings.SLIDE_DIMENSION + offset, Format.RGBA8888);
 
 		Array<ISlidePart> slideParts = gameScreen.world.getSlide().getSlideParts();
-		Array<Vector3> vertices = slideParts.first().getVertices();
+		Array<Vector3> vertices = slideParts.first().getInterpolatedVertices();
 		pixmap.setColor(Color.valueOf("001A33"));
 		pixmap.fill();
 		pixmap.setColor(Color.ORANGE);
@@ -83,16 +83,16 @@ public class Hud {
 
 		pixmap.setColor(Color.RED);
 
-		for (Vector3 v : slideParts.first().getControlVertices()) {
+		for (Vector3 v : slideParts.first().getControlPoints()) {
 			pixmap.fillCircle((int) v.x + (offset / 2), (int) v.z + (offset / 2), 3);
 		}
 
-		Vector3 tmp = slideParts.first().getControlVertices()[0];
+		Vector3 tmp = slideParts.first().getControlPoints().first();
 		pixmap.setColor(Color.YELLOW);
 		pixmap.fillCircle((int) tmp.x + (offset / 2), (int) tmp.z + (offset / 2), 3);
 
-		tmp = slideParts.first().getControlVertices()[slideParts.first()
-		                                              .getControlVertices().length - 1];
+		tmp = slideParts.first().getControlPoints().get(slideParts.first()
+				.getControlPoints().size - 1);
 		pixmap.setColor(Color.GREEN);
 		pixmap.fillCircle((int) tmp.x + (offset / 2), (int) tmp.z + (offset / 2), 3);
 		mapOverview.setDrawable(new TextureRegionDrawable(new TextureRegion(new Texture(

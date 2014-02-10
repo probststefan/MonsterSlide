@@ -25,6 +25,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.Collision;
 import com.badlogic.gdx.physics.bullet.collision.btBvhTriangleMeshShape;
+import com.badlogic.gdx.physics.bullet.collision.btIndexedMesh;
+import com.badlogic.gdx.physics.bullet.collision.btTriangleIndexVertexArray;
 import com.badlogic.gdx.physics.bullet.collision.btTriangleInfoMap;
 import com.badlogic.gdx.physics.bullet.collision.btTriangleMesh;
 import com.badlogic.gdx.utils.Array;
@@ -38,6 +40,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
 	/* Die CatmullRomSpline von der alles abgeleitet wird */
 	private CatmullRomSpline<Vector3> catmullRom;
+	Array<Vector3> controlPoints;
 	/*
 	 * Die abgeleiteten Punkte der Spline für Rendering und Physik basierend auf
 	 * einem splitting
@@ -56,7 +59,6 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 	public ArrayList<Vector3> baseCoordinates = new ArrayList<Vector3>();
 
 	private Vector3[] startPoints;
-	private float down = 0.0f;
 
 	public Texture texture;
 	public Mesh mesh;
@@ -64,6 +66,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 	private btTriangleInfoMap triangleInfoMap;
 
 	public SlidePart() {
+		controlPoints = new Array<Vector3>();
 		catmullRom = new CatmullRomSpline<Vector3>();
 		texture = new Texture(Gdx.files.internal("data/floor.jpg"));
 	}
@@ -73,6 +76,18 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		startPoints = new Vector3[2];
 		catmullRom.set(points, false);
 		setup();
+		return this;
+	}
+
+	@Override
+	public ISlidePart setControlPoints(Array<Vector3> controlPoints) {
+		startPoints = new Vector3[2];
+		this.controlPoints = controlPoints;
+		catmullRom.set(controlPoints.items, false);
+		setup();
+		startPoints[0] = graphicsVertices.get(0).cpy();
+		startPoints[1] = graphicsVertices.get(1).cpy();
+
 		return this;
 	}
 
@@ -91,26 +106,31 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		createModelInstance();
 		btTriangleMesh tetraMesh = new btTriangleMesh();
 
+		btTriangleIndexVertexArray vertexArray = new btTriangleIndexVertexArray();
+
 		for (int i = 0; i <= (graphicsVertices.size - 4); i += 4) {
 			tetraMesh.addTriangle(graphicsVertices.get(i + 2),
-					graphicsVertices.get(i + 1), graphicsVertices.get(i), true);
+					graphicsVertices.get(i + 1), graphicsVertices.get(i));
 
 			tetraMesh.addTriangle(graphicsVertices.get(i + 3),
-					graphicsVertices.get(i + 2), graphicsVertices.get(i + 1), true);
+					graphicsVertices.get(i + 2), graphicsVertices.get(i + 1));
 		}
 
-		btBvhTriangleMeshShape collisionShape = new btBvhTriangleMeshShape(tetraMesh,
-				true);
+		// btBvhTriangleMeshShape collisionShape = new
+		// btBvhTriangleMeshShape(tetraMesh,
+		// true);
 
-		triangleInfoMap = new btTriangleInfoMap();
+		// triangleInfoMap = new btTriangleInfoMap();
 		// now you can adjust some thresholds in triangleInfoMap if needed.
+		// triangleInfoMap.setEdgeDistanceThreshold(25.0f);
 
 		// btGenerateInternalEdgeInfo fills in the btTriangleInfoMap and stores
 		// it as a user pointer of collisionShape
 		// (collisionShape->setUserPointer(triangleInfoMap))
-		Collision.btGenerateInternalEdgeInfo(collisionShape, triangleInfoMap);
+		// Collision.btGenerateInternalEdgeInfo(collisionShape,
+		// triangleInfoMap);
 
-		setCollisionShape(collisionShape);
+		// setCollisionShape(collisionShape);
 		createRigidBody();
 	}
 
@@ -126,19 +146,12 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 			// Base Koordinaten zu diesem Punkt berechnen und ablegen.
 			calcBaseCoordinates(catmullRom, i);
 
-			tmpBezierVec.y = tmpBezierVec.y - down;
-			down += 1.0f;
-
 			physicsPointCloud.add(tmpBezierVec.x);
 			physicsPointCloud.add(tmpBezierVec.y);
 			physicsPointCloud.add(tmpBezierVec.z);
 			vertices.add(new Vector3(tmpBezierVec));
 
-			if (i == 0) {
-				startPoints[0] = tmpBezierVec.cpy();
-			}
 		}
-		startPoints[0] = vertices.get(0).cpy();
 
 		for (int i = vertices.size - 1; i >= 0; --i) {
 			Vector3 v = vertices.get(i);
@@ -254,6 +267,20 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		NodePart nodePart = new NodePart(meshPart, material);
 		m.nodes.get(0).parts.add(nodePart);
 		instance = new ModelInstance(m);
+
+		// Stefans Test
+		btIndexedMesh indexedMesh = new btIndexedMesh(mesh);
+		btTriangleIndexVertexArray triangleVertexArray = new btTriangleIndexVertexArray();
+		triangleVertexArray.addIndexedMesh(indexedMesh);
+
+		btBvhTriangleMeshShape collisionShape = new btBvhTriangleMeshShape(
+				triangleVertexArray, true);
+
+		triangleInfoMap = new btTriangleInfoMap();
+		// triangleInfoMap.setEdgeDistanceThreshold(50.0f);
+		Collision.btGenerateInternalEdgeInfo(collisionShape, triangleInfoMap);
+
+		setCollisionShape(collisionShape);
 	}
 
 	@Override
@@ -273,13 +300,13 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 	}
 
 	@Override
-	public Array<Vector3> getVertices() {
+	public Array<Vector3> getInterpolatedVertices() {
 		return vertices;
 	}
 
 	@Override
-	public Vector3[] getControlVertices() {
-		return catmullRom.controlPoints;
+	public Array<Vector3> getControlPoints() {
+		return controlPoints;
 	}
 
 	@Override

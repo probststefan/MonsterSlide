@@ -54,12 +54,6 @@ public class World implements IWorld {
 		dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver,
 				collisionConfiguration);
 
-		dynamicsWorld.getSolverInfo().setSplitImpulse(1);
-		dynamicsWorld.getSolverInfo().setSplitImpulsePenetrationThreshold(1e30f);
-		dynamicsWorld.getSolverInfo().setMaxErrorReduction(1e30f);
-		dynamicsWorld.getSolverInfo().setErp(1.0f);
-		dynamicsWorld.getSolverInfo().setErp(1.0f);
-
 		dynamicsWorld.setGravity(new Vector3(0, worldGravtiy, 0));
 
 		// Rutsche und Spieler erzeugen.

@@ -92,7 +92,7 @@ public class DebugDrawer {
 	}
 
 	Pool<ModelInstance> spherePool = new Pool<ModelInstance>() {
-		float diameter = 1f;
+		float diameter = 0.3f;
 		Model sphereModel = new ModelBuilder().createSphere(diameter, diameter, diameter,
 				4, 4, new Material(ColorAttribute.createDiffuse(Color.WHITE)),
 				Usage.Position);
@@ -121,12 +121,21 @@ public class DebugDrawer {
 			}
 
 			/* Spline Punkte */
-			for (Vector3 v : bPart.getVertices()) {
+			for (Vector3 v : bPart.getInterpolatedVertices()) {
 				tmp = spherePool.obtain();
 				tmp.transform.setToTranslation(v.cpy());
 				ColorAttribute attr = (ColorAttribute) tmp.materials.first().get(
 						ColorAttribute.Diffuse);
 				attr.color.set(Color.BLUE);
+				batch.render(tmp);
+				usedSpheres.add(tmp);
+			}
+			for (Vector3 v : bPart.getControlPoints()) {
+				tmp = spherePool.obtain();
+				tmp.transform.setToTranslation(v.cpy());
+				ColorAttribute attr = (ColorAttribute) tmp.materials.first().get(
+						ColorAttribute.Diffuse);
+				attr.color.set(Color.MAGENTA);
 				batch.render(tmp);
 				usedSpheres.add(tmp);
 			}
