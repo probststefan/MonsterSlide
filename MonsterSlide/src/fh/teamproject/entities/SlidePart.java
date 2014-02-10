@@ -138,7 +138,8 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		Vector3 tmpBezierVec = new Vector3();
 		physicsPointCloud = new FloatArray();
 		/* Der SlidePart wird im Abstand von jeweils 1 Meter diskretisiert */
-		splitting = 1f / GameScreen.settings.SLIDE_LENGTH * 5.0f;
+		splitting = ((1f / GameScreen.settings.SLIDE_LENGTH)
+				* GameScreen.settings.SLIDE_LENGTH) / 2;
 		float epsilon = 0.01f;
 
 		for (float i = 0; i <= (1 + epsilon); i += splitting) {
@@ -161,7 +162,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
 			binormal.scl(GameScreen.settings.SLIDE_WIDTH);
 			physicsPointCloud
-					.addAll(v.x + binormal.x, v.y + binormal.y, v.z + binormal.z);
+			.addAll(v.x + binormal.x, v.y + binormal.y, v.z + binormal.z);
 
 			if (i == 0) {
 				startPoints[1] = new Vector3(v.x + binormal.x, v.y + binormal.y, v.z
@@ -204,8 +205,8 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		MeshBuilder builder = new MeshBuilder();
 		builder.begin(new VertexAttributes(new VertexAttribute(Usage.Position, 3,
 				ShaderProgram.POSITION_ATTRIBUTE), new VertexAttribute(Usage.Color, 4,
-				ShaderProgram.COLOR_ATTRIBUTE), new VertexAttribute(Usage.Normal, 3,
-				ShaderProgram.NORMAL_ATTRIBUTE)));
+						ShaderProgram.COLOR_ATTRIBUTE), new VertexAttribute(Usage.Normal, 3,
+								ShaderProgram.NORMAL_ATTRIBUTE)));
 		// , new VertexAttribute(
 		// Usage.TextureCoordinates, 2, ShaderProgram.TEXCOORD_ATTRIBUTE)
 
@@ -226,28 +227,28 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
 		for (int i = 0; i <= (graphicsVertices.size - 4); i += 4) {
 			VertexInfo info = new VertexInfo();
-			Color col = Color.BLUE;
-			Vector3 nor = null; // new Vector3(0f, 1f, 0f);
+			Color col = Color.RED;
 
-			info.set(graphicsVertices.get(i), baseNormalCoordinates.get(i / 4), col,
+			Vector3 normal = baseNormalCoordinates.get(i / 4);
+			info.set(graphicsVertices.get(i), normal, col,
 					new Vector2(1, 0));
 			vertInfo.add(info);
 
 			info = new VertexInfo();
-			col = Color.RED;
-			info.set(graphicsVertices.get(i + 1), baseNormalCoordinates.get(i / 4), col,
+			// col = Color.RED;
+			info.set(graphicsVertices.get(i + 1), normal, col,
 					new Vector2(1, 1));
 			vertInfo.add(info);
 
 			info = new VertexInfo();
-			col = Color.GREEN;
-			info.set(graphicsVertices.get(i + 2), baseNormalCoordinates.get(i / 4), col,
+			// col = Color.GREEN;
+			info.set(graphicsVertices.get(i + 2), normal, col,
 					new Vector2(0, 0));
 			vertInfo.add(info);
 
 			info = new VertexInfo();
-			col = Color.YELLOW;
-			info.set(graphicsVertices.get(i + 3), baseNormalCoordinates.get(i / 4), col,
+			// col = Color.YELLOW;
+			info.set(graphicsVertices.get(i + 3), normal, col,
 					new Vector2(0, 1));
 			vertInfo.add(info);
 		}
@@ -302,8 +303,6 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
 	@Override
 	public void render() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override

@@ -13,11 +13,12 @@ import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
 
 public class TriangleMeshCollisionFixer extends ContactListener {
 
+	@Override
 	public boolean onContactAdded(btManifoldPoint cp,
 			btCollisionObjectWrapper colObj0Wrap, int partId0, int index0,
 			btCollisionObjectWrapper colObj1Wrap, int partId1, int index1) {
 
-		System.out.println(colObj0Wrap.getCollisionShape().getShapeType());
+		// System.out.println(colObj0Wrap.getCollisionShape().getShapeType());
 		if (colObj1Wrap.getCollisionShape().getShapeType() != BroadphaseNativeTypes.TRIANGLE_SHAPE_PROXYTYPE) {
 			// System.out.println("########");
 		}
@@ -54,10 +55,12 @@ public class TriangleMeshCollisionFixer extends ContactListener {
 		float friction = friction0 * friction0;
 
 		float MAX_FRICTION = 10.f;
-		if (friction < -MAX_FRICTION)
+		if (friction < -MAX_FRICTION) {
 			friction = -MAX_FRICTION;
-		if (friction > MAX_FRICTION)
+		}
+		if (friction > MAX_FRICTION) {
 			friction = MAX_FRICTION;
+		}
 		return friction;
 	}
 
@@ -72,7 +75,7 @@ public class TriangleMeshCollisionFixer extends ContactListener {
 		btBvhTriangleMeshShape trimesh = null;
 		trimesh = (btBvhTriangleMeshShape) colObj0Wrap.getCollisionObject()
 				.getCollisionShape();
-		btTriangleInfoMap triangleInfoMapPtr = (btTriangleInfoMap) trimesh
+		btTriangleInfoMap triangleInfoMapPtr = trimesh
 				.getTriangleInfoMap();
 
 		if (trimesh.getTriangleInfoMap() == null) {

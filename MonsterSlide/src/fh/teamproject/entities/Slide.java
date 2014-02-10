@@ -81,6 +81,7 @@ public class Slide implements ISlide {
 		for (SlideBorder b : borders) {
 			batch.render(b.getModelInstance(), lights);
 		}
+
 	}
 
 	@Override

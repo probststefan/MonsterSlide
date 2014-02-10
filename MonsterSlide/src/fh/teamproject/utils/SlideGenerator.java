@@ -19,10 +19,10 @@ public class SlideGenerator {
 		float segments = GameScreen.settings.SLIDE_SEGMENTS;
 		int slideLength = GameScreen.settings.SLIDE_LENGTH;
 		float curveDirection = 1f;// verschiebungsrichtung auf z achse
-		float maxSlope = -0.5f;
-		float minSlope = 0.1f;
-		float maxCurvyness = 0.1f;
-		float minCurvyness = -0.1f;
+		float maxSlope = 0f;// -0.5f;
+		float minSlope = 0f;// 0.1f;
+		float maxCurvyness = 0f;// 0.1f;
+		float minCurvyness = 0f;// -0.1f;
 		float curvyness;
 		Vector3 start = new Vector3(0f, 0f, 0f);
 		controlPoints.add(start.cpy()); // Anfangskontrollpunkt
