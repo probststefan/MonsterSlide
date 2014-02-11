@@ -12,7 +12,6 @@ public class SlideGenerator {
 		XY, XZ, YZ
 	}
 
-
 	public Array<Vector3> generateControlPoints() {
 		Array<Vector3> controlPoints = new Array<Vector3>(false, 16, Vector3.class);
 		float slope = GameScreen.settings.SLIDE_SLOPE;
@@ -37,8 +36,7 @@ public class SlideGenerator {
 					Plane.XZ);
 			tmp.z += curvy.z * curveDirection;
 			Gdx.app.log("Generator ", " Segment " + i + " " + tmp + " - Slope " + slope
-					+ " - Z "
-					+ curvy.z);
+					+ " - Z " + curvy.z);
 
 			controlPoints.add(tmp);
 		}
@@ -49,7 +47,6 @@ public class SlideGenerator {
 		controlPoints.shrink();
 		return controlPoints;
 	}
-
 
 	/**
 	 * Berechnet den Y Wert auf der Geraden durch den Punkt point mit Steigung
