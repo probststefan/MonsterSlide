@@ -49,6 +49,7 @@ public class DebugDrawer {
 		renderCameras();
 		renderBullet();
 		renderSlideParts();
+		renderPlayer();
 		infoPanel.render();
 	}
 
@@ -103,6 +104,18 @@ public class DebugDrawer {
 			return new ModelInstance(sphereModel);
 		}
 	};
+
+	private void renderPlayer() {
+		renderer.begin(ShapeType.Line);
+		renderer.setProjectionMatrix(GameScreen.camManager.getActiveCamera().combined);
+		renderer.setColor(Color.MAGENTA);
+
+		Vector3 position = gameScreen.world.getPlayer().getPosition();
+		Vector3 direction = gameScreen.world
+				.getPlayer().getDirection();
+		renderer.line(position, position.cpy().add(direction));
+		renderer.end();
+	}
 
 	private void renderSlideParts() {
 		Array<ModelInstance> usedSpheres = new Array<ModelInstance>();

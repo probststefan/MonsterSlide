@@ -31,13 +31,13 @@ public class Player extends CollisionEntity implements IPlayer {
 	public Vector3 linearVelocity = new Vector3();
 
 	@Debug(name = "Speed", isModifiable = false)
-	public float speed = 0;
+	public float speed;
 
 	@Debug(name = "Max Speed", isModifiable = true)
-	public float MAX_SPEED = 50;
+	public float MAX_SPEED;
 
 	@Debug(name = "Acceleration", isModifiable = true)
-	public float acceleration = 5000;
+	public float acceleration;
 
 	@Debug(name = "Radius", isModifiable = false)
 	public float radius = 1f;
@@ -46,7 +46,7 @@ public class Player extends CollisionEntity implements IPlayer {
 	public boolean isGrounded = false;
 
 	@Debug(name = "Turn Intensity", isModifiable = true)
-	public float turnIntensity = 130000;
+	public float turnIntensity;
 
 	@Debug(name = "Jump Amount", isModifiable = true)
 	private float jumpAmount = 7.0f;
@@ -63,6 +63,9 @@ public class Player extends CollisionEntity implements IPlayer {
 		super();
 		this.position = position;
 		buildPlayer();
+		acceleration = GameScreen.settings.PLAYER_ACCEL;
+		turnIntensity = GameScreen.settings.PLAYER_TURN_INTENSITY;
+		MAX_SPEED = GameScreen.settings.PLAYER_MAX_SPEED;
 	}
 
 	@Override
@@ -165,5 +168,10 @@ public class Player extends CollisionEntity implements IPlayer {
 				| btCollisionObject.CollisionFlags.CF_CUSTOM_MATERIAL_CALLBACK);
 
 		setEntityWorldTransform(instance.transform);
+	}
+
+	@Override
+	public Vector3 getDirection() {
+		return direction;
 	}
 }

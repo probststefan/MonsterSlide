@@ -59,7 +59,7 @@ public class CatmullSplineGenerator {
 
 	public void generateSlide() {
 		// http://bordeen.blogspot.de/2013/12/how-to-generate-procedural-racetracks.html
-		int pointCount = GameScreen.settings.SLIDE_LENGTH;
+		int pointCount = (int) GameScreen.settings.SLIDE_LENGTH;
 
 		float[] points = new float[pointCount * 2];
 

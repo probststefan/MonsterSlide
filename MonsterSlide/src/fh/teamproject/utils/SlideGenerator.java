@@ -16,7 +16,7 @@ public class SlideGenerator {
 		Array<Vector3> controlPoints = new Array<Vector3>(false, 16, Vector3.class);
 		float slope = GameScreen.settings.SLIDE_SLOPE;
 		float segments = GameScreen.settings.SLIDE_SEGMENTS;
-		int slideLength = GameScreen.settings.SLIDE_LENGTH;
+		float slideLength = GameScreen.settings.SLIDE_LENGTH;
 		float curveDirection = 1f;// verschiebungsrichtung auf z achse
 		float maxSlope = 0f;// -0.5f;
 		float minSlope = 0f;// 0.1f;
