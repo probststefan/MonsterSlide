@@ -113,7 +113,6 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		computePointCloud();
 		createModelInstance();
 		btCollisionShape collisionShape = null;
-		btTriangleIndexVertexArray vertexArray = new btTriangleIndexVertexArray();
 
 		ShapeType type = ShapeType.indexedmesh;
 		switch (type) {
@@ -153,10 +152,6 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
 			collisionShape = new btBvhTriangleMeshShape(
 					triangleVertexArray, true);
-
-			triangleInfoMap = new btTriangleInfoMap();
-			Collision.btGenerateInternalEdgeInfo((btBvhTriangleMeshShape) collisionShape,
-					triangleInfoMap);
 
 			triangleInfoMap = new btTriangleInfoMap();
 			// now you can adjust some thresholds in triangleInfoMap if needed.
