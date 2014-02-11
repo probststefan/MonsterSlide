@@ -10,8 +10,8 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.bullet.collision.btCapsuleShape;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionObject;
-import com.badlogic.gdx.physics.bullet.collision.btCylinderShape;
 
 import fh.teamproject.controller.player.pc.InputHandling;
 import fh.teamproject.interfaces.IPlayer;
@@ -153,7 +153,9 @@ public class Player extends CollisionEntity implements IPlayer {
 		instance = new ModelInstance(m, position);
 
 		// Bullet-Eigenschaften setzen.
-		setCollisionShape(new btCylinderShape(new Vector3(radius, height, radius)));
+		// setCollisionShape(new btCylinderShape(new Vector3(radius, height,
+		// radius)));
+		setCollisionShape(new btCapsuleShape(radius, height * 3.0f));
 
 		setLocalInertia(new Vector3(0, 0, 0));
 		setMass(GameScreen.settings.PLAYER_MASS); // Masse der Sphere.
