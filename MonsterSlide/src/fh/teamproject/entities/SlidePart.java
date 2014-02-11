@@ -23,8 +23,12 @@ import com.badlogic.gdx.math.CatmullRomSpline;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.bullet.collision.Collision;
 import com.badlogic.gdx.physics.bullet.collision.btBvhTriangleMeshShape;
+import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
 import com.badlogic.gdx.physics.bullet.collision.btCompoundShape;
+import com.badlogic.gdx.physics.bullet.collision.btConvexHullShape;
+import com.badlogic.gdx.physics.bullet.collision.btIndexedMesh;
 import com.badlogic.gdx.physics.bullet.collision.btTriangleIndexVertexArray;
 import com.badlogic.gdx.physics.bullet.collision.btTriangleInfoMap;
 import com.badlogic.gdx.physics.bullet.collision.btTriangleMesh;
@@ -101,47 +105,75 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		return startPoints;
 	}
 
+	public enum ShapeType {
+		triangles, convexhull, indexedmesh
+	};
+
 	private void setup() {
 		computePointCloud();
 		createModelInstance();
-		btTriangleMesh tetraMesh = new btTriangleMesh();
-
+		btCollisionShape collisionShape = null;
 		btTriangleIndexVertexArray vertexArray = new btTriangleIndexVertexArray();
 
-		btCompoundShape compundShape = new btCompoundShape();
+		ShapeType type = ShapeType.indexedmesh;
+		switch (type) {
+		case triangles:
+			btTriangleMesh tetraMesh = new btTriangleMesh();
+			for (int i = 0; i <= (graphicsVertices.size - 4); i += 4) {
+				tetraMesh.addTriangle(graphicsVertices.get(i + 2),
+						graphicsVertices.get(i + 1), graphicsVertices.get(i));
 
-		Matrix4 mat4 = new Matrix4();
-		mat4.idt();
+				tetraMesh.addTriangle(graphicsVertices.get(i + 3),
+						graphicsVertices.get(i + 2), graphicsVertices.get(i + 1));
+			}
+			collisionShape = new btBvhTriangleMeshShape(tetraMesh, true);
+			break;
+		case convexhull:
+			// btCompoundShape compoundShape = new btCompoundShape();
+			collisionShape = new btCompoundShape();
+			for (int i = 0; i <= (graphicsVertices.size - 4); i += 4) {
+				btConvexHullShape convexHullShape = new btConvexHullShape();
 
-		for (int i = 0; i <= (graphicsVertices.size - 4); i += 4) {
-			// btConvexHullShape convexHullShape = new btConvexHullShape();
+				convexHullShape.addPoint(graphicsVertices.get(i));
+				convexHullShape.addPoint(graphicsVertices.get(i + 1));
+				convexHullShape.addPoint(graphicsVertices.get(i + 3));
+				convexHullShape.addPoint(graphicsVertices.get(i + 2));
 
-			// convexHullShape.addPoint(graphicsVertices.get(i));
-			// convexHullShape.addPoint(graphicsVertices.get(i + 1));
-			// convexHullShape.addPoint(graphicsVertices.get(i + 3));
-			// convexHullShape.addPoint(graphicsVertices.get(i + 2));
-			//
-			// compundShape.addChildShape(mat4, convexHullShape);
+				((btCompoundShape) collisionShape).addChildShape(new Matrix4().idt(),
+						convexHullShape);
 
-			tetraMesh.addTriangle(graphicsVertices.get(i + 2),
-					graphicsVertices.get(i + 1), graphicsVertices.get(i));
+			}
+			break;
+		case indexedmesh:
+			// Stefans Test
 
-			tetraMesh.addTriangle(graphicsVertices.get(i + 3),
-					graphicsVertices.get(i + 2), graphicsVertices.get(i + 1));
+			btIndexedMesh indexedMesh = new btIndexedMesh(mesh);
+			btTriangleIndexVertexArray triangleVertexArray = new btTriangleIndexVertexArray();
+			triangleVertexArray.addIndexedMesh(indexedMesh);
 
+			collisionShape = new btBvhTriangleMeshShape(
+					triangleVertexArray, true);
+
+			triangleInfoMap = new btTriangleInfoMap();
+			Collision.btGenerateInternalEdgeInfo((btBvhTriangleMeshShape) collisionShape,
+					triangleInfoMap);
+
+			triangleInfoMap = new btTriangleInfoMap();
+			// now you can adjust some thresholds in triangleInfoMap if needed.
+			triangleInfoMap.setEdgeDistanceThreshold(25.0f);
+
+			// btGenerateInternalEdgeInfo fills in the btTriangleInfoMap and
+			// stores
+			// it as a user pointer of collisionShape
+			// (collisionShape->setUserPointer(triangleInfoMap))
+			Collision.btGenerateInternalEdgeInfo((btBvhTriangleMeshShape) collisionShape,
+					triangleInfoMap);
+			break;
+		default:
+			break;
 		}
 
-		btBvhTriangleMeshShape collisionShape = new btBvhTriangleMeshShape(tetraMesh,
-				true);
 
-		triangleInfoMap = new btTriangleInfoMap();
-		// now you can adjust some thresholds in triangleInfoMap if needed.
-		// triangleInfoMap.setEdgeDistanceThreshold(25.0f);
-
-		// btGenerateInternalEdgeInfo fills in the btTriangleInfoMap and stores
-		// it as a user pointer of collisionShape
-		// (collisionShape->setUserPointer(triangleInfoMap))
-		// Collision.btGenerateInternalEdgeInfo(compundShape, triangleInfoMap);
 
 		setCollisionShape(collisionShape);
 		createRigidBody();
@@ -303,22 +335,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		m.nodes.get(0).parts.add(nodePart);
 		instance = new ModelInstance(m);
 
-		// Stefans Test
-		/*
-		 * btIndexedMesh indexedMesh = new btIndexedMesh(mesh);
-		 * btTriangleIndexVertexArray triangleVertexArray = new
-		 * btTriangleIndexVertexArray();
-		 * triangleVertexArray.addIndexedMesh(indexedMesh);
-		 * 
-		 * btBvhTriangleMeshShape collisionShape = new btBvhTriangleMeshShape(
-		 * triangleVertexArray, true);
-		 * 
-		 * triangleInfoMap = new btTriangleInfoMap();
-		 * Collision.btGenerateInternalEdgeInfo(collisionShape,
-		 * triangleInfoMap);
-		 * 
-		 * setCollisionShape(collisionShape);
-		 */
+
 	}
 
 	@Override
