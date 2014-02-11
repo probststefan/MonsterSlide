@@ -8,6 +8,7 @@ import com.badlogic.gdx.physics.bullet.collision.btBroadphaseInterface;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionDispatcher;
 import com.badlogic.gdx.physics.bullet.collision.btDbvtBroadphase;
 import com.badlogic.gdx.physics.bullet.collision.btDefaultCollisionConfiguration;
+import com.badlogic.gdx.physics.bullet.dynamics.btContactSolverInfo;
 import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.physics.bullet.dynamics.btSequentialImpulseConstraintSolver;
@@ -53,6 +54,9 @@ public class World implements IWorld {
 
 		dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver,
 				collisionConfiguration);
+
+		btContactSolverInfo info = dynamicsWorld.getSolverInfo();
+		info.setRestitution(0.0f);
 
 		dynamicsWorld.setGravity(new Vector3(0, worldGravtiy, 0));
 
