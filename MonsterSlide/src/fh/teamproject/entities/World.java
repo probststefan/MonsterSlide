@@ -51,11 +51,21 @@ public class World implements IWorld {
 		collisionConfiguration = new btDefaultCollisionConfiguration();
 		dispatcher = new btCollisionDispatcher(collisionConfiguration);
 		solver = new btSequentialImpulseConstraintSolver();
+
 		dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver,
 				collisionConfiguration);
 
 		btContactSolverInfo info = dynamicsWorld.getSolverInfo();
 		info.setRestitution(0.0f);
+		info.setNumIterations(20);
+
+		info.setSplitImpulse(1); // enable split impulse feature
+		// optionally set the m_splitImpulsePenetrationThreshold (only used when
+		// m_splitImpulse is enabled)
+		// only enable split impulse position correction when the penetration is
+		// deeper than this m_splitImpulsePenetrationThreshold, otherwise use
+		// the regular velocity/position constraint coupling (Baumgarte).
+		info.setSplitImpulsePenetrationThreshold(-0.02f);
 
 		dynamicsWorld.setGravity(new Vector3(0, worldGravtiy, 0));
 
