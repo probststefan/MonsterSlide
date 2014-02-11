@@ -34,7 +34,7 @@ public class World implements IWorld {
 	private btCollisionDispatcher dispatcher;
 	private btDefaultCollisionConfiguration collisionConfiguration;
 	private int maxSubSteps = 3;
-	private float fixedTimeStep = 1 / 60f;
+	private float fixedTimeStep = 1 / 30f;
 	private float worldGravtiy = -9.81f;
 
 	private TriangleMeshCollisionFixer myContactListener;
@@ -50,7 +50,6 @@ public class World implements IWorld {
 		collisionConfiguration = new btDefaultCollisionConfiguration();
 		dispatcher = new btCollisionDispatcher(collisionConfiguration);
 		solver = new btSequentialImpulseConstraintSolver();
-
 		dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver,
 				collisionConfiguration);
 

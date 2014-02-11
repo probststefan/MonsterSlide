@@ -29,7 +29,7 @@ public class SlideGenerator {
 
 		for (int i = 0; i < segments; i++) {
 			float x = start.x + (((slideLength - start.x) / segments) * (i + 1));
-			slope = MathUtils.random(maxSlope, minSlope);
+			slope = -0.2f;// MathUtils.random(maxSlope, minSlope);
 			curvyness = MathUtils.random(maxCurvyness, minCurvyness);
 			Vector3 tmp = getStraightLineYValue(controlPoints.peek(), slope, x, Plane.XY);
 			Vector3 curvy = getStraightLineYValue(controlPoints.peek(), curvyness, x,

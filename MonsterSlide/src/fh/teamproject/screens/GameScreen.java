@@ -32,7 +32,7 @@ public class GameScreen implements Screen {
 
 	// DEBUG
 	private final boolean showFps = true;
-	public boolean isPaused = false;
+	public boolean isPaused = true;
 	public DebugDrawer debugDrawer;
 	// Controller
 	public SwipeController swipeController;
@@ -61,7 +61,7 @@ public class GameScreen implements Screen {
 
 		// this.swipeController = new SwipeController(this.player);
 		GameScreen.camManager = new CameraManager(this);
-		GameScreen.camManager.setMode(Mode.CHASE);
+		GameScreen.camManager.setMode(Mode.FREE);
 
 		batch = new ModelBatch();
 

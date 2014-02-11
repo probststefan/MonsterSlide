@@ -23,8 +23,8 @@ import com.badlogic.gdx.math.CatmullRomSpline;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.bullet.collision.btBvhTriangleMeshShape;
 import com.badlogic.gdx.physics.bullet.collision.btCompoundShape;
-import com.badlogic.gdx.physics.bullet.collision.btConvexHullShape;
 import com.badlogic.gdx.physics.bullet.collision.btTriangleIndexVertexArray;
 import com.badlogic.gdx.physics.bullet.collision.btTriangleInfoMap;
 import com.badlogic.gdx.physics.bullet.collision.btTriangleMesh;
@@ -114,27 +114,25 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		mat4.idt();
 
 		for (int i = 0; i <= (graphicsVertices.size - 4); i += 4) {
-			btConvexHullShape convexHullShape = new btConvexHullShape();
+			// btConvexHullShape convexHullShape = new btConvexHullShape();
 
-			convexHullShape.addPoint(graphicsVertices.get(i));
-			convexHullShape.addPoint(graphicsVertices.get(i + 1));
-			convexHullShape.addPoint(graphicsVertices.get(i + 3));
-			convexHullShape.addPoint(graphicsVertices.get(i + 2));
+			// convexHullShape.addPoint(graphicsVertices.get(i));
+			// convexHullShape.addPoint(graphicsVertices.get(i + 1));
+			// convexHullShape.addPoint(graphicsVertices.get(i + 3));
+			// convexHullShape.addPoint(graphicsVertices.get(i + 2));
+			//
+			// compundShape.addChildShape(mat4, convexHullShape);
 
-			compundShape.addChildShape(mat4, convexHullShape);
+			tetraMesh.addTriangle(graphicsVertices.get(i + 2),
+					graphicsVertices.get(i + 1), graphicsVertices.get(i));
 
-			/*
-			 * tetraMesh.addTriangle(graphicsVertices.get(i + 2),
-			 * graphicsVertices.get(i + 1), graphicsVertices.get(i));
-			 * 
-			 * tetraMesh.addTriangle(graphicsVertices.get(i + 3),
-			 * graphicsVertices.get(i + 2), graphicsVertices.get(i + 1));
-			 */
+			tetraMesh.addTriangle(graphicsVertices.get(i + 3),
+					graphicsVertices.get(i + 2), graphicsVertices.get(i + 1));
+
 		}
 
-		// btBvhTriangleMeshShape collisionShape = new
-		// btBvhTriangleMeshShape(tetraMesh,
-		// true);
+		btBvhTriangleMeshShape collisionShape = new btBvhTriangleMeshShape(tetraMesh,
+				true);
 
 		triangleInfoMap = new btTriangleInfoMap();
 		// now you can adjust some thresholds in triangleInfoMap if needed.
@@ -145,15 +143,18 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		// (collisionShape->setUserPointer(triangleInfoMap))
 		// Collision.btGenerateInternalEdgeInfo(compundShape, triangleInfoMap);
 
-		setCollisionShape(compundShape);
+		setCollisionShape(collisionShape);
 		createRigidBody();
+		setMass(1000f);
+		getRigidBody().setFriction(0.1f);
+		getRigidBody().setRestitution(0f);
 	}
 
 	private void computePointCloud() {
 		Vector3 tmpBezierVec = new Vector3();
 		physicsPointCloud = new FloatArray();
 		/* Der SlidePart wird im Abstand von jeweils 1 Meter diskretisiert */
-		splitting = (1f / GameScreen.settings.SLIDE_LENGTH) * 5f;
+		splitting = (1f / GameScreen.settings.SLIDE_LENGTH) * 50f;
 		float epsilon = 0.01f;
 
 		for (float i = 0; i <= (1 + epsilon); i += splitting) {
@@ -254,28 +255,23 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 			// normal.set(Vector3.Y);
 
 			VertexInfo info = new VertexInfo();
-			info.set(graphicsVertices.get(i), normal, col,
-					new Vector2(1, 0));
+			info.set(graphicsVertices.get(i), normal, col, new Vector2(1, 0));
 			vertInfo.add(info);
 
 			info = new VertexInfo();
 			// col = Color.RED;
-			info.set(graphicsVertices.get(i + 1), normal, col,
-					new Vector2(1, 1));
+			info.set(graphicsVertices.get(i + 1), normal, col, new Vector2(1, 1));
 			vertInfo.add(info);
 
 			info = new VertexInfo();
 			// col = Color.GREEN;
-			info.set(graphicsVertices.get(i + 2), normal, col,
-					new Vector2(0, 0));
+			info.set(graphicsVertices.get(i + 2), normal, col, new Vector2(0, 0));
 			vertInfo.add(info);
 
 			info = new VertexInfo();
 			// col = Color.YELLOW;
-			info.set(graphicsVertices.get(i + 3), normal, col,
-					new Vector2(0, 1));
+			info.set(graphicsVertices.get(i + 3), normal, col, new Vector2(0, 1));
 			vertInfo.add(info);
-
 
 		}
 

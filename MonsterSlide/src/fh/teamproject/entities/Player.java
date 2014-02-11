@@ -146,28 +146,31 @@ public class Player extends CollisionEntity implements IPlayer {
 				1f, 1f)));
 		// Durchmesser der Sphere berechnen.
 		float diameter = radius * 2;
-		float height = 0.2f;
+		float height = 0.5f;
 		Model m = builder.createCylinder(diameter, height, diameter, 16, material,
 				Usage.Position | Usage.Normal);
 
 		instance = new ModelInstance(m, position);
 
 		// Bullet-Eigenschaften setzen.
-		setCollisionShape(new btCylinderShape(new Vector3(radius, height / 2, radius)));
+		setCollisionShape(new btCylinderShape(new Vector3(radius, height, radius)));
 
 		setLocalInertia(new Vector3(0, 0, 0));
 		setMass(GameScreen.settings.PLAYER_MASS); // Masse der Sphere.
 		createMotionState();
 		createRigidBody();
 		// Damit rutscht die Sphere nur noch und rollt nicht mehr.
-		getRigidBody().setAngularFactor(0);
-		rigidBody.setFriction(1f);
+		// getRigidBody().setAngularFactor(0);
+		rigidBody.setFriction(0.1f);
+		rigidBody.setRestitution(0f);
 		// rigidBody.setMassProps(10.0f, new Vector3(0, 0, 0));
 
 		rigidBody.setCollisionFlags(rigidBody.getCollisionFlags()
 				| btCollisionObject.CollisionFlags.CF_CUSTOM_MATERIAL_CALLBACK);
+		// rigidBody.setInvInertiaDiagLocal(new Vector3());
 
 		setEntityWorldTransform(instance.transform);
+		Gdx.app.log("player", "Masse: " + rigidBody.getInvInertiaTensorWorld());
 	}
 
 	@Override

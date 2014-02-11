@@ -35,33 +35,33 @@ public class DebugCameraController extends CameraController implements ICameraCo
 	}
 
 	public void update(float deltaTime) {
-		if (this.keys.containsKey(this.FORWARD)) {
-			this.tmp.set(this.camera.direction).nor().scl(deltaTime * this.velocity);
-			this.camera.position.add(this.tmp);
+		if (keys.containsKey(FORWARD)) {
+			tmp.set(camera.direction).nor().scl(deltaTime * velocity);
+			camera.position.add(tmp);
 		}
-		if (this.keys.containsKey(this.BACKWARD)) {
-			this.tmp.set(this.camera.direction).nor().scl(-deltaTime * this.velocity);
-			this.camera.position.add(this.tmp);
+		if (keys.containsKey(BACKWARD)) {
+			tmp.set(camera.direction).nor().scl(-deltaTime * velocity);
+			camera.position.add(tmp);
 		}
-		if (this.keys.containsKey(this.STRAFE_LEFT)) {
-			this.tmp.set(this.camera.direction).crs(this.camera.up).nor()
-					.scl(-deltaTime * this.velocity);
-			this.camera.position.add(this.tmp);
+		if (keys.containsKey(STRAFE_LEFT)) {
+			tmp.set(camera.direction).crs(camera.up).nor()
+					.scl(-deltaTime * velocity);
+			camera.position.add(tmp);
 		}
-		if (this.keys.containsKey(this.STRAFE_RIGHT)) {
-			this.tmp.set(this.camera.direction).crs(this.camera.up).nor()
-					.scl(deltaTime * this.velocity);
-			this.camera.position.add(this.tmp);
+		if (keys.containsKey(STRAFE_RIGHT)) {
+			tmp.set(camera.direction).crs(camera.up).nor()
+					.scl(deltaTime * velocity);
+			camera.position.add(tmp);
 		}
-		if (this.keys.containsKey(this.UP)) {
-			this.tmp.set(this.camera.up).nor().scl(deltaTime * this.velocity);
-			this.camera.position.add(this.tmp);
+		if (keys.containsKey(UP)) {
+			tmp.set(camera.up).nor().scl(deltaTime * velocity);
+			camera.position.add(tmp);
 		}
-		if (this.keys.containsKey(this.DOWN)) {
-			this.tmp.set(this.camera.up).nor().scl(-deltaTime * this.velocity);
-			this.camera.position.add(this.tmp);
+		if (keys.containsKey(DOWN)) {
+			tmp.set(camera.up).nor().scl(-deltaTime * velocity);
+			camera.position.add(tmp);
 		}
-		this.camera.update(true);
+		camera.update(true);
 	}
 
 	/**
@@ -86,13 +86,13 @@ public class DebugCameraController extends CameraController implements ICameraCo
 
 	@Override
 	public boolean keyDown(int keycode) {
-		this.keys.put(keycode, keycode);
+		keys.put(keycode, keycode);
 		return true;
 	}
 
 	@Override
 	public boolean keyUp(int keycode) {
-		this.keys.remove(keycode, 0);
+		keys.remove(keycode, 0);
 		return true;
 	}
 
@@ -116,11 +116,11 @@ public class DebugCameraController extends CameraController implements ICameraCo
 
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer) {
-		float deltaX = -Gdx.input.getDeltaX() * this.degreesPerPixel;
-		float deltaY = -Gdx.input.getDeltaY() * this.degreesPerPixel;
-		this.camera.direction.rotate(this.camera.up, deltaX);
-		this.tmp.set(this.camera.direction).crs(this.camera.up).nor();
-		this.camera.direction.rotate(this.tmp, deltaY);
+		float deltaX = -Gdx.input.getDeltaX() * degreesPerPixel;
+		float deltaY = -Gdx.input.getDeltaY() * degreesPerPixel;
+		camera.direction.rotate(camera.up, deltaX);
+		tmp.set(camera.direction).crs(camera.up).nor();
+		camera.direction.rotate(tmp, deltaY);
 		// camera.up.rotate(tmp, deltaY);
 		return true;
 	}
