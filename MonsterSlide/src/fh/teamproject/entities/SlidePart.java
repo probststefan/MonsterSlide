@@ -150,8 +150,8 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 			btTriangleIndexVertexArray triangleVertexArray = new btTriangleIndexVertexArray();
 			triangleVertexArray.addIndexedMesh(indexedMesh);
 
-			collisionShape = new btBvhTriangleMeshShape(
-					triangleVertexArray, true);
+			collisionShape = new btBvhTriangleMeshShape(triangleVertexArray, true);
+			collisionShape.setMargin(0.01f);
 
 			triangleInfoMap = new btTriangleInfoMap();
 			// now you can adjust some thresholds in triangleInfoMap if needed.
@@ -167,8 +167,6 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		default:
 			break;
 		}
-
-
 
 		setCollisionShape(collisionShape);
 		createRigidBody();
@@ -204,7 +202,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
 			binormal.scl(GameScreen.settings.SLIDE_WIDTH);
 			physicsPointCloud
-			.addAll(v.x + binormal.x, v.y + binormal.y, v.z + binormal.z);
+					.addAll(v.x + binormal.x, v.y + binormal.y, v.z + binormal.z);
 
 			if (i == 0) {
 				startPoints[1] = new Vector3(v.x + binormal.x, v.y + binormal.y, v.z
@@ -247,8 +245,8 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		MeshBuilder builder = new MeshBuilder();
 		builder.begin(new VertexAttributes(new VertexAttribute(Usage.Position, 3,
 				ShaderProgram.POSITION_ATTRIBUTE), new VertexAttribute(Usage.Color, 4,
-						ShaderProgram.COLOR_ATTRIBUTE), new VertexAttribute(Usage.Normal, 3,
-								ShaderProgram.NORMAL_ATTRIBUTE)));
+				ShaderProgram.COLOR_ATTRIBUTE), new VertexAttribute(Usage.Normal, 3,
+				ShaderProgram.NORMAL_ATTRIBUTE)));
 		// , new VertexAttribute(
 		// Usage.TextureCoordinates, 2, ShaderProgram.TEXCOORD_ATTRIBUTE)
 
@@ -329,7 +327,6 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		NodePart nodePart = new NodePart(meshPart, material);
 		m.nodes.get(0).parts.add(nodePart);
 		instance = new ModelInstance(m);
-
 
 	}
 

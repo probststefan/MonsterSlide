@@ -162,7 +162,7 @@ public class Player extends CollisionEntity implements IPlayer {
 		createMotionState();
 		createRigidBody();
 		// Damit rutscht die Sphere nur noch und rollt nicht mehr.
-		// getRigidBody().setAngularFactor(0);
+		getRigidBody().setAngularFactor(new Vector3(0, 1.0f, 0));
 		rigidBody.setFriction(0.1f);
 		rigidBody.setRestitution(0f);
 		// rigidBody.setMassProps(10.0f, new Vector3(0, 0, 0));
