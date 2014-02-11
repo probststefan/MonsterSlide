@@ -33,8 +33,8 @@ public class World implements IWorld {
 	private btSequentialImpulseConstraintSolver solver;
 	private btCollisionDispatcher dispatcher;
 	private btDefaultCollisionConfiguration collisionConfiguration;
-	private int maxSubSteps = 5;
-	private float fixedTimeStep = 1f / 60f;
+	private int maxSubSteps = 3;
+	private float fixedTimeStep = 1 / 60f;
 	private float worldGravtiy = -9.81f;
 
 	private TriangleMeshCollisionFixer myContactListener;
@@ -69,8 +69,8 @@ public class World implements IWorld {
 		dynamicsWorld.addRigidBody(player.getRigidBody());
 
 		// ContactListener initialisieren.
-		this.myContactListener = new TriangleMeshCollisionFixer();
-		this.myContactListener.enable();
+		myContactListener = new TriangleMeshCollisionFixer();
+		myContactListener.enable();
 	}
 
 	public void update() {

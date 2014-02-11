@@ -226,10 +226,19 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		}
 
 		for (int i = 0; i <= (graphicsVertices.size - 4); i += 4) {
-			VertexInfo info = new VertexInfo();
-			Color col = Color.RED;
-
 			Vector3 normal = baseNormalCoordinates.get(i / 4);
+
+			Color col = Color.WHITE;
+			Vector3 v1 = graphicsVertices.get(i).cpy();
+			v1.sub(graphicsVertices.get(i + 1));
+			Vector3 v2 = graphicsVertices.get(i).cpy();
+			v2.sub(graphicsVertices.get(i + 2));
+			Vector3 nor = v1.crs(v2).nor();
+			Gdx.app.log("slidepart",
+					"soll " + nor + " ist " + normal + " " + nor.equals(normal));
+			// normal.set(Vector3.Y);
+
+			VertexInfo info = new VertexInfo();
 			info.set(graphicsVertices.get(i), normal, col,
 					new Vector2(1, 0));
 			vertInfo.add(info);
@@ -251,6 +260,8 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 			info.set(graphicsVertices.get(i + 3), normal, col,
 					new Vector2(0, 1));
 			vertInfo.add(info);
+
+
 		}
 
 		builder.part("part1", GL10.GL_TRIANGLES);

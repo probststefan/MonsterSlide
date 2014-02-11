@@ -17,7 +17,7 @@ public class TriangleMeshCollisionFixer extends ContactListener {
 	public boolean onContactAdded(btManifoldPoint cp,
 			btCollisionObjectWrapper colObj0Wrap, int partId0, int index0,
 			btCollisionObjectWrapper colObj1Wrap, int partId1, int index1) {
-
+		// Gdx.app.log("CollisionFixer", "contact added");
 		// System.out.println(colObj0Wrap.getCollisionShape().getShapeType());
 		if (colObj1Wrap.getCollisionShape().getShapeType() != BroadphaseNativeTypes.TRIANGLE_SHAPE_PROXYTYPE) {
 			// System.out.println("########");

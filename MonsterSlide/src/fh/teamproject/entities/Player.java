@@ -37,7 +37,7 @@ public class Player extends CollisionEntity implements IPlayer {
 	public float MAX_SPEED = 50;
 
 	@Debug(name = "Acceleration", isModifiable = true)
-	public float acceleration = 160000;
+	public float acceleration = 5000;
 
 	@Debug(name = "Radius", isModifiable = false)
 	public float radius = 1f;
@@ -91,6 +91,7 @@ public class Player extends CollisionEntity implements IPlayer {
 	public void accelerate(float amount) {
 		getRigidBody().applyCentralForce(
 				direction.cpy().scl(acceleration * Gdx.graphics.getDeltaTime()));
+
 	}
 
 	@Override
@@ -157,7 +158,7 @@ public class Player extends CollisionEntity implements IPlayer {
 		createRigidBody();
 		// Damit rutscht die Sphere nur noch und rollt nicht mehr.
 		getRigidBody().setAngularFactor(0);
-		rigidBody.setFriction(0f);
+		rigidBody.setFriction(1f);
 		// rigidBody.setMassProps(10.0f, new Vector3(0, 0, 0));
 
 		rigidBody.setCollisionFlags(rigidBody.getCollisionFlags()

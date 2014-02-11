@@ -163,6 +163,8 @@ public class DebugDrawer {
 						verts[i + 8], verts[i + 9]);
 				// Gdx.app.log("debugdrawer", "Point " + point + " Normal " +
 				// normal);
+
+				// Gdx.app.log("debugdrawer", );
 				renderer.line(point, normal);
 			}
 		}
