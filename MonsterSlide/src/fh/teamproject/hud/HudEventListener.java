@@ -12,11 +12,11 @@ public class HudEventListener extends ChangeListener {
 	public HudEventListener(GameScreen gameScreen) {
 		this.gameScreen = gameScreen;
 	}
+
 	@Override
 	public void changed(ChangeEvent event, Actor actor) {
 		if (actor.getName().equals("reset")) {
 			this.gameScreen.world.reset();
 		}
 	}
-
 }
