@@ -8,7 +8,7 @@ import fh.teamproject.entities.Player;
 public class ChaseCameraController extends CameraController {
 
 	private final Player player;
-	private float radius = 5;
+	private float radius = 10;
 	private Vector3 offset;
 
 	public ChaseCameraController(Camera camera, Player player) {
@@ -34,7 +34,7 @@ public class ChaseCameraController extends CameraController {
 		Vector3 orbitPos = pos.cpy().add(offset);
 		camera.position.set(orbitPos);
 		camera.rotateAround(pos, rotAxis, 315);
-		camera.lookAt(pos.cpy().add(player.direction));
+		camera.lookAt(pos.cpy().add(player.direction.cpy().scl(3f)));
 		super.update();
 
 	}
