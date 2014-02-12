@@ -83,6 +83,7 @@ public class World implements IWorld {
 		// ContactListener initialisieren.
 		myContactListener = new TriangleMeshCollisionFixer();
 		myContactListener.enable();
+
 	}
 
 	public void update() {

@@ -1,5 +1,6 @@
 package fh.teamproject.entities;
 
+import java.nio.FloatBuffer;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
@@ -13,6 +14,7 @@ import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.model.MeshPart;
 import com.badlogic.gdx.graphics.g3d.model.Node;
 import com.badlogic.gdx.graphics.g3d.model.NodePart;
@@ -106,7 +108,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 	}
 
 	public enum ShapeType {
-		triangles, convexhull, indexedmesh
+		triangles, convexhull, indexedmesh, heightmap
 	};
 
 	private void setup() {
@@ -114,7 +116,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		createModelInstance();
 		btCollisionShape collisionShape = null;
 
-		ShapeType type = ShapeType.indexedmesh;
+		ShapeType type = ShapeType.triangles;
 		switch (type) {
 		case triangles:
 			btTriangleMesh tetraMesh = new btTriangleMesh();
@@ -164,6 +166,18 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 			Collision.btGenerateInternalEdgeInfo((btBvhTriangleMeshShape) collisionShape,
 					triangleInfoMap);
 			break;
+		case heightmap:
+			int heightStickWidth;
+			int heightStickLength;
+			FloatBuffer heightfieldData;
+			float heightScale;
+			float minHeight;
+			float maxHeight;
+			int upAxis;
+			boolean flipQuadEdges;
+			// collisionShape = new btHeightfieldTerrainShape(heightStickWidth,
+			// heightStickLength, heightfieldData, heightScale, minHeight,
+			// maxHeight, upAxis, flipQuadEdges);
 		default:
 			break;
 		}
@@ -179,7 +193,8 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		Vector3 tmpBezierVec = new Vector3();
 		physicsPointCloud = new FloatArray();
 		/* Der SlidePart wird im Abstand von jeweils 1 Meter diskretisiert */
-		splitting = (1f / GameScreen.settings.SLIDE_LENGTH);
+		splitting = (1f / GameScreen.settings.SLIDE_LENGTH)
+				* GameScreen.settings.SLIDE_LENGTH;
 		float epsilon = 0.01f;
 
 		for (float i = 0; i <= (1 + epsilon); i += splitting) {
@@ -242,13 +257,6 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
 	private void createModelInstance() {
 		Array<VertexInfo> vertInfo = new Array<VertexInfo>();
-		MeshBuilder builder = new MeshBuilder();
-		builder.begin(new VertexAttributes(new VertexAttribute(Usage.Position, 3,
-				ShaderProgram.POSITION_ATTRIBUTE), new VertexAttribute(Usage.Color, 4,
-						ShaderProgram.COLOR_ATTRIBUTE), new VertexAttribute(Usage.Normal, 3,
-								ShaderProgram.NORMAL_ATTRIBUTE)));
-		// , new VertexAttribute(
-		// Usage.TextureCoordinates, 2, ShaderProgram.TEXCOORD_ATTRIBUTE)
 
 		for (int i = 0; i < vertices.size; ++i) {
 			Vector3 v = vertices.get(i);
@@ -269,7 +277,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
 			Vector3 normal = baseNormalCoordinates.get(i / 4);
 
-			Color col = Color.DARK_GRAY;
+			Color col = null;
 			Vector3 v1 = graphicsVertices.get(i).cpy();
 			v1.sub(graphicsVertices.get(i + 1));
 			Vector3 v2 = graphicsVertices.get(i).cpy();
@@ -278,34 +286,60 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 			// Gdx.app.log("slidepart",
 			// "soll " + nor + " ist " + normal + " " + nor.equals(normal));
 			// normal.set(Vector3.Y);
+			float uMin = 0, uMax = 1, vMin = 0, vMax = 1;
 
 			VertexInfo info = new VertexInfo();
-			info.set(graphicsVertices.get(i), normal, col, new Vector2(1, 0));
+			info.set(graphicsVertices.get(i), normal, col, new Vector2(uMin, vMin));
 			vertInfo.add(info);
 
 			info = new VertexInfo();
 			// col = Color.RED;
-			info.set(graphicsVertices.get(i + 1), normal, col, new Vector2(1, 1));
+			info.set(graphicsVertices.get(i + 1), normal, col, new Vector2(uMax, vMin));
 			vertInfo.add(info);
 
 			info = new VertexInfo();
 			// col = Color.GREEN;
-			info.set(graphicsVertices.get(i + 2), normal, col, new Vector2(0, 0));
+			info.set(graphicsVertices.get(i + 2), normal, col, new Vector2(uMin, vMax));
 			vertInfo.add(info);
 
 			info = new VertexInfo();
 			// col = Color.YELLOW;
-			info.set(graphicsVertices.get(i + 3), normal, col, new Vector2(0, 1));
+			info.set(graphicsVertices.get(i + 3), normal, col, new Vector2(uMax, vMax));
 			vertInfo.add(info);
 
 		}
-
+		MeshBuilder builder = new MeshBuilder();
+		builder.begin(new VertexAttributes(new VertexAttribute(Usage.Position, 3,
+				ShaderProgram.POSITION_ATTRIBUTE), new VertexAttribute(Usage.Normal, 3,
+						ShaderProgram.NORMAL_ATTRIBUTE), new VertexAttribute(
+								Usage.TextureCoordinates, 2, ShaderProgram.TEXCOORD_ATTRIBUTE)));
 		builder.part("part1", GL10.GL_TRIANGLES);
 
 		for (int i = 0; i <= (vertInfo.size - 4); i += 4) {
-			builder.triangle(vertInfo.get(i + 2), vertInfo.get(i + 1), vertInfo.get(i));
 			builder.triangle(vertInfo.get(i + 2), vertInfo.get(i + 3),
 					vertInfo.get(i + 1));
+			builder.triangle(vertInfo.get(i + 1), vertInfo.get(i), vertInfo.get(i + 2));
+			// VertexInfo corner00 = vertInfo.get(i);
+			// VertexInfo corner10 = vertInfo.get(i + 1);
+			// VertexInfo corner11 = vertInfo.get(i + 3);
+			// VertexInfo corner01 = vertInfo.get(i + 2);
+			// Vector3 normal = baseNormalCoordinates.get(i / 4);
+			// builder.vertex(corner00);
+			// builder.vertex(corner11);
+			// builder.vertex(corner10);
+			// builder.vertex(corner00);
+			// builder.vertex(corner01);
+			// builder.vertex(corner11);
+			// builder.rect(corner00.position.x, corner00.position.y,
+			// corner00.position.z,
+			// corner10.position.x, corner10.position.y, corner10.position.z,
+			// corner11.position.x, corner11.position.y, corner11.position.z,
+			// corner01.position.x, corner01.position.y, corner01.position.z,
+			// normal.x, normal.y, normal.z);
+			// builder.rect(0f, 0f, 0f, 0f, 0f, 50f, 50f, 0f, 50f, 50f, 0f, 0f,
+			// 0f, 1f, 0f);
+			// builder.triangle(corner00, corner11, corner01);
+			// builder.rect(corner00, corner10, corner11, corner01);
 		}
 
 		mesh = builder.end();
@@ -319,12 +353,19 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
 		Model m = new Model();
 		m.nodes.add(new Node());
-
 		Material material = new Material();
 		// material.set(ColorAttribute.createDiffuse(Color.BLUE));
-		// material.set(TextureAttribute.createDiffuse(new Texture(Gdx.files
-		// .internal("data/floor.jpg"))));
+		TextureAttribute texAttr = TextureAttribute.createDiffuse(new Texture(Gdx.files
+				.internal("data/floor2.png")));
+		// texAttr.textureDescription.uWrap = TextureWrap.ClampToEdge;
+		// texAttr.textureDescription.vWrap = TextureWrap.ClampToEdge;
+		// texAttr.textureDescription.minFilter =
+		// TextureFilter.MipMapLinearLinear;
+		// texAttr.textureDescription.magFilter =
+		// TextureFilter.MipMapLinearLinear;
+		material.set(texAttr);
 		NodePart nodePart = new NodePart(meshPart, material);
+
 		m.nodes.get(0).parts.add(nodePart);
 		instance = new ModelInstance(m);
 

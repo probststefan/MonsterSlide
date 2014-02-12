@@ -1,7 +1,6 @@
 package fh.teamproject.utils;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
@@ -29,8 +28,8 @@ public class SlideGenerator {
 
 		for (int i = 0; i < segments; i++) {
 			float x = start.x + (((slideLength - start.x) / segments) * (i + 1));
-			slope = MathUtils.random(maxSlope, minSlope);
-			curvyness = MathUtils.random(maxCurvyness, minCurvyness);
+			slope = 0f;// MathUtils.random(maxSlope, minSlope);
+			curvyness = 0f;// MathUtils.random(maxCurvyness, minCurvyness);
 			Vector3 tmp = getStraightLineYValue(controlPoints.peek(), slope, x, Plane.XY);
 			Vector3 curvy = getStraightLineYValue(controlPoints.peek(), curvyness, x,
 					Plane.XZ);
