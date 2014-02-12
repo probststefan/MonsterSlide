@@ -18,10 +18,10 @@ public class SlideGenerator {
 		float segments = GameScreen.settings.SLIDE_SEGMENTS;
 		float slideLength = GameScreen.settings.SLIDE_LENGTH;
 		float curveDirection = 1f;// verschiebungsrichtung auf z achse
-		float maxSlope = 0f;// -0.5f;
-		float minSlope = 0f;// 0.1f;
-		float maxCurvyness = 0f;// 0.1f;
-		float minCurvyness = 0f;// -0.1f;
+		float maxSlope = -0.5f;
+		float minSlope = 0.1f;
+		float maxCurvyness = 0.1f;
+		float minCurvyness = -0.1f;
 		float curvyness;
 		Vector3 start = new Vector3(0f, 0f, 0f);
 		controlPoints.add(start.cpy()); // Anfangskontrollpunkt
@@ -29,7 +29,7 @@ public class SlideGenerator {
 
 		for (int i = 0; i < segments; i++) {
 			float x = start.x + (((slideLength - start.x) / segments) * (i + 1));
-			// slope = MathUtils.random(maxSlope, minSlope);
+			slope = MathUtils.random(maxSlope, minSlope);
 			curvyness = MathUtils.random(maxCurvyness, minCurvyness);
 			Vector3 tmp = getStraightLineYValue(controlPoints.peek(), slope, x, Plane.XY);
 			Vector3 curvy = getStraightLineYValue(controlPoints.peek(), curvyness, x,

@@ -159,6 +159,8 @@ public class Player extends CollisionEntity implements IPlayer {
 	public void resetAt(Vector3 position) {
 		Matrix4 transform = getModelInstance().transform;
 		transform.setToTranslation(position);
+		transform.rotate(Vector3.Z, 90);
+
 		getRigidBody().setWorldTransform(transform);
 		rigidBody.setLinearVelocity(Vector3.X);
 		rigidBody.setAngularVelocity(new Vector3());
@@ -173,24 +175,23 @@ public class Player extends CollisionEntity implements IPlayer {
 		Material material = new Material(ColorAttribute.createDiffuse(new Color(1f, 1f,
 				1f, 1f)));
 		// Durchmesser der Sphere berechnen.
-		float diameter = radius * 2;
-		float height = 0.5f;
-		Model m = builder.createCylinder(diameter, height, diameter, 16, material,
-				Usage.Position | Usage.Normal);
-
+		float height = radius * 2f;
+		Model m = builder.createCapsule(radius, height * 2, 16, material, Usage.Position
+				| Usage.Normal);
 		instance = new ModelInstance(m, position);
+		instance.transform.rotate(Vector3.Z, 90);
 
 		// Bullet-Eigenschaften setzen.
 		// setCollisionShape(new btCylinderShape(new Vector3(radius, height,
 		// radius)));
-		setCollisionShape(new btCapsuleShape(radius, height * 3.0f));
-
+		btCapsuleShape collisionShape = new btCapsuleShape(radius, height);
+		setCollisionShape(collisionShape);
 		setLocalInertia(new Vector3(0, 0, 0));
 		setMass(GameScreen.settings.PLAYER_MASS); // Masse der Sphere.
 		createMotionState();
 		createRigidBody();
 		// Damit rutscht die Sphere nur noch und rollt nicht mehr.
-		getRigidBody().setAngularFactor(new Vector3(0, 1.0f, 0));
+		// getRigidBody().setAngularFactor(new Vector3(0, 1.0f, 0));
 		rigidBody.setFriction(0.1f);
 		rigidBody.setRestitution(0f);
 		// rigidBody.setMassProps(10.0f, new Vector3(0, 0, 0));
@@ -198,9 +199,10 @@ public class Player extends CollisionEntity implements IPlayer {
 		rigidBody.setCollisionFlags(rigidBody.getCollisionFlags()
 				| btCollisionObject.CollisionFlags.CF_CUSTOM_MATERIAL_CALLBACK);
 		// rigidBody.setInvInertiaDiagLocal(new Vector3());
-
 		setEntityWorldTransform(instance.transform);
-		Gdx.app.log("player", "Masse: " + rigidBody.getInvInertiaTensorWorld());
+
+		// Gdx.app.log("player", "Masse: " +
+		// rigidBody.getInvInertiaTensorWorld());
 	}
 
 	@Override

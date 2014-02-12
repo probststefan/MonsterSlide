@@ -28,7 +28,7 @@ import fh.teamproject.screens.GameScreen;
 public class DebugDrawer {
 
 	public GameScreen gameScreen;
-	public static boolean isDebug = true;
+	public static boolean isDebug = false;
 	public DebugInfoPanel infoPanel;
 	public BulletDebugDrawer bulletdebugDrawer = null;
 	ModelBatch batch = new ModelBatch();
@@ -42,7 +42,7 @@ public class DebugDrawer {
 
 		setDebugMode(btIDebugDraw.DebugDrawModes.DBG_DrawWireframe,
 				GameScreen.camManager.getActiveCamera().combined);
-
+		toggleDebug();
 	}
 
 	public void render() {
