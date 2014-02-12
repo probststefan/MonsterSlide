@@ -27,6 +27,7 @@ public class World implements IWorld {
 	// Die Welt haelt die wichtigsten Elemente inne.
 	private Slide slide;
 	private Player player;
+	private Coin coin;
 
 	// Bullet Infos.
 	private btDiscreteDynamicsWorld dynamicsWorld;
@@ -59,13 +60,13 @@ public class World implements IWorld {
 		info.setRestitution(0.0f);
 		info.setNumIterations(20);
 
-		info.setSplitImpulse(1); // enable split impulse feature
+		// info.setSplitImpulse(1); // enable split impulse feature
 		// optionally set the m_splitImpulsePenetrationThreshold (only used when
 		// m_splitImpulse is enabled)
 		// only enable split impulse position correction when the penetration is
 		// deeper than this m_splitImpulsePenetrationThreshold, otherwise use
 		// the regular velocity/position constraint coupling (Baumgarte).
-		info.setSplitImpulsePenetrationThreshold(-0.02f);
+		// info.setSplitImpulsePenetrationThreshold(-0.02f);
 
 		dynamicsWorld.setGravity(new Vector3(0, worldGravtiy, 0));
 
@@ -77,6 +78,8 @@ public class World implements IWorld {
 		player.getRigidBody().setContactCallbackFlag(4);
 		PlayerTickCallback playerCallback = new PlayerTickCallback(player);
 		playerCallback.attach(dynamicsWorld, false);
+
+		coin = new Coin();
 
 		// Spieler zur Bullet-Welt hinzufuegen.
 		dynamicsWorld.addRigidBody(player.getRigidBody());
@@ -153,6 +156,8 @@ public class World implements IWorld {
 	@Override
 	public void render(ModelBatch batch, Environment lights) {
 		batch.render(player.getModelInstance(), lights);
+		player.render();
 		slide.render(batch, lights);
+		batch.render(coin.getModelInstance(), lights);
 	}
 }

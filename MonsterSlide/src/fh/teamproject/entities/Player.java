@@ -3,6 +3,9 @@ package fh.teamproject.entities;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
+import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
@@ -12,6 +15,7 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.btCapsuleShape;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionObject;
+import com.badlogic.gdx.utils.Array;
 
 import fh.teamproject.controller.player.pc.InputHandling;
 import fh.teamproject.interfaces.IPlayer;
@@ -54,6 +58,10 @@ public class Player extends CollisionEntity implements IPlayer {
 	// wird benoetigt, um die update() methode von InputHandling aufzurufen
 	public InputHandling inputHandling;
 
+	private ParticleEffect effect;
+	private Array<ParticleEmitter> emitters;
+	private Vector3 particlePos;
+
 	public Player() {
 		super();
 		buildPlayer();
@@ -66,6 +74,13 @@ public class Player extends CollisionEntity implements IPlayer {
 		acceleration = GameScreen.settings.PLAYER_ACCEL;
 		turnIntensity = GameScreen.settings.PLAYER_TURN_INTENSITY;
 		MAX_SPEED = GameScreen.settings.PLAYER_MAX_SPEED;
+
+		effect = new ParticleEffect();
+		effect.load(Gdx.files.internal("data/particle.p"), Gdx.files.internal("data"));
+		effect.setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
+		emitters = new Array(effect.getEmitters());
+		effect.getEmitters().clear();
+		effect.getEmitters().add(emitters.get(0));
 	}
 
 	@Override
@@ -82,6 +97,19 @@ public class Player extends CollisionEntity implements IPlayer {
 		// weiter zu bewegen
 		inputHandling.update();
 
+		particlePos = position.cpy();
+		GameScreen.camManager.getActiveCamera().project(particlePos);
+		effect.setPosition(this.particlePos.x, this.particlePos.y);
+	}
+
+	SpriteBatch batch = new SpriteBatch();
+
+	public void render() {
+		batch.setProjectionMatrix(GameScreen.camManager.getActiveCamera().combined);
+		float delta = Gdx.graphics.getDeltaTime();
+		batch.begin();
+		effect.draw(batch, delta);
+		batch.end();
 	}
 
 	public void syncWithBullet() {
