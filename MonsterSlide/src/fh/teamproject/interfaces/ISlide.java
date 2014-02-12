@@ -20,4 +20,5 @@ public interface ISlide {
 
 	public void render(ModelBatch batch, Environment lights);
 
+	public float getSlidedDistance();
 }

@@ -28,6 +28,8 @@ public class Slide implements ISlide {
 	Array<SlideBorder> borders = new Array<SlideBorder>();
 	private CatmullSplineGenerator generator;
 	private ISlidePart tmpSlidePart;
+	private Vector3 nearestControlPoint = null;
+	private float slidedDistance = 0.0f;
 
 	public Slide(btDiscreteDynamicsWorld dynamicsWorld) {
 		this.dynamicsWorld = dynamicsWorld;
@@ -48,6 +50,27 @@ public class Slide implements ISlide {
 
 	@Override
 	public void update(Vector3 playerPosition) {
+		ISlidePart slidePart = slideParts.get(0);
+
+		// for (Vector3 controlPoint : slidePart.getControlPoints()) {
+		for (Vector3 controlPoint : slidePart.getGraphicVertices()) {
+			if (nearestControlPoint == null) {
+				nearestControlPoint = controlPoint;
+				slidedDistance += nearestControlPoint.dst(new Vector3());
+			}
+
+			if (playerPosition.dst(controlPoint) < playerPosition
+					.dst(nearestControlPoint)) {
+				slidedDistance += nearestControlPoint.dst(controlPoint);
+				nearestControlPoint = controlPoint;
+			}
+		}
+
+		System.out.println("Gerutschte Distanz: " + slidedDistance);
+	}
+
+	public float getSlidedDistance() {
+		return this.slidedDistance;
 	}
 
 	/**

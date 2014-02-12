@@ -1,8 +1,11 @@
 package fh.teamproject.entities;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g3d.Environment;
+import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
+import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.btBroadphaseInterface;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionDispatcher;
@@ -28,6 +31,7 @@ public class World implements IWorld {
 	private Slide slide;
 	private Player player;
 	private Coin coin;
+	ModelInstance skydome;
 
 	// Bullet Infos.
 	private btDiscreteDynamicsWorld dynamicsWorld;
@@ -70,7 +74,6 @@ public class World implements IWorld {
 		dynamicsWorld.setGravity(new Vector3(0, worldGravtiy, 0));
 
 		// Rutsche und Spieler erzeugen.
-
 		slide = new Slide(dynamicsWorld);
 		slide.getSlideParts().get(0).getRigidBody().setContactCallbackFlag(2);
 		player = new Player(slide.getStartPosition());
@@ -79,6 +82,13 @@ public class World implements IWorld {
 		playerCallback.attach(dynamicsWorld, false);
 
 		coin = new Coin();
+
+		// Skydome laden.
+		AssetManager asset = new AssetManager();
+		asset.load("data/g3d/skydome.g3db", Model.class);
+		asset.finishLoading();
+
+		skydome = new ModelInstance(asset.get("data/g3d/skydome.g3db", Model.class));
 
 		// Spieler zur Bullet-Welt hinzufuegen.
 		dynamicsWorld.addRigidBody(player.getRigidBody());
@@ -96,6 +106,7 @@ public class World implements IWorld {
 				getFixedTimeStep());
 		performanceCounter.stop();
 		player.update();
+		slide.update(player.position);
 	}
 
 	public void dispose() {
@@ -154,6 +165,9 @@ public class World implements IWorld {
 
 	@Override
 	public void render(ModelBatch batch, Environment lights) {
+		// if (skydome != null)
+		batch.render(skydome);
+
 		batch.render(player.getModelInstance(), lights);
 		player.render();
 		slide.render(batch, lights);

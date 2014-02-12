@@ -51,7 +51,6 @@ public class GameScreen implements Screen {
 	public Hud hud;
 	public Game game;
 
-
 	public GameScreen(Game game) {
 		this.game = game;
 		GameScreen.settings = new Json().fromJson(Settings.class,
@@ -66,8 +65,7 @@ public class GameScreen implements Screen {
 		batch = new ModelBatch();
 
 		lights = new Environment();
-		lights.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f,
-				1f));
+		lights.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f));
 		lights.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
 
 		// Debug
@@ -111,17 +109,19 @@ public class GameScreen implements Screen {
 		}
 		GameScreen.camManager.update();
 		hud.update();
+		hud.setPoints((int) world.getSlide().getSlidedDistance());
 
 		/* RENDER */
 		batch.begin(GameScreen.camManager.getActiveCamera());
 		world.render(batch, lights);
 		batch.end();
 		hud.render();
+
 		if (DebugDrawer.isDebug) {
 			debugDrawer.render();
 		}
-		showFPS();
 
+		showFPS();
 	}
 
 	@Override
@@ -164,8 +164,7 @@ public class GameScreen implements Screen {
 		if (showFps) {
 			// FPS anzeigen.
 			spriteBatch.begin();
-			font.draw(spriteBatch, Gdx.graphics.getFramesPerSecond()
-					+ " fps, Bullet: "
+			font.draw(spriteBatch, Gdx.graphics.getFramesPerSecond() + " fps, Bullet: "
 					+ (int) (world.performanceCounter.load.value * 100f) + "%", 10,
 					Gdx.graphics.getHeight() - 10);
 			spriteBatch.end();

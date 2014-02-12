@@ -179,7 +179,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		Vector3 tmpBezierVec = new Vector3();
 		physicsPointCloud = new FloatArray();
 		/* Der SlidePart wird im Abstand von jeweils 1 Meter diskretisiert */
-		splitting = (1f / GameScreen.settings.SLIDE_LENGTH);
+		splitting = (1f / GameScreen.settings.SLIDE_LENGTH) * 15.0f;
 		float epsilon = 0.01f;
 
 		for (float i = 0; i <= (1 + epsilon); i += splitting) {
@@ -202,7 +202,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
 			binormal.scl(GameScreen.settings.SLIDE_WIDTH);
 			physicsPointCloud
-			.addAll(v.x + binormal.x, v.y + binormal.y, v.z + binormal.z);
+					.addAll(v.x + binormal.x, v.y + binormal.y, v.z + binormal.z);
 
 			if (i == 0) {
 				startPoints[1] = new Vector3(v.x + binormal.x, v.y + binormal.y, v.z
@@ -245,8 +245,8 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		MeshBuilder builder = new MeshBuilder();
 		builder.begin(new VertexAttributes(new VertexAttribute(Usage.Position, 3,
 				ShaderProgram.POSITION_ATTRIBUTE), new VertexAttribute(Usage.Color, 4,
-						ShaderProgram.COLOR_ATTRIBUTE), new VertexAttribute(Usage.Normal, 3,
-								ShaderProgram.NORMAL_ATTRIBUTE)));
+				ShaderProgram.COLOR_ATTRIBUTE), new VertexAttribute(Usage.Normal, 3,
+				ShaderProgram.NORMAL_ATTRIBUTE)));
 		// , new VertexAttribute(
 		// Usage.TextureCoordinates, 2, ShaderProgram.TEXCOORD_ATTRIBUTE)
 

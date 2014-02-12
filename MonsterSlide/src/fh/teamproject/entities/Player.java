@@ -99,7 +99,8 @@ public class Player extends CollisionEntity implements IPlayer {
 
 		particlePos = position.cpy();
 		GameScreen.camManager.getActiveCamera().project(particlePos);
-		effect.setPosition(this.particlePos.x, this.particlePos.y);
+		effect.setPosition(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
 	}
 
 	SpriteBatch batch = new SpriteBatch();

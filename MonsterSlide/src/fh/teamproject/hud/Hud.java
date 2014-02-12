@@ -23,7 +23,11 @@ import fh.teamproject.utils.SkinManager;
 public class Hud {
 
 	public Stage stage;
-	public Table hud, pause;
+	public Table hud, pause, points;
+	private Label labelPoints;
+
+	// Abstand zu den Kanten.
+	private float padding = 10.0f;
 
 	Skin skin;
 	GameScreen gameScreen;
@@ -52,6 +56,22 @@ public class Hud {
 		stage.addActor(pause);
 		pause.setVisible(false);
 		pause.debug(Debug.all);
+
+		points = new Table().top().right().padRight(this.padding).padTop(this.padding);
+		points.setFillParent(true);
+		labelPoints = new Label("1234m", skin);
+		labelPoints.setName("points");
+		points.add(labelPoints);
+		stage.addActor(points);
+	}
+
+	/**
+	 * Setzt die aktuelle Punktezahl des Spielers auf dem Bildschirm.
+	 * 
+	 * @param points
+	 */
+	public void setPoints(int points) {
+		this.labelPoints.setText(points + "");
 	}
 
 	public void setViewport(float width, float height) {
@@ -98,8 +118,8 @@ public class Hud {
 		pixmap.setColor(Color.YELLOW);
 		pixmap.fillCircle((int) tmp.x + (offset / 2), (int) tmp.z + (offset / 2), 3);
 
-		tmp = slideParts.first().getControlPoints().get(slideParts.first()
-				.getControlPoints().size - 1);
+		tmp = slideParts.first().getControlPoints()
+				.get(slideParts.first().getControlPoints().size - 1);
 		pixmap.setColor(Color.GREEN);
 		pixmap.fillCircle((int) tmp.x + (offset / 2), (int) tmp.z + (offset / 2), 3);
 		mapOverview.setDrawable(new TextureRegionDrawable(new TextureRegion(new Texture(
