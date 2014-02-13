@@ -9,8 +9,6 @@ import com.badlogic.gdx.utils.Array;
 
 import fh.teamproject.interfaces.ISlide;
 import fh.teamproject.interfaces.ISlidePart;
-import fh.teamproject.screens.GameScreen;
-import fh.teamproject.utils.CatmullSplineGenerator;
 import fh.teamproject.utils.SlideGenerator;
 
 /**
@@ -27,7 +25,6 @@ public class Slide implements ISlide {
 	btDiscreteDynamicsWorld dynamicsWorld;
 	SlidePartPool pool = new SlidePartPool();
 	Array<SlideBorder> borders = new Array<SlideBorder>();
-	private CatmullSplineGenerator generator;
 	private ISlidePart tmpSlidePart;
 	private Vector3 nearestControlPoint = null;
 	private float slidedDistance = 0.0f;
@@ -35,7 +32,6 @@ public class Slide implements ISlide {
 
 	public Slide(btDiscreteDynamicsWorld dynamicsWorld) {
 		this.dynamicsWorld = dynamicsWorld;
-		// addCatmullSlidePart();
 		addSlidePart();
 	}
 
@@ -54,7 +50,7 @@ public class Slide implements ISlide {
 	public void update(Vector3 playerPosition) {
 		ISlidePart slidePart = slideParts.get(0);
 
-		// for (Vector3 controlPoint : slidePart.getControlPoints()) {
+		// Update slideDistance.
 		for (Vector3 controlPoint : slidePart.getGraphicVertices()) {
 			if (nearestControlPoint == null) {
 				nearestControlPoint = controlPoint;
@@ -105,10 +101,6 @@ public class Slide implements ISlide {
 			batch.render(part.getModelInstance(), lights);
 
 		}
-		for (SlideBorder b : borders) {
-			// batch.render(b.getModelInstance(), lights);
-		}
-
 	}
 
 	@Override
@@ -118,24 +110,5 @@ public class Slide implements ISlide {
 
 		slideParts.add(tmpSlidePart);
 		dynamicsWorld.addRigidBody(tmpSlidePart.getRigidBody());
-	}
-
-	private void addCatmullSlidePart() {
-		generator = new CatmullSplineGenerator();
-		generator.generateSlide();
-
-		if (GameScreen.settings.DEBUG_HILL) {
-			tmpSlidePart = pool.obtain().setCatmullPoints(generator.getPlankPoints());
-		} else {
-			tmpSlidePart = pool.obtain().setCatmullPoints(generator.getPoints());
-		}
-
-		// tmpSlidePart.getRigidBody().setCollisionFlags(
-		// tmpSlidePart.getRigidBody().getCollisionFlags()
-		// | btCollisionObject.CollisionFlags.CF_CUSTOM_MATERIAL_CALLBACK);
-
-		slideParts.add(tmpSlidePart);
-		dynamicsWorld.addRigidBody(tmpSlidePart.getRigidBody());
-		// createSlidePartBorders(tmpSlidePart);
 	}
 }
