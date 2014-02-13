@@ -3,9 +3,6 @@ package fh.teamproject.entities;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
-import com.badlogic.gdx.graphics.g2d.ParticleEffect;
-import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
@@ -15,7 +12,6 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.btCapsuleShape;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionObject;
-import com.badlogic.gdx.utils.Array;
 
 import fh.teamproject.controller.player.pc.InputHandling;
 import fh.teamproject.interfaces.IPlayer;
@@ -41,7 +37,7 @@ public class Player extends CollisionEntity implements IPlayer {
 	public float MAX_SPEED;
 
 	@Debug(name = "Acceleration", isModifiable = true)
-	public float acceleration;
+	public float ACCELERATION;
 
 	@Debug(name = "Radius", isModifiable = false)
 	public float radius = 1f;
@@ -50,7 +46,7 @@ public class Player extends CollisionEntity implements IPlayer {
 	public boolean isGrounded = false;
 
 	@Debug(name = "Turn Intensity", isModifiable = true)
-	public float turnIntensity;
+	public float TURN_INTENSITIY;
 
 	@Debug(name = "Jump Amount", isModifiable = true)
 	private float jumpAmount = 7.0f;
@@ -58,35 +54,16 @@ public class Player extends CollisionEntity implements IPlayer {
 	// wird benoetigt, um die update() methode von InputHandling aufzurufen
 	public InputHandling inputHandling;
 
-	private ParticleEffect effect;
-	private Array<ParticleEmitter> emitters;
-	private Vector3 particlePos;
-
-	public Player() {
-		super();
-		buildPlayer();
-	}
-
 	public Player(Vector3 position) {
 		super();
+
 		this.position = position;
+		inputHandling = new InputHandling(this);
+
 		buildPlayer();
-		acceleration = GameScreen.settings.PLAYER_ACCEL;
-		turnIntensity = GameScreen.settings.PLAYER_TURN_INTENSITY;
-		MAX_SPEED = GameScreen.settings.PLAYER_MAX_SPEED;
-
-		effect = new ParticleEffect();
-		effect.load(Gdx.files.internal("data/particle.p"), Gdx.files.internal("data"));
-		effect.setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
-		emitters = new Array(effect.getEmitters());
-		effect.getEmitters().clear();
-		effect.getEmitters().add(emitters.get(0));
-	}
-
-	@Override
-	public void createMotionState() {
-		motionState = new PlayerMotionState(this);
-
+		this.ACCELERATION = GameScreen.settings.PLAYER_ACCEL;
+		this.TURN_INTENSITIY = GameScreen.settings.PLAYER_TURN_INTENSITY;
+		this.MAX_SPEED = GameScreen.settings.PLAYER_MAX_SPEED;
 	}
 
 	@Override
@@ -96,21 +73,6 @@ public class Player extends CollisionEntity implements IPlayer {
 		// update() wird aufgerufen, um bei gedrueckt-halten der Keys sich immer
 		// weiter zu bewegen
 		inputHandling.update();
-
-		particlePos = position.cpy();
-		GameScreen.camManager.getActiveCamera().project(particlePos);
-		effect.setPosition(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-
-	}
-
-	SpriteBatch batch = new SpriteBatch();
-
-	public void render() {
-		batch.setProjectionMatrix(GameScreen.camManager.getActiveCamera().combined);
-		float delta = Gdx.graphics.getDeltaTime();
-		batch.begin();
-		effect.draw(batch, delta);
-		batch.end();
 	}
 
 	public void syncWithBullet() {
@@ -122,14 +84,14 @@ public class Player extends CollisionEntity implements IPlayer {
 	@Override
 	public void accelerate(float amount) {
 		getRigidBody().applyCentralForce(
-				direction.cpy().scl(acceleration * Gdx.graphics.getDeltaTime()));
+				direction.cpy().scl(ACCELERATION * Gdx.graphics.getDeltaTime()));
 
 	}
 
 	@Override
 	public void brake(float amount) {
 		getRigidBody().applyCentralForce(
-				direction.cpy().scl(-1f * acceleration * Gdx.graphics.getDeltaTime()));
+				direction.cpy().scl(-1f * ACCELERATION * Gdx.graphics.getDeltaTime()));
 
 	}
 
@@ -137,14 +99,14 @@ public class Player extends CollisionEntity implements IPlayer {
 	public void slideLeft() {
 		Vector3 dir = direction.cpy().crs(Vector3.Y).scl(-1f);
 		getRigidBody().applyCentralForce(
-				dir.scl(turnIntensity * Gdx.graphics.getDeltaTime()));
+				dir.scl(TURN_INTENSITIY * Gdx.graphics.getDeltaTime()));
 	}
 
 	@Override
 	public void slideRight() {
 		Vector3 dir = direction.cpy().crs(Vector3.Y);
 		getRigidBody().applyCentralForce(
-				dir.scl(turnIntensity * Gdx.graphics.getDeltaTime()));
+				dir.scl(TURN_INTENSITIY * Gdx.graphics.getDeltaTime()));
 	}
 
 	@Override
@@ -168,42 +130,33 @@ public class Player extends CollisionEntity implements IPlayer {
 	}
 
 	private void buildPlayer() {
-		inputHandling = new InputHandling(this);
-
 		// Grafische Darstellung erstellen
 		ModelBuilder builder = new ModelBuilder();
-
 		Material material = new Material(ColorAttribute.createDiffuse(new Color(1f, 1f,
 				1f, 1f)));
+
 		// Durchmesser der Sphere berechnen.
 		float height = radius * 2f;
 		Model m = builder.createCapsule(radius, height * 2, 16, material, Usage.Position
 				| Usage.Normal);
 		instance = new ModelInstance(m, position);
-		instance.transform.rotate(Vector3.Z, 90);
 
 		// Bullet-Eigenschaften setzen.
-		// setCollisionShape(new btCylinderShape(new Vector3(radius, height,
-		// radius)));
 		btCapsuleShape collisionShape = new btCapsuleShape(radius, height);
 		setCollisionShape(collisionShape);
 		setLocalInertia(new Vector3(0, 0, 0));
 		setMass(GameScreen.settings.PLAYER_MASS); // Masse der Sphere.
-		createMotionState();
+		this.motionState = new PlayerMotionState(this);
 		createRigidBody();
+
 		// Damit rutscht die Sphere nur noch und rollt nicht mehr.
-		// getRigidBody().setAngularFactor(new Vector3(0, 1.0f, 0));
-		rigidBody.setFriction(0.1f);
-		rigidBody.setRestitution(0f);
-		// rigidBody.setMassProps(10.0f, new Vector3(0, 0, 0));
+		this.rigidBody.setAngularFactor(new Vector3(0, 1.0f, 0));
+		this.rigidBody.setFriction(0.1f);
+		this.rigidBody.setRestitution(0f);
 
-		rigidBody.setCollisionFlags(rigidBody.getCollisionFlags()
+		this.rigidBody.setCollisionFlags(this.rigidBody.getCollisionFlags()
 				| btCollisionObject.CollisionFlags.CF_CUSTOM_MATERIAL_CALLBACK);
-		// rigidBody.setInvInertiaDiagLocal(new Vector3());
 		setEntityWorldTransform(instance.transform);
-
-		// Gdx.app.log("player", "Masse: " +
-		// rigidBody.getInvInertiaTensorWorld());
 	}
 
 	@Override

@@ -2,6 +2,7 @@ package fh.teamproject.entities;
 
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld;
 import com.badlogic.gdx.utils.Array;
@@ -30,6 +31,7 @@ public class Slide implements ISlide {
 	private ISlidePart tmpSlidePart;
 	private Vector3 nearestControlPoint = null;
 	private float slidedDistance = 0.0f;
+	private float displayedPoints = 0.0f;
 
 	public Slide(btDiscreteDynamicsWorld dynamicsWorld) {
 		this.dynamicsWorld = dynamicsWorld;
@@ -65,12 +67,12 @@ public class Slide implements ISlide {
 				nearestControlPoint = controlPoint;
 			}
 		}
-
-		System.out.println("Gerutschte Distanz: " + slidedDistance);
 	}
 
 	public float getSlidedDistance() {
-		return this.slidedDistance;
+		this.displayedPoints = Interpolation.linear.apply(this.displayedPoints,
+				this.slidedDistance, 0.1f);
+		return this.displayedPoints;
 	}
 
 	/**

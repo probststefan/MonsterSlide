@@ -11,5 +11,4 @@ public class SlidePartPool extends Pool<ISlidePart> {
 		SlidePart slidePart = new SlidePart();
 		return slidePart;
 	}
-
 }

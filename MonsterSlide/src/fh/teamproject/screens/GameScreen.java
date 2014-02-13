@@ -139,13 +139,11 @@ public class GameScreen implements Screen {
 
 	@Override
 	public void hide() {
-
 	}
 
 	@Override
 	public void pause() {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -156,7 +154,6 @@ public class GameScreen implements Screen {
 
 	@Override
 	public void dispose() {
-		System.out.println("Dispose");
 		world.dispose();
 	}
 

@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.bullet.collision.ClosestRayResultCallback;
 import com.badlogic.gdx.physics.bullet.collision.btBroadphaseInterface;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionDispatcher;
 import com.badlogic.gdx.physics.bullet.collision.btDbvtBroadphase;
@@ -42,8 +43,10 @@ public class World implements IWorld {
 	private int maxSubSteps = 3;
 	private float fixedTimeStep = 1 / 30f;
 	private float worldGravtiy = -9.81f;
+	private final float checkPlayerOnSlideRayDepth = 100.0f;
 
 	private TriangleMeshCollisionFixer myContactListener;
+	private ClosestRayResultCallback resultCallback;
 
 	public PerformanceCounter performanceCounter = new PerformanceCounter(this.getClass()
 			.getSimpleName());
@@ -96,6 +99,11 @@ public class World implements IWorld {
 		// ContactListener initialisieren.
 		myContactListener = new TriangleMeshCollisionFixer();
 		myContactListener.enable();
+
+		// Wird fuer checkIsPlayerOnSlide() benoetigt.
+		resultCallback = new ClosestRayResultCallback(player.position, new Vector3(
+				player.position.x, player.position.y - this.checkPlayerOnSlideRayDepth,
+				player.position.z));
 	}
 
 	public void update() {
@@ -107,6 +115,12 @@ public class World implements IWorld {
 		performanceCounter.stop();
 		player.update();
 		slide.update(player.position);
+		// Der Skydome soll den Player verfolgen.
+		skydome.transform.setToTranslation(player.position);
+
+		if (!checkIsPlayerOnSlide()) {
+			this.gameScreen.game.setScreen(new MenuScreen(this.gameScreen.game));
+		}
 	}
 
 	public void dispose() {
@@ -115,6 +129,7 @@ public class World implements IWorld {
 		broadphase.dispose();
 		dispatcher.dispose();
 		collisionConfiguration.dispose();
+		resultCallback.dispose();
 
 		for (int i = 0; i < slide.getSlideParts().size; ++i) {
 			slide.getSlideParts().get(i).dispose();
@@ -169,8 +184,28 @@ public class World implements IWorld {
 		batch.render(skydome);
 
 		batch.render(player.getModelInstance(), lights);
-		player.render();
 		slide.render(batch, lights);
 		batch.render(coin.getModelInstance(), lights);
+	}
+
+	/**
+	 * Gibt an ob der Player sich noch auf der Rutsche befindet oder schon
+	 * runtergefallen ist.
+	 * 
+	 * @return boolean
+	 */
+	private boolean checkIsPlayerOnSlide() {
+		resultCallback.setCollisionObject(null);
+		resultCallback.setClosestHitFraction(1f);
+		resultCallback.getRayFromWorld().setValue(player.position.x, player.position.y,
+				player.position.z);
+		resultCallback.getRayToWorld().setValue(player.position.x,
+				player.position.y - this.checkPlayerOnSlideRayDepth, player.position.z);
+
+		dynamicsWorld.rayTest(player.position, new Vector3(player.position.x,
+				player.position.y - this.checkPlayerOnSlideRayDepth, player.position.z),
+				resultCallback);
+
+		return resultCallback.hasHit();
 	}
 }

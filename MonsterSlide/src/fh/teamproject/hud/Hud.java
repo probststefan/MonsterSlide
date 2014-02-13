@@ -27,7 +27,7 @@ public class Hud {
 	private Label labelPoints;
 
 	// Abstand zu den Kanten.
-	private float padding = 10.0f;
+	private float padding = 15.0f;
 
 	Skin skin;
 	GameScreen gameScreen;
@@ -57,7 +57,7 @@ public class Hud {
 		pause.setVisible(false);
 		pause.debug(Debug.all);
 
-		points = new Table().top().right().padRight(this.padding).padTop(this.padding);
+		points = new Table().bottom().left().padLeft(this.padding).padTop(this.padding);
 		points.setFillParent(true);
 		labelPoints = new Label("1234m", skin);
 		labelPoints.setName("points");
@@ -70,8 +70,8 @@ public class Hud {
 	 * 
 	 * @param points
 	 */
-	public void setPoints(int points) {
-		this.labelPoints.setText(points + "");
+	public void setPoints(float points) {
+		this.labelPoints.setText((int) points + "");
 	}
 
 	public void setViewport(float width, float height) {

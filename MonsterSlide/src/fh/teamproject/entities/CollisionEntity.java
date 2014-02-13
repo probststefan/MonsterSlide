@@ -37,7 +37,9 @@ public abstract class CollisionEntity extends Entitiy implements ICollisionEntit
 	@Override
 	public void dispose() {
 		rigidBody.dispose();
-		motionState.dispose();
+		if (motionState != null) {
+			motionState.dispose();
+		}
 		collisionShape.dispose();
 		rigidBodyInfo.dispose();
 	}
