@@ -69,8 +69,9 @@ public class Slide implements ISlide {
 		System.out.println("Gerutschte Distanz: " + slidedDistance);
 	}
 
+	@Override
 	public float getSlidedDistance() {
-		return this.slidedDistance;
+		return slidedDistance;
 	}
 
 	/**
@@ -100,9 +101,10 @@ public class Slide implements ISlide {
 	public void render(ModelBatch batch, Environment lights) {
 		for (ISlidePart part : slideParts) {
 			batch.render(part.getModelInstance(), lights);
+
 		}
 		for (SlideBorder b : borders) {
-			batch.render(b.getModelInstance(), lights);
+			// batch.render(b.getModelInstance(), lights);
 		}
 
 	}

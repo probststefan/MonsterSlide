@@ -109,6 +109,7 @@ public class GameScreen implements Screen {
 
 	@Override
 	public void render(float delta) {
+		// Gdx.gl.glEnable(GL20.GL_TEXTURE);
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1f);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
@@ -123,8 +124,8 @@ public class GameScreen implements Screen {
 
 		/* RENDER */
 		batch.begin(GameScreen.camManager.getActiveCamera());
+		batch.render(test, lights);
 		world.render(batch, lights);
-		// batch.render(test, lights);
 		batch.end();
 		hud.render();
 
@@ -151,6 +152,7 @@ public class GameScreen implements Screen {
 		rect.materials.add(material);
 		test = new ModelInstance(rect);
 	}
+
 	@Override
 	public void resize(int width, int height) {
 		GameScreen.camManager.setViewport(width, height);
@@ -183,7 +185,6 @@ public class GameScreen implements Screen {
 
 	@Override
 	public void dispose() {
-		System.out.println("Dispose");
 		world.dispose();
 	}
 

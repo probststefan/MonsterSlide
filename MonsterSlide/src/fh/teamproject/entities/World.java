@@ -166,12 +166,10 @@ public class World implements IWorld {
 
 	@Override
 	public void render(ModelBatch batch, Environment lights) {
-		// if (skydome != null)
-		batch.render(skydome);
+		if (skydome != null)
+			batch.render(skydome);
 
 		batch.render(player.getModelInstance(), lights);
-		player.render();
 		slide.render(batch, lights);
-		batch.render(coin.getModelInstance(), lights);
 	}
 }
