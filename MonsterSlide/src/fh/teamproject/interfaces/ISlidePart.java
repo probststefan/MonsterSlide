@@ -20,14 +20,6 @@ public interface ISlidePart extends ICollisionEntity {
 	public Array<Vector3> getGraphicVertices();
 
 	/**
-	 * Gibt die Vertices zurück, die zur Erstellung der konvexen Hülle genutzt
-	 * werden. Sie sind als geschlossener konkaver Polygonzug modelliert.
-	 * 
-	 * @return
-	 */
-	public float[] getPhysicsVertices();
-
-	/**
 	 * Gibt die interpolierten Punkte zurück, die zum Aufbau der Physik und
 	 * Rendering genutzt werden
 	 * 

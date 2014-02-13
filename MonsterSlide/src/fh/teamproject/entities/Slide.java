@@ -69,6 +69,7 @@ public class Slide implements ISlide {
 		}
 	}
 
+	@Override
 	public float getSlidedDistance() {
 		this.displayedPoints = Interpolation.linear.apply(this.displayedPoints,
 				this.slidedDistance, 0.1f);
@@ -102,9 +103,10 @@ public class Slide implements ISlide {
 	public void render(ModelBatch batch, Environment lights) {
 		for (ISlidePart part : slideParts) {
 			batch.render(part.getModelInstance(), lights);
+
 		}
 		for (SlideBorder b : borders) {
-			batch.render(b.getModelInstance(), lights);
+			// batch.render(b.getModelInstance(), lights);
 		}
 
 	}

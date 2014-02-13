@@ -6,12 +6,19 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.Environment;
+import com.badlogic.gdx.graphics.g3d.Material;
+import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
+import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
+import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
+import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.utils.Json;
 
 import fh.teamproject.controller.player.android.SwipeController;
@@ -96,11 +103,15 @@ public class GameScreen implements Screen {
 			spriteBatch = new SpriteBatch();
 			font = new BitmapFont();
 		}
+
+		setupTestModel();
 	}
 
 	@Override
 	public void render(float delta) {
+		// Gdx.gl.glEnable(GL20.GL_TEXTURE);
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1f);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
 		/* UPDATE */
@@ -113,6 +124,7 @@ public class GameScreen implements Screen {
 
 		/* RENDER */
 		batch.begin(GameScreen.camManager.getActiveCamera());
+		batch.render(test, lights);
 		world.render(batch, lights);
 		batch.end();
 		hud.render();
@@ -122,6 +134,23 @@ public class GameScreen implements Screen {
 		}
 
 		showFPS();
+	}
+
+	ModelInstance test;
+
+	private void setupTestModel() {
+		ModelBuilder builder = new ModelBuilder();
+		Material material = new Material();
+		TextureAttribute texAttr = TextureAttribute.createDiffuse(new Texture(Gdx.files
+				.internal("data/floor2.png")));
+		material.set(texAttr);
+
+		Model rect = builder.createRect(0f, 0f, 0f, 0f, 0f, 50f, 50f, 0f, 50f, 50f, 0f,
+				0f, 0f, 1f, 0f, material, Usage.Position | Usage.TextureCoordinates
+				| Usage.Normal);
+
+		rect.materials.add(material);
+		test = new ModelInstance(rect);
 	}
 
 	@Override

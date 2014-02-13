@@ -3,7 +3,6 @@ package fh.teamproject.entities;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.Texture;
@@ -13,6 +12,7 @@ import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.model.MeshPart;
 import com.badlogic.gdx.graphics.g3d.model.Node;
 import com.badlogic.gdx.graphics.g3d.model.NodePart;
@@ -20,20 +20,15 @@ import com.badlogic.gdx.graphics.g3d.utils.MeshBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder.VertexInfo;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.CatmullRomSpline;
-import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.Collision;
 import com.badlogic.gdx.physics.bullet.collision.btBvhTriangleMeshShape;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
-import com.badlogic.gdx.physics.bullet.collision.btCompoundShape;
-import com.badlogic.gdx.physics.bullet.collision.btConvexHullShape;
 import com.badlogic.gdx.physics.bullet.collision.btIndexedMesh;
 import com.badlogic.gdx.physics.bullet.collision.btTriangleIndexVertexArray;
 import com.badlogic.gdx.physics.bullet.collision.btTriangleInfoMap;
-import com.badlogic.gdx.physics.bullet.collision.btTriangleMesh;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.FloatArray;
 import com.badlogic.gdx.utils.Pool.Poolable;
 
 import fh.teamproject.interfaces.ISlidePart;
@@ -45,14 +40,11 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 	private CatmullRomSpline<Vector3> catmullRom;
 	Array<Vector3> controlPoints;
 	/*
-	 * Die abgeleiteten Punkte der Spline für Rendering und Physik basierend auf
-	 * einem splitting
+	 * Die interpolierten Punkte der Spline
 	 */
 	private Array<Vector3> vertices = new Array<Vector3>();
 	/* Das Splitting mit dem die Spline diskretisiert wird */
 	private float splitting;
-	/* Die Punkte zur Erstellung der konvexen Hülle als Polygon angeordnet */
-	private FloatArray physicsPointCloud;
 	/*
 	 * Die Punkte zum Rendering in alternierender Reihenfolge (links, rechts,
 	 * links, rechts)
@@ -105,112 +97,33 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		return startPoints;
 	}
 
-	public enum ShapeType {
-		triangles, convexhull, indexedmesh
-	};
-
 	private void setup() {
-		computePointCloud();
-		createModelInstance();
-		btCollisionShape collisionShape = null;
+		/* Die Schrittweite zum interpolieren der Spline */
+		float stepSize = 10f;
+		/*
+		 * Der SlidePart wird im Abstand von jeweils stepSize Meter
+		 * diskretisiert
+		 */
+		splitting = (1f / GameScreen.settings.SLIDE_LENGTH) * stepSize;
 
-		ShapeType type = ShapeType.indexedmesh;
-		switch (type) {
-		case triangles:
-			btTriangleMesh tetraMesh = new btTriangleMesh();
-			for (int i = 0; i <= (graphicsVertices.size - 4); i += 4) {
-				tetraMesh.addTriangle(graphicsVertices.get(i + 2),
-						graphicsVertices.get(i + 1), graphicsVertices.get(i));
+		Vector3 interpolatedVertex = new Vector3();
+		float epsilon = 0.01f;
 
-				tetraMesh.addTriangle(graphicsVertices.get(i + 3),
-						graphicsVertices.get(i + 2), graphicsVertices.get(i + 1));
-			}
-			collisionShape = new btBvhTriangleMeshShape(tetraMesh, true);
-			break;
-		case convexhull:
-			// btCompoundShape compoundShape = new btCompoundShape();
-			collisionShape = new btCompoundShape();
-			for (int i = 0; i <= (graphicsVertices.size - 4); i += 4) {
-				btConvexHullShape convexHullShape = new btConvexHullShape();
+		for (float i = 0; i <= (1 + epsilon); i += splitting) {
+			catmullRom.valueAt(interpolatedVertex, i);
+			// Normale und Binormale berechnen
+			calcBaseCoordinates(catmullRom, i);
+			vertices.add(new Vector3(interpolatedVertex));
 
-				convexHullShape.addPoint(graphicsVertices.get(i));
-				convexHullShape.addPoint(graphicsVertices.get(i + 1));
-				convexHullShape.addPoint(graphicsVertices.get(i + 3));
-				convexHullShape.addPoint(graphicsVertices.get(i + 2));
-
-				((btCompoundShape) collisionShape).addChildShape(new Matrix4().idt(),
-						convexHullShape);
-
-			}
-			break;
-		case indexedmesh:
-			// Stefans Test
-
-			btIndexedMesh indexedMesh = new btIndexedMesh(mesh);
-			btTriangleIndexVertexArray triangleVertexArray = new btTriangleIndexVertexArray();
-			triangleVertexArray.addIndexedMesh(indexedMesh);
-
-			collisionShape = new btBvhTriangleMeshShape(triangleVertexArray, true);
-			collisionShape.setMargin(0.01f);
-
-			triangleInfoMap = new btTriangleInfoMap();
-			// now you can adjust some thresholds in triangleInfoMap if needed.
-			triangleInfoMap.setEdgeDistanceThreshold(25.0f);
-
-			// btGenerateInternalEdgeInfo fills in the btTriangleInfoMap and
-			// stores
-			// it as a user pointer of collisionShape
-			// (collisionShape->setUserPointer(triangleInfoMap))
-			Collision.btGenerateInternalEdgeInfo((btBvhTriangleMeshShape) collisionShape,
-					triangleInfoMap);
-			break;
-		default:
-			break;
 		}
 
-		setCollisionShape(collisionShape);
+		createModelInstance();
+		createCollisionShape();
+
 		createRigidBody();
 		setMass(1000f);
 		getRigidBody().setFriction(0.1f);
 		getRigidBody().setRestitution(0f);
-	}
-
-	private void computePointCloud() {
-		Vector3 tmpBezierVec = new Vector3();
-		physicsPointCloud = new FloatArray();
-		/* Der SlidePart wird im Abstand von jeweils 1 Meter diskretisiert */
-		splitting = (1f / GameScreen.settings.SLIDE_LENGTH) * 15.0f;
-		float epsilon = 0.01f;
-
-		for (float i = 0; i <= (1 + epsilon); i += splitting) {
-			// Punkte der Bezier Kurve setzen.
-			catmullRom.valueAt(tmpBezierVec, i);
-
-			// Base Koordinaten zu diesem Punkt berechnen und ablegen.
-			calcBaseCoordinates(catmullRom, i);
-
-			physicsPointCloud.add(tmpBezierVec.x);
-			physicsPointCloud.add(tmpBezierVec.y);
-			physicsPointCloud.add(tmpBezierVec.z);
-			vertices.add(new Vector3(tmpBezierVec));
-
-		}
-
-		for (int i = vertices.size - 1; i >= 0; --i) {
-			Vector3 v = vertices.get(i);
-			Vector3 binormal = baseCoordinates.get(i);
-
-			binormal.scl(GameScreen.settings.SLIDE_WIDTH);
-			physicsPointCloud
-					.addAll(v.x + binormal.x, v.y + binormal.y, v.z + binormal.z);
-
-			if (i == 0) {
-				startPoints[1] = new Vector3(v.x + binormal.x, v.y + binormal.y, v.z
-						+ binormal.z);
-			}
-		}
-
-		tmpBezierVec = null;
 	}
 
 	/**
@@ -240,19 +153,36 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		baseCoordinates.add(binormal);
 	}
 
+	private void createCollisionShape() {
+		btCollisionShape collisionShape = null;
+
+		btIndexedMesh indexedMesh = new btIndexedMesh(mesh);
+		btTriangleIndexVertexArray triangleVertexArray = new btTriangleIndexVertexArray();
+		triangleVertexArray.addIndexedMesh(indexedMesh);
+
+		collisionShape = new btBvhTriangleMeshShape(triangleVertexArray, true);
+		collisionShape.setMargin(0.01f);
+
+		triangleInfoMap = new btTriangleInfoMap();
+		// now you can adjust some thresholds in triangleInfoMap if needed.
+		triangleInfoMap.setEdgeDistanceThreshold(25.0f);
+
+		// btGenerateInternalEdgeInfo fills in the btTriangleInfoMap and
+		// stores
+		// it as a user pointer of collisionShape
+		// (collisionShape->setUserPointer(triangleInfoMap))
+		Collision.btGenerateInternalEdgeInfo((btBvhTriangleMeshShape) collisionShape,
+				triangleInfoMap);
+
+		setCollisionShape(collisionShape);
+	}
 	private void createModelInstance() {
 		Array<VertexInfo> vertInfo = new Array<VertexInfo>();
-		MeshBuilder builder = new MeshBuilder();
-		builder.begin(new VertexAttributes(new VertexAttribute(Usage.Position, 3,
-				ShaderProgram.POSITION_ATTRIBUTE), new VertexAttribute(Usage.Color, 4,
-				ShaderProgram.COLOR_ATTRIBUTE), new VertexAttribute(Usage.Normal, 3,
-				ShaderProgram.NORMAL_ATTRIBUTE)));
-		// , new VertexAttribute(
-		// Usage.TextureCoordinates, 2, ShaderProgram.TEXCOORD_ATTRIBUTE)
 
 		for (int i = 0; i < vertices.size; ++i) {
 			Vector3 v = vertices.get(i);
 			Vector3 binormal = baseCoordinates.get(i);
+			binormal.scl(GameScreen.settings.SLIDE_WIDTH);
 
 			graphicsVertices.add(new Vector3(v.x, v.y, v.z));
 			graphicsVertices.add(new Vector3(v.x + binormal.x, v.y + binormal.y, v.z
@@ -269,43 +199,40 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
 			Vector3 normal = baseNormalCoordinates.get(i / 4);
 
-			Color col = Color.DARK_GRAY;
-			Vector3 v1 = graphicsVertices.get(i).cpy();
-			v1.sub(graphicsVertices.get(i + 1));
-			Vector3 v2 = graphicsVertices.get(i).cpy();
-			v2.sub(graphicsVertices.get(i + 2));
-			Vector3 nor = v1.crs(v2).nor();
-			// Gdx.app.log("slidepart",
-			// "soll " + nor + " ist " + normal + " " + nor.equals(normal));
-			// normal.set(Vector3.Y);
+			float uMin = 0f, uMax = 1f, vMin = 0f, vMax = 1f;
 
 			VertexInfo info = new VertexInfo();
-			info.set(graphicsVertices.get(i), normal, col, new Vector2(1, 0));
+			info.set(null, null, null, null).setPos(graphicsVertices.get(i))
+					.setNor(normal).setUV(new Vector2(uMin, vMin));
 			vertInfo.add(info);
 
 			info = new VertexInfo();
-			// col = Color.RED;
-			info.set(graphicsVertices.get(i + 1), normal, col, new Vector2(1, 1));
+			info.set(null, null, null, null).setPos(graphicsVertices.get(i + 1))
+					.setNor(normal).setUV(new Vector2(uMax, vMin));
 			vertInfo.add(info);
 
 			info = new VertexInfo();
-			// col = Color.GREEN;
-			info.set(graphicsVertices.get(i + 2), normal, col, new Vector2(0, 0));
+			info.set(null, null, null, null).setPos(graphicsVertices.get(i + 2))
+					.setNor(normal).setUV(new Vector2(uMin, vMax));
 			vertInfo.add(info);
 
 			info = new VertexInfo();
-			// col = Color.YELLOW;
-			info.set(graphicsVertices.get(i + 3), normal, col, new Vector2(0, 1));
+			info.set(null, null, null, null).setPos(graphicsVertices.get(i + 3))
+					.setNor(normal).setUV(new Vector2(uMax, vMax));
 			vertInfo.add(info);
 
 		}
-
+		MeshBuilder builder = new MeshBuilder();
+		builder.begin(new VertexAttributes(new VertexAttribute(Usage.Position, 3,
+				ShaderProgram.POSITION_ATTRIBUTE), new VertexAttribute(Usage.Normal, 3,
+				ShaderProgram.NORMAL_ATTRIBUTE), new VertexAttribute(
+				Usage.TextureCoordinates, 2, ShaderProgram.TEXCOORD_ATTRIBUTE)));
 		builder.part("part1", GL10.GL_TRIANGLES);
 
 		for (int i = 0; i <= (vertInfo.size - 4); i += 4) {
-			builder.triangle(vertInfo.get(i + 2), vertInfo.get(i + 1), vertInfo.get(i));
 			builder.triangle(vertInfo.get(i + 2), vertInfo.get(i + 3),
 					vertInfo.get(i + 1));
+			builder.triangle(vertInfo.get(i + 1), vertInfo.get(i), vertInfo.get(i + 2));
 		}
 
 		mesh = builder.end();
@@ -319,30 +246,26 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
 		Model m = new Model();
 		m.nodes.add(new Node());
-
 		Material material = new Material();
-		// material.set(ColorAttribute.createDiffuse(Color.BLUE));
-		// material.set(TextureAttribute.createDiffuse(new Texture(Gdx.files
-		// .internal("data/floor.jpg"))));
+		TextureAttribute texAttr = TextureAttribute.createDiffuse(new Texture(Gdx.files
+				.internal("data/floor2.png")));
+
+		material.set(texAttr);
 		NodePart nodePart = new NodePart(meshPart, material);
+
 		m.nodes.get(0).parts.add(nodePart);
 		instance = new ModelInstance(m);
-
 	}
 
 	@Override
 	public void reset() {
-		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void render() {
 	}
 
-	@Override
-	public float[] getPhysicsVertices() {
-		return physicsPointCloud.toArray();
-	}
 
 	@Override
 	public Array<Vector3> getInterpolatedVertices() {
