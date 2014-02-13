@@ -104,7 +104,6 @@ public class GameScreen implements Screen {
 			font = new BitmapFont();
 		}
 
-		setupTestModel();
 	}
 
 	@Override
@@ -124,7 +123,6 @@ public class GameScreen implements Screen {
 
 		/* RENDER */
 		batch.begin(GameScreen.camManager.getActiveCamera());
-		batch.render(test, lights);
 		world.render(batch, lights);
 		batch.end();
 		hud.render();
@@ -136,22 +134,6 @@ public class GameScreen implements Screen {
 		showFPS();
 	}
 
-	ModelInstance test;
-
-	private void setupTestModel() {
-		ModelBuilder builder = new ModelBuilder();
-		Material material = new Material();
-		TextureAttribute texAttr = TextureAttribute.createDiffuse(new Texture(Gdx.files
-				.internal("data/floor2.png")));
-		material.set(texAttr);
-
-		Model rect = builder.createRect(0f, 0f, 0f, 0f, 0f, 50f, 50f, 0f, 50f, 50f, 0f,
-				0f, 0f, 1f, 0f, material, Usage.Position | Usage.TextureCoordinates
-				| Usage.Normal);
-
-		rect.materials.add(material);
-		test = new ModelInstance(rect);
-	}
 
 	@Override
 	public void resize(int width, int height) {

@@ -96,14 +96,6 @@ public class Slide implements ISlide {
 	}
 
 	@Override
-	public void render(ModelBatch batch, Environment lights) {
-		for (ISlidePart part : slideParts) {
-			batch.render(part.getModelInstance(), lights);
-
-		}
-	}
-
-	@Override
 	public void addSlidePart() {
 		tmpSlidePart = pool.obtain().setControlPoints(
 				Slide.slideGenerator.generateControlPoints());

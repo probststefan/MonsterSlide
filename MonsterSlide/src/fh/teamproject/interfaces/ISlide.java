@@ -18,7 +18,5 @@ public interface ISlide {
 
 	public void update(Vector3 playerPosition);
 
-	public void render(ModelBatch batch, Environment lights);
-
 	public float getSlidedDistance();
 }

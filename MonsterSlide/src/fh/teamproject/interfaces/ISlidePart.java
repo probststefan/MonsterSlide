@@ -9,8 +9,6 @@ public interface ISlidePart extends ICollisionEntity {
 
 	public Vector3[] getStartPoints();
 
-	public void render();
-
 	/**
 	 * Gibt die Vertices zurück, die zur Erstellung des Models genutzt werden.
 	 * Sie sind anders sortiert als die Physikvertices.

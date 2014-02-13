@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.VertexAttribute;
@@ -176,6 +177,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
 		setCollisionShape(collisionShape);
 	}
+
 	private void createModelInstance() {
 		Array<VertexInfo> vertInfo = new Array<VertexInfo>();
 
@@ -202,23 +204,23 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 			float uMin = 0f, uMax = 1f, vMin = 0f, vMax = 1f;
 
 			VertexInfo info = new VertexInfo();
-			info.set(null, null, null, null).setPos(graphicsVertices.get(i))
-					.setNor(normal).setUV(new Vector2(uMin, vMin));
+			info.setPos(graphicsVertices.get(i)).setNor(normal)
+					.setUV(new Vector2(uMin, vMin));
 			vertInfo.add(info);
 
 			info = new VertexInfo();
-			info.set(null, null, null, null).setPos(graphicsVertices.get(i + 1))
-					.setNor(normal).setUV(new Vector2(uMax, vMin));
+			info.setPos(graphicsVertices.get(i + 1)).setNor(normal)
+					.setUV(new Vector2(uMax, vMin));
 			vertInfo.add(info);
 
 			info = new VertexInfo();
-			info.set(null, null, null, null).setPos(graphicsVertices.get(i + 2))
-					.setNor(normal).setUV(new Vector2(uMin, vMax));
+			info.setPos(graphicsVertices.get(i + 2)).setNor(normal)
+					.setUV(new Vector2(uMin, vMax));
 			vertInfo.add(info);
 
 			info = new VertexInfo();
-			info.set(null, null, null, null).setPos(graphicsVertices.get(i + 3))
-					.setNor(normal).setUV(new Vector2(uMax, vMax));
+			info.setPos(graphicsVertices.get(i + 3)).setNor(normal)
+					.setUV(new Vector2(uMax, vMax));
 			vertInfo.add(info);
 
 		}
@@ -227,7 +229,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 				ShaderProgram.POSITION_ATTRIBUTE), new VertexAttribute(Usage.Normal, 3,
 				ShaderProgram.NORMAL_ATTRIBUTE), new VertexAttribute(
 				Usage.TextureCoordinates, 2, ShaderProgram.TEXCOORD_ATTRIBUTE)));
-		builder.part("part1", GL10.GL_TRIANGLES);
+		builder.part("part1", GL20.GL_TRIANGLES);
 
 		for (int i = 0; i <= (vertInfo.size - 4); i += 4) {
 			builder.triangle(vertInfo.get(i + 2), vertInfo.get(i + 3),
@@ -239,33 +241,29 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
 		MeshPart meshPart = new MeshPart();
 		meshPart.id = "SlidePart" + id;
-		meshPart.primitiveType = GL10.GL_TRIANGLES;
+		meshPart.primitiveType = GL20.GL_TRIANGLES;
 		meshPart.mesh = mesh;
 		meshPart.indexOffset = 0;
 		meshPart.numVertices = mesh.getNumVertices();
 
-		Model m = new Model();
-		m.nodes.add(new Node());
+		Model model = new Model();
+		Node node = new Node();
+		model.nodes.add(node);
 		Material material = new Material();
 		TextureAttribute texAttr = TextureAttribute.createDiffuse(new Texture(Gdx.files
 				.internal("data/floor2.png")));
-
 		material.set(texAttr);
 		NodePart nodePart = new NodePart(meshPart, material);
+		node.parts.add(nodePart);
+		model.materials.add(material);
 
-		m.nodes.get(0).parts.add(nodePart);
-		instance = new ModelInstance(m);
+		instance = new ModelInstance(model);
 	}
 
 	@Override
 	public void reset() {
 
 	}
-
-	@Override
-	public void render() {
-	}
-
 
 	@Override
 	public Array<Vector3> getInterpolatedVertices() {
