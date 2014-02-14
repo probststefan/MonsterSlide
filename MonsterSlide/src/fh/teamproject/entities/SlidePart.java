@@ -3,7 +3,6 @@ package fh.teamproject.entities;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.Texture;
@@ -59,6 +58,10 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
 	public Texture texture;
 	public Mesh mesh;
+
+	// Bullet-Daten (Werden hier zum spaeteren disposen benoetigt)
+	btTriangleIndexVertexArray triangleVertexArray;
+	btIndexedMesh indexedMesh;
 
 	private btTriangleInfoMap triangleInfoMap;
 
@@ -157,8 +160,8 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 	private void createCollisionShape() {
 		btCollisionShape collisionShape = null;
 
-		btIndexedMesh indexedMesh = new btIndexedMesh(mesh);
-		btTriangleIndexVertexArray triangleVertexArray = new btTriangleIndexVertexArray();
+		indexedMesh = new btIndexedMesh(mesh);
+		triangleVertexArray = new btTriangleIndexVertexArray();
 		triangleVertexArray.addIndexedMesh(indexedMesh);
 
 		collisionShape = new btBvhTriangleMeshShape(triangleVertexArray, true);
@@ -264,6 +267,12 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 	@Override
 	public void reset() {
 
+	}
+
+	public void dispose() {
+		triangleInfoMap.dispose();
+		triangleVertexArray.dispose();
+		indexedMesh.dispose();
 	}
 
 	@Override

@@ -6,21 +6,8 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL10;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g3d.Environment;
-import com.badlogic.gdx.graphics.g3d.Material;
-import com.badlogic.gdx.graphics.g3d.Model;
-import com.badlogic.gdx.graphics.g3d.ModelBatch;
-import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
-import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
-import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
-import com.badlogic.gdx.graphics.g3d.utils.DefaultTextureBinder;
-import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
-import com.badlogic.gdx.graphics.g3d.utils.RenderContext;
 import com.badlogic.gdx.utils.Json;
 
 import fh.teamproject.controller.player.android.SwipeController;
@@ -46,8 +33,6 @@ public class GameScreen implements Screen {
 	// Controller
 	public SwipeController swipeController;
 
-
-
 	// Logic
 	public World world;
 	public Player player;
@@ -68,9 +53,6 @@ public class GameScreen implements Screen {
 		GameScreen.camManager = new CameraManager(this);
 		GameScreen.camManager.setMode(Mode.FREE);
 
-
-
-
 		// Debug
 		debugDrawer = new DebugDrawer(this);
 
@@ -86,7 +68,6 @@ public class GameScreen implements Screen {
 		debugInputMul.addProcessor(DebugInfoPanel.stage);
 		debugInputMul.addProcessor((InputProcessor) GameScreen.camManager
 				.getController(Mode.FREE));
-
 
 		// gameInputMul.addProcessor(this.player.inputHandling);
 		gameInputMul.addProcessor(hud.stage);
@@ -107,23 +88,28 @@ public class GameScreen implements Screen {
 		Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1f);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
-		/* UPDATE */
-		if (!isPaused) {
-			world.update();
+		if (!world.checkIsPlayerOnSlide() && !isPaused) {
+			this.game.setScreen(new MenuScreen(this.game));
+			this.dispose();
+		} else {
+			/* UPDATE */
+			if (!isPaused) {
+				world.update();
+			}
+			GameScreen.camManager.update();
+			hud.update();
+			hud.setPoints((int) world.getSlide().getSlidedDistance());
+
+			/* RENDER */
+			world.render();
+			hud.render();
+
+			if (DebugDrawer.isDebug) {
+				debugDrawer.render();
+			}
+
+			showFPS();
 		}
-		GameScreen.camManager.update();
-		hud.update();
-		hud.setPoints((int) world.getSlide().getSlidedDistance());
-
-		/* RENDER */
-		world.render();
-		hud.render();
-
-		if (DebugDrawer.isDebug) {
-			debugDrawer.render();
-		}
-
-		showFPS();
 	}
 
 	@Override
@@ -156,6 +142,7 @@ public class GameScreen implements Screen {
 
 	@Override
 	public void dispose() {
+		camManager.dispose();
 		world.dispose();
 	}
 

@@ -2,8 +2,6 @@ package fh.teamproject.entities;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g3d.Environment;
@@ -14,9 +12,7 @@ import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
-import com.badlogic.gdx.graphics.g3d.shaders.DefaultShader;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.ClosestRayResultCallback;
 import com.badlogic.gdx.physics.bullet.collision.btBroadphaseInterface;
@@ -142,10 +138,6 @@ public class World implements IWorld {
 		slide.update(player.position);
 		// Der Skydome soll den Player verfolgen.
 		skydome.transform.setToTranslation(player.position);
-
-		if (!checkIsPlayerOnSlide()) {
-			this.gameScreen.game.setScreen(new MenuScreen(this.gameScreen.game));
-		}
 	}
 
 	public void dispose() {
@@ -215,6 +207,28 @@ public class World implements IWorld {
 		}
 		batch.end();
 	}
+
+	/**
+	 * Gibt an ob der Player sich noch auf der Rutsche befindet oder schon
+	 * runtergefallen ist.
+	 * 
+	 * @return boolean
+	 */
+	public boolean checkIsPlayerOnSlide() {
+		resultCallback.setCollisionObject(null);
+		resultCallback.setClosestHitFraction(1f);
+		resultCallback.getRayFromWorld().setValue(player.position.x, player.position.y,
+				player.position.z);
+		resultCallback.getRayToWorld().setValue(player.position.x,
+				player.position.y - this.checkPlayerOnSlideRayDepth, player.position.z);
+
+		dynamicsWorld.rayTest(player.position, new Vector3(player.position.x,
+				player.position.y - this.checkPlayerOnSlideRayDepth, player.position.z),
+				resultCallback);
+
+		return resultCallback.hasHit();
+	}
+
 	ModelInstance test;
 
 	private void setupTestModel() {
@@ -231,26 +245,5 @@ public class World implements IWorld {
 		rect.materials.add(material);
 		test = new ModelInstance(rect);
 		test.userData = "test";
-	}
-
-	/**
-	 * Gibt an ob der Player sich noch auf der Rutsche befindet oder schon
-	 * runtergefallen ist.
-	 * 
-	 * @return boolean
-	 */
-	private boolean checkIsPlayerOnSlide() {
-		resultCallback.setCollisionObject(null);
-		resultCallback.setClosestHitFraction(1f);
-		resultCallback.getRayFromWorld().setValue(player.position.x, player.position.y,
-				player.position.z);
-		resultCallback.getRayToWorld().setValue(player.position.x,
-				player.position.y - this.checkPlayerOnSlideRayDepth, player.position.z);
-
-		dynamicsWorld.rayTest(player.position, new Vector3(player.position.x,
-				player.position.y - this.checkPlayerOnSlideRayDepth, player.position.z),
-				resultCallback);
-
-		return resultCallback.hasHit();
 	}
 }
