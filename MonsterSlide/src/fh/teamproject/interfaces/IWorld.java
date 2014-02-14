@@ -9,6 +9,6 @@ public interface IWorld {
 
 	public IPlayer getPlayer();
 
-	public void render(ModelBatch batch, Environment lights);
+	public void render();
 
 }

@@ -18,7 +18,9 @@ import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
+import com.badlogic.gdx.graphics.g3d.utils.DefaultTextureBinder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
+import com.badlogic.gdx.graphics.g3d.utils.RenderContext;
 import com.badlogic.gdx.utils.Json;
 
 import fh.teamproject.controller.player.android.SwipeController;
@@ -44,9 +46,7 @@ public class GameScreen implements Screen {
 	// Controller
 	public SwipeController swipeController;
 
-	// Rendering
-	public ModelBatch batch;
-	public Environment lights;
+
 
 	// Logic
 	public World world;
@@ -65,15 +65,11 @@ public class GameScreen implements Screen {
 		world = new World(this);
 		player = (Player) world.getPlayer();
 
-		// this.swipeController = new SwipeController(this.player);
 		GameScreen.camManager = new CameraManager(this);
 		GameScreen.camManager.setMode(Mode.FREE);
 
-		batch = new ModelBatch();
 
-		lights = new Environment();
-		lights.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f));
-		lights.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
+
 
 		// Debug
 		debugDrawer = new DebugDrawer(this);
@@ -91,7 +87,7 @@ public class GameScreen implements Screen {
 		debugInputMul.addProcessor((InputProcessor) GameScreen.camManager
 				.getController(Mode.FREE));
 
-		// gameInputMul.addProcessor(new GestureDetector(this.swipeController));
+
 		// gameInputMul.addProcessor(this.player.inputHandling);
 		gameInputMul.addProcessor(hud.stage);
 		allInputs.addProcessor(gameInputMul);
@@ -109,7 +105,8 @@ public class GameScreen implements Screen {
 	@Override
 	public void render(float delta) {
 		// Gdx.gl.glEnable(GL20.GL_TEXTURE);
-		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		// Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(),
+		// Gdx.graphics.getHeight());
 		Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1f);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
@@ -122,9 +119,7 @@ public class GameScreen implements Screen {
 		hud.setPoints((int) world.getSlide().getSlidedDistance());
 
 		/* RENDER */
-		batch.begin(GameScreen.camManager.getActiveCamera());
-		world.render(batch, lights);
-		batch.end();
+		world.render();
 		hud.render();
 
 		if (DebugDrawer.isDebug) {
@@ -133,7 +128,6 @@ public class GameScreen implements Screen {
 
 		showFPS();
 	}
-
 
 	@Override
 	public void resize(int width, int height) {

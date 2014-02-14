@@ -140,7 +140,7 @@ public class Player extends CollisionEntity implements IPlayer {
 		Model m = builder.createCapsule(radius, height * 2, 16, material, Usage.Position
 				| Usage.Normal);
 		instance = new ModelInstance(m, position);
-
+		instance.userData = "player";
 		// Bullet-Eigenschaften setzen.
 		btCapsuleShape collisionShape = new btCapsuleShape(radius, height);
 		setCollisionShape(collisionShape);

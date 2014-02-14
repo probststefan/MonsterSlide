@@ -258,6 +258,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		model.materials.add(material);
 
 		instance = new ModelInstance(model);
+		instance.userData = "slidepart";
 	}
 
 	@Override

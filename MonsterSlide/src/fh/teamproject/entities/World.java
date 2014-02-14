@@ -2,6 +2,8 @@ package fh.teamproject.entities;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g3d.Environment;
@@ -9,8 +11,12 @@ import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
+import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
+import com.badlogic.gdx.graphics.g3d.shaders.DefaultShader;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.ClosestRayResultCallback;
 import com.badlogic.gdx.physics.bullet.collision.btBroadphaseInterface;
@@ -40,6 +46,10 @@ public class World implements IWorld {
 	private Coin coin;
 	ModelInstance skydome;
 
+	// Rendering
+	public ModelBatch batch, batch2;
+	public Environment lights;
+
 	// Bullet Infos.
 	private btDiscreteDynamicsWorld dynamicsWorld;
 	private btBroadphaseInterface broadphase;
@@ -60,6 +70,13 @@ public class World implements IWorld {
 
 	public World(GameScreen gameScreen) {
 		this.gameScreen = gameScreen;
+		// Rendering
+		batch = new ModelBatch();
+		batch2 = new ModelBatch();
+		lights = new Environment();
+		lights.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f));
+		lights.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
+
 		// "Bullet-Welt" erstellen.
 		broadphase = new btDbvtBroadphase();
 		collisionConfiguration = new btDefaultCollisionConfiguration();
@@ -187,16 +204,17 @@ public class World implements IWorld {
 	}
 
 	@Override
-	public void render(ModelBatch batch, Environment lights) {
+	public void render() {
+		batch.begin(GameScreen.camManager.getActiveCamera());
+		batch.render(test, lights);
 		if (skydome != null)
 			batch.render(skydome);
 		batch.render(player.getModelInstance());
 		for (ISlidePart part : slide.getSlideParts()) {
 			batch.render(part.getModelInstance(), lights);
-
 		}
+		batch.end();
 	}
-
 	ModelInstance test;
 
 	private void setupTestModel() {
@@ -212,7 +230,9 @@ public class World implements IWorld {
 
 		rect.materials.add(material);
 		test = new ModelInstance(rect);
+		test.userData = "test";
 	}
+
 	/**
 	 * Gibt an ob der Player sich noch auf der Rutsche befindet oder schon
 	 * runtergefallen ist.
