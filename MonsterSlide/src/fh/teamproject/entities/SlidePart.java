@@ -225,39 +225,29 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
 		}
 		MeshBuilder builder = new MeshBuilder();
-		// NOTE: createAttributes funktioniert, ansonsten sind texturen total
-		// falsch
+		// NOTE: Attribute vom MeshBuilder erzeugen lassen (sonst komische
+		// Probleme)
 		builder.begin(MeshBuilder.createAttributes(Usage.Position | Usage.Normal
 				| Usage.TextureCoordinates));
-		// builder.begin(new VertexAttributes(new
-		// VertexAttribute(Usage.Position, 3,
-		// ShaderProgram.POSITION_ATTRIBUTE), new VertexAttribute(
-		// Usage.TextureCoordinates, 2, ShaderProgram.TEXCOORD_ATTRIBUTE),
-		// new VertexAttribute(Usage.Normal, 3,
-		// ShaderProgram.NORMAL_ATTRIBUTE)));
-
-		// builder.part("part1", GL20.GL_TRIANGLES);
-
 		for (int i = 0; i <= (graphicsVertices.size - 4); i += 4) {
 			builder.triangle(vertInfo.get(i + 2), vertInfo.get(i + 3),
 					vertInfo.get(i + 1));
 			builder.triangle(vertInfo.get(i + 1), vertInfo.get(i), vertInfo.get(i + 2));
 		}
-
 		mesh = builder.end();
 
-
-		Model model = new Model();
-		Node node = new Node();
-		model.nodes.add(node);
 		Material material = new Material();
 		TextureAttribute texAttr = TextureAttribute.createDiffuse(new Texture(Gdx.files
-				.internal("data/floor2.png")));
+				.internal("data/floor.jpg")));
 		material.set(texAttr);
+
 		MeshPart meshPart = new MeshPart("meshPart1", mesh, 0, mesh.getNumVertices(),
-				GL10.GL_TRIANGLES);
+				GL20.GL_TRIANGLES);
 		NodePart nodePart = new NodePart(meshPart, material);
+		Node node = new Node();
 		node.parts.add(nodePart);
+		Model model = new Model();
+		model.nodes.add(node);
 
 		instance = new ModelInstance(model);
 		instance.userData = "slidepart";
