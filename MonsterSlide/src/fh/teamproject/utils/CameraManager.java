@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.ObjectMap.Values;
 
@@ -13,7 +14,7 @@ import fh.teamproject.interfaces.ICameraController;
 import fh.teamproject.screens.GameScreen;
 import fh.teamproject.utils.debug.DebugCameraController;
 
-public class CameraManager {
+public class CameraManager implements Disposable {
 	public enum Mode {
 		CHASE, FREE
 	};
@@ -93,5 +94,12 @@ public class CameraManager {
 			cameras.add(c.getCamera());
 		}
 		return cameras;
+	}
+
+	@Override
+	public void dispose() {
+		gameScreen = null;
+		cameras = null;
+		activeCamera = null;
 	}
 }
