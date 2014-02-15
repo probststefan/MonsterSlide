@@ -1,6 +1,7 @@
 package fh.teamproject.utils;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.CatmullRomSpline;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
@@ -12,23 +13,23 @@ public class SlideGenerator {
 		XY, XZ, YZ
 	}
 
-	public Array<Vector3> generateControlPoints() {
+	float slope = GameScreen.settings.SLIDE_SLOPE;
+	float segments = GameScreen.settings.SLIDE_SEGMENTS;
+	float slideLength = GameScreen.settings.SLIDE_LENGTH;
+	float curveDirection = 1f;// verschiebungsrichtung auf z achse
+	float maxSlope = -0.5f;
+	float minSlope = 0.1f;
+	float maxCurvyness = 0.1f;
+	float minCurvyness = -0.1f;
+	float curvyness;
+
+	public Array<Vector3> generateControlPoints(Vector3 tangent, Vector3 start) {
 		Array<Vector3> controlPoints = new Array<Vector3>(false, 16, Vector3.class);
-		float slope = GameScreen.settings.SLIDE_SLOPE;
-		float segments = GameScreen.settings.SLIDE_SEGMENTS;
-		float slideLength = GameScreen.settings.SLIDE_LENGTH;
-		float curveDirection = 1f;// verschiebungsrichtung auf z achse
-		float maxSlope = -0.5f;
-		float minSlope = 0.1f;
-		float maxCurvyness = 0.1f;
-		float minCurvyness = -0.1f;
-		float curvyness;
-		Vector3 start = new Vector3(0f, 0f, 0f);
-		controlPoints.add(start.cpy()); // Anfangskontrollpunkt
+		controlPoints.add(tangent.cpy()); // Anfangskontrollpunkt
 		controlPoints.add(start.cpy()); // Erster Punkt
 
 		for (int i = 0; i < segments; i++) {
-			float x = start.x + (((slideLength - start.x) / segments) * (i + 1));
+			float x = start.x + ((slideLength / segments) * (i + 1));
 			slope = MathUtils.random(maxSlope, minSlope);
 			curvyness = MathUtils.random(maxCurvyness, minCurvyness);
 			Vector3 tmp = getStraightLineYValue(controlPoints.peek(), slope, x, Plane.XY);
@@ -47,6 +48,7 @@ public class SlideGenerator {
 		controlPoints.shrink();
 		return controlPoints;
 	}
+
 
 	/**
 	 * Berechnet den Y Wert auf der Geraden durch den Punkt point mit Steigung

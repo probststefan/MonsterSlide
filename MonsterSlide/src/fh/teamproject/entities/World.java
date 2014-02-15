@@ -2,6 +2,8 @@ package fh.teamproject.entities;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.Texture;
@@ -14,8 +16,13 @@ import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
+import com.badlogic.gdx.graphics.g3d.model.MeshPart;
+import com.badlogic.gdx.graphics.g3d.model.Node;
+import com.badlogic.gdx.graphics.g3d.model.NodePart;
 import com.badlogic.gdx.graphics.g3d.shaders.DefaultShader;
+import com.badlogic.gdx.graphics.g3d.utils.MeshBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
+import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder.VertexInfo;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.ClosestRayResultCallback;
@@ -206,22 +213,24 @@ public class World implements IWorld {
 	@Override
 	public void render() {
 		batch.begin(GameScreen.camManager.getActiveCamera());
-		batch.render(test, lights);
-		if (skydome != null)
-			batch.render(skydome);
-		batch.render(player.getModelInstance());
+		// batch.render(test, lights);
+		// if (skydome != null)
+		// batch.render(skydome, lights);
+		// batch.render(player.getModelInstance(), lights);
+		// batch.render(test2, lights);
 		for (ISlidePart part : slide.getSlideParts()) {
 			batch.render(part.getModelInstance(), lights);
 		}
 		batch.end();
 	}
-	ModelInstance test;
+
+	ModelInstance test, test2;
 
 	private void setupTestModel() {
 		ModelBuilder builder = new ModelBuilder();
 		Material material = new Material();
-		TextureAttribute texAttr = TextureAttribute.createDiffuse(new Texture(Gdx.files
-				.internal("data/floor2.png")));
+		Texture texture = new Texture(Gdx.files.internal("data/floor2.png"));
+		TextureAttribute texAttr = TextureAttribute.createDiffuse(texture);
 		material.set(texAttr);
 
 		Model rect = builder.createRect(0f, 0f, 0f, 0f, 0f, 50f, 50f, 0f, 50f, 50f, 0f,
@@ -231,7 +240,38 @@ public class World implements IWorld {
 		rect.materials.add(material);
 		test = new ModelInstance(rect);
 		test.userData = "test";
+
+		MeshBuilder meshBuilder = new MeshBuilder();
+		Model model2;
+		Mesh mesh;
+
+		Vector3 nor = new Vector3(0f, 0f, 1f);
+		Color col = Color.WHITE;
+		VertexInfo v1 = new VertexInfo().setPos(0f, 1f, 0f).setNor(nor).setUV(0.5f, 0.5f)
+				.setCol(col);
+		VertexInfo v2 = new VertexInfo().setPos(-1f, 0f, 0f).setNor(nor).setUV(0f, 1f)
+				.setCol(col);
+		VertexInfo v3 = new VertexInfo().setPos(1f, 0f, 0f).setNor(nor).setUV(1f, 1f)
+				.setCol(col);
+		meshBuilder.begin(MeshBuilder.createAttributes(Usage.Position | Usage.Normal
+				| Usage.TextureCoordinates));
+
+		meshBuilder.triangle(v1, v2, v3);
+		mesh = meshBuilder.end();
+
+		material = new Material();
+		TextureAttribute texAttr2 = TextureAttribute.createDiffuse(texture);
+		material.set(texAttr2);
+
+		model2 = new Model();
+		Node node = new Node();
+		model2.nodes.add(node);
+		MeshPart meshPart = new MeshPart("meshPart1", mesh, 0, 3, GL10.GL_TRIANGLES);
+		NodePart nodePart = new NodePart(meshPart, material);
+		node.parts.add(nodePart);
+		test2 = new ModelInstance(model2);
 	}
+
 
 	/**
 	 * Gibt an ob der Player sich noch auf der Rutsche befindet oder schon
@@ -253,4 +293,5 @@ public class World implements IWorld {
 
 		return resultCallback.hasHit();
 	}
+
 }

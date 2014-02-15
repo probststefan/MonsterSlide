@@ -32,6 +32,12 @@ public class Slide implements ISlide {
 
 	public Slide(btDiscreteDynamicsWorld dynamicsWorld) {
 		this.dynamicsWorld = dynamicsWorld;
+		Vector3 start = new Vector3(0, 0, 0);
+		tmpSlidePart = pool.obtain().setControlPoints(
+				Slide.slideGenerator.generateControlPoints(start, start));
+
+		slideParts.add(tmpSlidePart);
+		dynamicsWorld.addRigidBody(tmpSlidePart.getRigidBody());
 		addSlidePart();
 	}
 
@@ -63,6 +69,7 @@ public class Slide implements ISlide {
 				nearestControlPoint = controlPoint;
 			}
 		}
+
 	}
 
 	@Override
@@ -97,8 +104,14 @@ public class Slide implements ISlide {
 
 	@Override
 	public void addSlidePart() {
+		ISlidePart last = slideParts.peek();
+		Array<Vector3> cPoints = last.getControlPoints();
+		Vector3 v1 = cPoints.get(cPoints.size - 4);
+		Vector3 v2 = cPoints.get(cPoints.size - 3);
+		Vector3 start = cPoints.get(cPoints.size - 2);
+		Vector3 tangent = cPoints.peek();
 		tmpSlidePart = pool.obtain().setControlPoints(
-				Slide.slideGenerator.generateControlPoints());
+				Slide.slideGenerator.generateControlPoints(tangent, start));
 
 		slideParts.add(tmpSlidePart);
 		dynamicsWorld.addRigidBody(tmpSlidePart.getRigidBody());

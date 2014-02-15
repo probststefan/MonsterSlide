@@ -225,13 +225,20 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
 		}
 		MeshBuilder builder = new MeshBuilder();
-		builder.begin(new VertexAttributes(new VertexAttribute(Usage.Position, 3,
-				ShaderProgram.POSITION_ATTRIBUTE), new VertexAttribute(Usage.Normal, 3,
-				ShaderProgram.NORMAL_ATTRIBUTE), new VertexAttribute(
-				Usage.TextureCoordinates, 2, ShaderProgram.TEXCOORD_ATTRIBUTE)));
-		builder.part("part1", GL20.GL_TRIANGLES);
+		// NOTE: createAttributes funktioniert, ansonsten sind texturen total
+		// falsch
+		builder.begin(MeshBuilder.createAttributes(Usage.Position | Usage.Normal
+				| Usage.TextureCoordinates));
+		// builder.begin(new VertexAttributes(new
+		// VertexAttribute(Usage.Position, 3,
+		// ShaderProgram.POSITION_ATTRIBUTE), new VertexAttribute(
+		// Usage.TextureCoordinates, 2, ShaderProgram.TEXCOORD_ATTRIBUTE),
+		// new VertexAttribute(Usage.Normal, 3,
+		// ShaderProgram.NORMAL_ATTRIBUTE)));
 
-		for (int i = 0; i <= (vertInfo.size - 4); i += 4) {
+		// builder.part("part1", GL20.GL_TRIANGLES);
+
+		for (int i = 0; i <= (graphicsVertices.size - 4); i += 4) {
 			builder.triangle(vertInfo.get(i + 2), vertInfo.get(i + 3),
 					vertInfo.get(i + 1));
 			builder.triangle(vertInfo.get(i + 1), vertInfo.get(i), vertInfo.get(i + 2));
@@ -239,12 +246,6 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
 		mesh = builder.end();
 
-		MeshPart meshPart = new MeshPart();
-		meshPart.id = "SlidePart" + id;
-		meshPart.primitiveType = GL20.GL_TRIANGLES;
-		meshPart.mesh = mesh;
-		meshPart.indexOffset = 0;
-		meshPart.numVertices = mesh.getNumVertices();
 
 		Model model = new Model();
 		Node node = new Node();
@@ -253,9 +254,10 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		TextureAttribute texAttr = TextureAttribute.createDiffuse(new Texture(Gdx.files
 				.internal("data/floor2.png")));
 		material.set(texAttr);
+		MeshPart meshPart = new MeshPart("meshPart1", mesh, 0, mesh.getNumVertices(),
+				GL10.GL_TRIANGLES);
 		NodePart nodePart = new NodePart(meshPart, material);
 		node.parts.add(nodePart);
-		model.materials.add(material);
 
 		instance = new ModelInstance(model);
 		instance.userData = "slidepart";
