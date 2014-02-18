@@ -48,7 +48,7 @@ public class World implements IWorld {
 	private btCollisionDispatcher dispatcher;
 	private btDefaultCollisionConfiguration collisionConfiguration;
 	private int maxSubSteps = 3;
-	private float fixedTimeStep = 1 / 30f;
+	private float fixedTimeStep = 1 / 60f;
 	private float worldGravtiy = -9.81f;
 	private final float checkPlayerOnSlideRayDepth = 100.0f;
 

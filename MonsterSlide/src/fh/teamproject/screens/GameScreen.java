@@ -88,10 +88,7 @@ public class GameScreen implements Screen {
 		Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1f);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
-		if (!world.checkIsPlayerOnSlide() && !isPaused) {
-			this.game.setScreen(new MenuScreen(this.game));
-			this.dispose();
-		} else {
+
 			/* UPDATE */
 			if (!isPaused) {
 				world.update();
@@ -109,7 +106,7 @@ public class GameScreen implements Screen {
 			}
 
 			showFPS();
-		}
+
 	}
 
 	@Override
