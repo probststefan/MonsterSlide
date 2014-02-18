@@ -1,4 +1,4 @@
-package fh.teamproject.screens.utils;
+package fh.teamproject.menu;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;

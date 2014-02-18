@@ -6,7 +6,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 
 import fh.teamproject.screens.MenuScreen;
-import fh.teamproject.screens.utils.ButtonListener;
 import fh.teamproject.utils.SkinManager;
 
 public class CreditsSite extends AbstractMenuSite {

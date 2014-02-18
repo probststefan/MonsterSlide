@@ -3,8 +3,8 @@ package fh.teamproject.menu;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+
 import fh.teamproject.screens.MenuScreen;
-import fh.teamproject.screens.utils.ButtonListener;
 import fh.teamproject.utils.SkinManager;
 
 public class MainMenuSite extends AbstractMenuSite {
