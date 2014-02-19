@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
@@ -19,6 +20,7 @@ import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 
+import fh.teamproject.entities.SlidePart;
 import fh.teamproject.interfaces.ICameraController;
 import fh.teamproject.interfaces.ISlidePart;
 import fh.teamproject.screens.GameScreen;
@@ -118,31 +120,6 @@ public class DebugDrawer {
 		Array<ModelInstance> usedSpheres = new Array<ModelInstance>();
 		batch.begin(GameScreen.camManager.getActiveCamera());
 		ModelInstance tmp;
-		for (ISlidePart part : gameScreen.world.getSlide().getSlideParts()) {
-			ISlidePart bPart = (ISlidePart) part;
-			/* Graphic Punkte */
-			// for (Vector3 v : bPart.getGraphicVertices()) {
-			// tmp = spherePool.obtain();
-			// ColorAttribute attr = (ColorAttribute) tmp.materials.first().get(
-			// ColorAttribute.Diffuse);
-			// attr.color.set(Color.YELLOW);
-			// tmp.transform.setToTranslation(v);
-			// // batch.render(tmp);
-			// usedSpheres.add(tmp);
-			// }
-			//
-			// /* Spline Punkte */
-			// for (Vector3 v : bPart.getInterpolatedVertices()) {
-			// tmp = spherePool.obtain();
-			// tmp.transform.setToTranslation(v.cpy());
-			// ColorAttribute attr = (ColorAttribute) tmp.materials.first().get(
-			// ColorAttribute.Diffuse);
-			// attr.color.set(Color.BLUE);
-			// batch.render(tmp);
-			// usedSpheres.add(tmp);
-			// }
-
-		}
 		for (Vector3 v : gameScreen.world.getSlide().getSpline().controlPoints) {
 			tmp = spherePool.obtain();
 			tmp.transform.setToTranslation(v.cpy());
@@ -154,31 +131,6 @@ public class DebugDrawer {
 		}
 		batch.end();
 		spherePool.freeAll(usedSpheres);
-
-		// renderer.begin(ShapeType.Line);
-		// renderer.setColor(Color.BLUE);
-		// renderer.setProjectionMatrix(GameScreen.camManager.getActiveCamera().combined);
-		// for (ISlidePart part : gameScreen.world.getSlide().getSlideParts()) {
-		// SlidePart bPart = (SlidePart) part;
-		// Mesh mesh = bPart.mesh; //
-		// instance.nodes.first().parts.first().meshPart.mesh;
-		// float[] verts = new float[mesh.getNumVertices() * 10];
-		// short[] indices = new short[mesh.getNumIndices()];
-		// mesh.getIndices(indices);
-		// mesh.getVertices(verts);
-		// Vector3 point = new Vector3();
-		// Vector3 normal = new Vector3();
-		// for (int i = 0; i < verts.length; i += 12) {
-		// point.set(verts[i + 0], verts[i + 1], verts[i + 2]);
-		// normal.set(point).add(verts[i + 7], verts[i + 8], verts[i + 9]);
-		// // Gdx.app.log("debugdrawer", "Point " + point + " Normal " +
-		// // normal);
-		//
-		// // Gdx.app.log("debugdrawer", );
-		// renderer.line(point, normal);
-		// }
-		// }
-		// renderer.end();
 	}
 
 	public void setDebugMode(final int mode, final Matrix4 projMatrix) {
