@@ -21,6 +21,8 @@ import fh.teamproject.utils.debug.Debug;
 
 public class Player extends CollisionEntity implements IPlayer {
 
+	public static final int PLAYER_FLAG = 2;
+
 	@Debug(name = "Position", isModifiable = false)
 	public Vector3 position = new Vector3(-5.0f, 0.0f, -5.0f);
 
@@ -157,6 +159,9 @@ public class Player extends CollisionEntity implements IPlayer {
 		this.rigidBody.setCollisionFlags(this.rigidBody.getCollisionFlags()
 				| btCollisionObject.CollisionFlags.CF_CUSTOM_MATERIAL_CALLBACK);
 		setEntityWorldTransform(instance.transform);
+
+		// Wird gebraucht um die Kollisionen mit den Coins zu filtern.
+		this.getRigidBody().setContactCallbackFlag(Player.PLAYER_FLAG);
 	}
 
 	@Override

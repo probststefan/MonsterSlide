@@ -39,7 +39,7 @@ public class World implements IWorld {
 	// Die Welt haelt die wichtigsten Elemente inne.
 	private Slide slide;
 	private Player player;
-	private Coin coin;
+	private Coins coins;
 	ModelInstance skydome;
 
 	// Rendering
@@ -95,15 +95,16 @@ public class World implements IWorld {
 
 		dynamicsWorld.setGravity(new Vector3(0, worldGravtiy, 0));
 
-		// Rutsche und Spieler erzeugen.
+		// Rutsche, Spieler und Coins erzeugen.
 		slide = new Slide(dynamicsWorld);
 		slide.getSlideParts().get(0).getRigidBody().setContactCallbackFlag(2);
+
 		player = new Player(slide.getStartPosition());
 		player.getRigidBody().setContactCallbackFlag(4);
 		PlayerTickCallback playerCallback = new PlayerTickCallback(player);
 		playerCallback.attach(dynamicsWorld, false);
 
-		coin = new Coin();
+		coins = new Coins(dynamicsWorld);
 
 		// Skydome laden.
 		AssetManager asset = new AssetManager();
@@ -204,6 +205,9 @@ public class World implements IWorld {
 		batch.render(player.getModelInstance());
 		for (ISlidePart part : slide.getSlideParts()) {
 			batch.render(part.getModelInstance(), lights);
+		}
+		for (Coin coin : coins.getCoins()) {
+			batch.render(coin.getModelInstance(), lights);
 		}
 		batch.end();
 	}
