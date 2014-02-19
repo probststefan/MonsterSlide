@@ -93,7 +93,7 @@ public class World implements IWorld {
 		// Rutsche und Spieler erzeugen.
 		slide = new Slide(dynamicsWorld);
 		slide.getSlideParts().get(0).getRigidBody().setContactCallbackFlag(2);
-		player = new Player(slide.getStartPosition());
+		player = new Player(new Vector3());
 		player.getRigidBody().setContactCallbackFlag(4);
 		PlayerTickCallback playerCallback = new PlayerTickCallback(player);
 		playerCallback.attach(dynamicsWorld, false);
@@ -194,9 +194,7 @@ public class World implements IWorld {
 		if (skydome != null)
 			batch.render(skydome, lights);
 		batch.render(player.getModelInstance(), lights);
-		for (ISlidePart part : slide.getSlideParts()) {
-			batch.render(part.getModelInstance(), lights);
-		}
+		batch.render(slide.getModelInstance(), lights);
 		batch.end();
 	}
 

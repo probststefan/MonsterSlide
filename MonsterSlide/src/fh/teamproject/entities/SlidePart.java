@@ -37,27 +37,7 @@ import fh.teamproject.screens.GameScreen;
 public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
 	/* Die CatmullRomSpline von der alles abgeleitet wird */
-	private CatmullRomSpline<Vector3> catmullRom;
-	Array<Vector3> controlPoints;
-	/*
-	 * Die interpolierten Punkte der Spline
-	 */
-	private Array<Vector3> vertices = new Array<Vector3>();
-	/* Das Splitting mit dem die Spline diskretisiert wird */
-	private float splitting;
-	/*
-	 * Die Punkte zum Rendering in alternierender Reihenfolge (links, rechts,
-	 * links, rechts)
-	 */
-	public Array<Vector3> graphicsVertices = new Array<Vector3>();
-	/* */
-	public ArrayList<Vector3> baseCoordinates = new ArrayList<Vector3>();
-	public ArrayList<Vector3> baseNormalCoordinates = new ArrayList<Vector3>();
-
-	private Vector3[] startPoints;
-
-	public Texture texture;
-	public Mesh mesh;
+	private CatmullRomSpline<Vector3> spline;
 
 	// Bullet-Daten (Werden hier zum spaeteren disposen benoetigt)
 	btTriangleIndexVertexArray triangleVertexArray;
@@ -65,102 +45,35 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
 	private btTriangleInfoMap triangleInfoMap;
 
+	Slide slide;
+	String id;
+
+	public SlidePart(Slide slide, String id) {
+		this.slide = slide;
+		this.id = id;
+	}
+
 	public SlidePart() {
-		controlPoints = new Array<Vector3>();
-		catmullRom = new CatmullRomSpline<Vector3>();
-		texture = new Texture(Gdx.files.internal("data/floor.jpg"));
 	}
 
 	@Override
-	public ISlidePart setCatmullPoints(Vector3[] points) {
-		startPoints = new Vector3[2];
-		catmullRom.set(points, false);
-		setup();
+	public ISlidePart setSlide(Slide slide) {
+		this.slide = slide;
 		return this;
 	}
 
 	@Override
-	public ISlidePart setControlPoints(Array<Vector3> controlPoints) {
-		startPoints = new Vector3[2];
-		this.controlPoints = controlPoints;
-		catmullRom.set(controlPoints.items, false);
-		setup();
-		startPoints[0] = graphicsVertices.get(0).cpy();
-		startPoints[1] = graphicsVertices.get(1).cpy();
-
+	public ISlidePart setID(String id) {
+		this.id = id;
 		return this;
-	}
-
-	/**
-	 * Liefert den Startpunkt der Rutschbahn.
-	 * 
-	 * @return Vector3
-	 */
-	@Override
-	public Vector3[] getStartPoints() {
-		return startPoints;
-	}
-
-	private void setup() {
-		/* Die Schrittweite zum interpolieren der Spline */
-		float stepSize = 10f;
-		/*
-		 * Der SlidePart wird im Abstand von jeweils stepSize Meter
-		 * diskretisiert
-		 */
-		splitting = (1f / GameScreen.settings.SLIDE_LENGTH) * stepSize;
-
-		Vector3 interpolatedVertex = new Vector3();
-		float epsilon = 0.01f;
-
-		for (float i = 0; i <= (1 + epsilon); i += splitting) {
-			catmullRom.valueAt(interpolatedVertex, i);
-			// Normale und Binormale berechnen
-			calcBaseCoordinates(catmullRom, i);
-			vertices.add(new Vector3(interpolatedVertex));
-
-		}
-
-		createModelInstance();
-		createCollisionShape();
-
-		createRigidBody();
-		setMass(1000f);
-		getRigidBody().setFriction(0.1f);
-		getRigidBody().setRestitution(0f);
-	}
-
-	/**
-	 * Die Basis-Koordinaten zu den Punkten in der Spline berechnen.
-	 * 
-	 * @param bezier
-	 * @param t
-	 */
-	private void calcBaseCoordinates(CatmullRomSpline<Vector3> catmullRom, float t) {
-		Vector3 derivation = new Vector3();
-
-		// 1. und 2. Ableitung bilden.
-		derivation = catmullRom.derivativeAt(derivation, t);
-
-		Vector3 tangent = derivation.cpy().nor();
-
-		/*
-		 * Mit dem upVector wird das Problem der springenden Normalen behoben.
-		 * 
-		 * @link http://www.it.hiof.no/~borres/j3d/explain/frames/p-frames.html
-		 */
-		Vector3 upVector = new Vector3(0.0f, -1.0f, 0.0f);
-		Vector3 binormal = derivation.cpy().crs(upVector).nor();
-		Vector3 normal = tangent.crs(binormal);
-
-		baseNormalCoordinates.add(normal);
-		baseCoordinates.add(binormal);
 	}
 
 	private void createCollisionShape() {
 		btCollisionShape collisionShape = null;
-
-		indexedMesh = new btIndexedMesh(mesh);
+		// FIXME: Node könnte in zukunft auch mehrere parts haben oder sogar
+		// mehrere child-nodes!
+		Node node = slide.getModelInstance().getNode(id);
+		indexedMesh = new btIndexedMesh(node.parts.first().meshPart.mesh);
 		triangleVertexArray = new btTriangleIndexVertexArray();
 		triangleVertexArray.addIndexedMesh(indexedMesh);
 
@@ -181,81 +94,6 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		setCollisionShape(collisionShape);
 	}
 
-	private void createModelInstance() {
-		Array<VertexInfo> vertInfo = new Array<VertexInfo>();
-
-		for (int i = 0; i < vertices.size; ++i) {
-			Vector3 v = vertices.get(i);
-			Vector3 binormal = baseCoordinates.get(i);
-			binormal.scl(GameScreen.settings.SLIDE_WIDTH);
-
-			graphicsVertices.add(new Vector3(v.x, v.y, v.z));
-			graphicsVertices.add(new Vector3(v.x + binormal.x, v.y + binormal.y, v.z
-					+ binormal.z));
-			if ((i == 0) || (i == (vertices.size - 1))) {
-				continue;
-			}
-			graphicsVertices.add(new Vector3(v.x, v.y, v.z));
-			graphicsVertices.add(new Vector3(v.x + binormal.x, v.y + binormal.y, v.z
-					+ binormal.z));
-		}
-
-		for (int i = 0; i <= (graphicsVertices.size - 4); i += 4) {
-
-			Vector3 normal = baseNormalCoordinates.get(i / 4);
-
-			float uMin = 0f, uMax = 1f, vMin = 0f, vMax = 1f;
-
-			VertexInfo info = new VertexInfo();
-			info.setPos(graphicsVertices.get(i)).setNor(normal)
-					.setUV(new Vector2(uMin, vMin));
-			vertInfo.add(info);
-
-			info = new VertexInfo();
-			info.setPos(graphicsVertices.get(i + 1)).setNor(normal)
-					.setUV(new Vector2(uMax, vMin));
-			vertInfo.add(info);
-
-			info = new VertexInfo();
-			info.setPos(graphicsVertices.get(i + 2)).setNor(normal)
-					.setUV(new Vector2(uMin, vMax));
-			vertInfo.add(info);
-
-			info = new VertexInfo();
-			info.setPos(graphicsVertices.get(i + 3)).setNor(normal)
-					.setUV(new Vector2(uMax, vMax));
-			vertInfo.add(info);
-
-		}
-		MeshBuilder builder = new MeshBuilder();
-		// NOTE: Attribute vom MeshBuilder erzeugen lassen (sonst komische
-		// Probleme)
-		builder.begin(MeshBuilder.createAttributes(Usage.Position | Usage.Normal
-				| Usage.TextureCoordinates));
-		for (int i = 0; i <= (graphicsVertices.size - 4); i += 4) {
-			builder.triangle(vertInfo.get(i + 2), vertInfo.get(i + 3),
-					vertInfo.get(i + 1));
-			builder.triangle(vertInfo.get(i + 1), vertInfo.get(i), vertInfo.get(i + 2));
-		}
-		mesh = builder.end();
-
-		Material material = new Material();
-		TextureAttribute texAttr = TextureAttribute.createDiffuse(new Texture(Gdx.files
-				.internal("data/floor.jpg")));
-		material.set(texAttr);
-
-		MeshPart meshPart = new MeshPart("meshPart1", mesh, 0, mesh.getNumVertices(),
-				GL20.GL_TRIANGLES);
-		NodePart nodePart = new NodePart(meshPart, material);
-		Node node = new Node();
-		node.parts.add(nodePart);
-		Model model = new Model();
-		model.nodes.add(node);
-
-		instance = new ModelInstance(model);
-		instance.userData = "slidepart";
-	}
-
 	@Override
 	public void reset() {
 
@@ -267,18 +105,18 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		indexedMesh.dispose();
 	}
 
+
 	@Override
-	public Array<Vector3> getInterpolatedVertices() {
-		return vertices;
+	public ISlidePart setSpline(CatmullRomSpline<Vector3> spline) {
+		this.spline = spline;
+		return this;
 	}
 
 	@Override
-	public Array<Vector3> getControlPoints() {
-		return controlPoints;
-	}
-
-	@Override
-	public Array<Vector3> getGraphicVertices() {
-		return graphicsVertices;
+	public void init() {
+		createCollisionShape();
+		createRigidBody();
+		getRigidBody().setFriction(0f);
+		getRigidBody().setRestitution(0f);
 	}
 }

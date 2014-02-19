@@ -19,7 +19,6 @@ import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 
-import fh.teamproject.entities.SlidePart;
 import fh.teamproject.interfaces.ICameraController;
 import fh.teamproject.interfaces.ISlidePart;
 import fh.teamproject.screens.GameScreen;
@@ -110,8 +109,7 @@ public class DebugDrawer {
 		renderer.setColor(Color.MAGENTA);
 
 		Vector3 position = gameScreen.world.getPlayer().getPosition();
-		Vector3 direction = gameScreen.world
-				.getPlayer().getDirection();
+		Vector3 direction = gameScreen.world.getPlayer().getDirection();
 		renderer.line(position, position.cpy().add(direction));
 		renderer.end();
 	}
@@ -121,38 +119,38 @@ public class DebugDrawer {
 		batch.begin(GameScreen.camManager.getActiveCamera());
 		ModelInstance tmp;
 		for (ISlidePart part : gameScreen.world.getSlide().getSlideParts()) {
-			SlidePart bPart = (SlidePart) part;
+			ISlidePart bPart = (ISlidePart) part;
 			/* Graphic Punkte */
-			for (Vector3 v : bPart.getGraphicVertices()) {
-				tmp = spherePool.obtain();
-				ColorAttribute attr = (ColorAttribute) tmp.materials.first().get(
-						ColorAttribute.Diffuse);
-				attr.color.set(Color.YELLOW);
-				tmp.transform.setToTranslation(v);
-				// batch.render(tmp);
-				usedSpheres.add(tmp);
-			}
+			// for (Vector3 v : bPart.getGraphicVertices()) {
+			// tmp = spherePool.obtain();
+			// ColorAttribute attr = (ColorAttribute) tmp.materials.first().get(
+			// ColorAttribute.Diffuse);
+			// attr.color.set(Color.YELLOW);
+			// tmp.transform.setToTranslation(v);
+			// // batch.render(tmp);
+			// usedSpheres.add(tmp);
+			// }
+			//
+			// /* Spline Punkte */
+			// for (Vector3 v : bPart.getInterpolatedVertices()) {
+			// tmp = spherePool.obtain();
+			// tmp.transform.setToTranslation(v.cpy());
+			// ColorAttribute attr = (ColorAttribute) tmp.materials.first().get(
+			// ColorAttribute.Diffuse);
+			// attr.color.set(Color.BLUE);
+			// batch.render(tmp);
+			// usedSpheres.add(tmp);
+			// }
 
-			/* Spline Punkte */
-			for (Vector3 v : bPart.getInterpolatedVertices()) {
-				tmp = spherePool.obtain();
-				tmp.transform.setToTranslation(v.cpy());
-				ColorAttribute attr = (ColorAttribute) tmp.materials.first().get(
-						ColorAttribute.Diffuse);
-				attr.color.set(Color.BLUE);
-				batch.render(tmp);
-				usedSpheres.add(tmp);
-			}
-			for (Vector3 v : bPart.getControlPoints()) {
-				tmp = spherePool.obtain();
-				tmp.transform.setToTranslation(v.cpy());
-				ColorAttribute attr = (ColorAttribute) tmp.materials.first().get(
-						ColorAttribute.Diffuse);
-				attr.color.set(Color.MAGENTA);
-				batch.render(tmp);
-				usedSpheres.add(tmp);
-			}
-
+		}
+		for (Vector3 v : gameScreen.world.getSlide().getSpline().controlPoints) {
+			tmp = spherePool.obtain();
+			tmp.transform.setToTranslation(v.cpy());
+			ColorAttribute attr = (ColorAttribute) tmp.materials.first().get(
+					ColorAttribute.Diffuse);
+			attr.color.set(Color.MAGENTA);
+			batch.render(tmp);
+			usedSpheres.add(tmp);
 		}
 		batch.end();
 		spherePool.freeAll(usedSpheres);
