@@ -88,11 +88,15 @@ public class GameScreen implements Screen {
 		Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1f);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
+		/* UPDATE */
+		if (!isPaused) {
+			world.update();
+		}
 
-			/* UPDATE */
-			if (!isPaused) {
-				world.update();
-			}
+		if (!world.checkIsPlayerOnSlide() && !isPaused) {
+			this.game.setScreen(new MenuScreen(this.game));
+			this.dispose();
+		} else {
 			GameScreen.camManager.update();
 			hud.update();
 			hud.setPoints((int) world.getSlide().getSlidedDistance());
@@ -106,7 +110,7 @@ public class GameScreen implements Screen {
 			}
 
 			showFPS();
-
+		}
 	}
 
 	@Override
