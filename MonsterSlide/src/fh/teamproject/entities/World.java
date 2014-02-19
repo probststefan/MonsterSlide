@@ -2,17 +2,12 @@ package fh.teamproject.entities;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g3d.Environment;
-import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
-import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
-import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.ClosestRayResultCallback;
 import com.badlogic.gdx.physics.bullet.collision.btBroadphaseInterface;
@@ -27,7 +22,6 @@ import com.badlogic.gdx.utils.PerformanceCounter;
 
 import fh.teamproject.interfaces.IPlayer;
 import fh.teamproject.interfaces.ISlide;
-import fh.teamproject.interfaces.ISlidePart;
 import fh.teamproject.interfaces.IWorld;
 import fh.teamproject.physics.PlayerTickCallback;
 import fh.teamproject.physics.TriangleMeshCollisionFixer;
@@ -53,7 +47,7 @@ public class World implements IWorld {
 	private btCollisionDispatcher dispatcher;
 	private btDefaultCollisionConfiguration collisionConfiguration;
 	private int maxSubSteps = 3;
-	private float fixedTimeStep = 1 / 30f;
+	private float fixedTimeStep = 1 / 60f;
 	private float worldGravtiy = -9.81f;
 	private final float checkPlayerOnSlideRayDepth = 100.0f;
 
@@ -98,8 +92,7 @@ public class World implements IWorld {
 		// Rutsche, Spieler und Coins erzeugen.
 		slide = new Slide(dynamicsWorld);
 		slide.getSlideParts().get(0).getRigidBody().setContactCallbackFlag(2);
-
-		player = new Player(slide.getStartPosition());
+		player = new Player(new Vector3());
 		player.getRigidBody().setContactCallbackFlag(4);
 		PlayerTickCallback playerCallback = new PlayerTickCallback(player);
 		playerCallback.attach(dynamicsWorld, false);
@@ -124,8 +117,6 @@ public class World implements IWorld {
 		resultCallback = new ClosestRayResultCallback(player.position, new Vector3(
 				player.position.x, player.position.y - this.checkPlayerOnSlideRayDepth,
 				player.position.z));
-
-		setupTestModel();
 	}
 
 	public void update() {
@@ -199,16 +190,16 @@ public class World implements IWorld {
 	@Override
 	public void render() {
 		batch.begin(GameScreen.camManager.getActiveCamera());
-		batch.render(test, lights);
 		if (skydome != null)
-			batch.render(skydome);
-		batch.render(player.getModelInstance());
-		for (ISlidePart part : slide.getSlideParts()) {
-			batch.render(part.getModelInstance(), lights);
-		}
+
+			batch.render(skydome, lights);
+		batch.render(player.getModelInstance(), lights);
+		batch.render(slide.getModelInstance(), lights);
+
 		for (Coin coin : coins.getCoins()) {
 			batch.render(coin.getModelInstance(), lights);
 		}
+
 		batch.end();
 	}
 
@@ -231,23 +222,5 @@ public class World implements IWorld {
 				resultCallback);
 
 		return resultCallback.hasHit();
-	}
-
-	ModelInstance test;
-
-	private void setupTestModel() {
-		ModelBuilder builder = new ModelBuilder();
-		Material material = new Material();
-		TextureAttribute texAttr = TextureAttribute.createDiffuse(new Texture(Gdx.files
-				.internal("data/floor2.png")));
-		material.set(texAttr);
-
-		Model rect = builder.createRect(0f, 0f, 0f, 0f, 0f, 50f, 50f, 0f, 50f, 50f, 0f,
-				0f, 0f, 1f, 0f, material, Usage.Position | Usage.TextureCoordinates
-						| Usage.Normal);
-
-		rect.materials.add(material);
-		test = new ModelInstance(rect);
-		test.userData = "test";
 	}
 }

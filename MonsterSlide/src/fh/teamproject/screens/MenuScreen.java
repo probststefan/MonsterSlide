@@ -7,10 +7,10 @@ import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
-import fh.teamproject.screens.menusites.AbstractMenuSite;
-import fh.teamproject.screens.menusites.CreditsSite;
-import fh.teamproject.screens.menusites.DemoSite;
-import fh.teamproject.screens.menusites.MainMenuSite;
+import fh.teamproject.menu.AbstractMenuSite;
+import fh.teamproject.menu.CreditsSite;
+import fh.teamproject.menu.DemoSite;
+import fh.teamproject.menu.MainMenuSite;
 
 public class MenuScreen implements Screen {
 
