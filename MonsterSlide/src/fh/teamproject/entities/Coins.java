@@ -7,6 +7,8 @@ import com.badlogic.gdx.utils.Array;
 /**
  * Diese Klasse verwaltet alles Coins.
  * 
+ * Hallo Torsten; Test
+ * 
  * @author stefanprobst
  * 
  */
