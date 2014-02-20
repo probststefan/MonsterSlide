@@ -9,5 +9,4 @@ public class CoinPool extends Pool<Coin> {
 		Coin coin = new Coin();
 		return coin;
 	}
-
 }

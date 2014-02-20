@@ -12,7 +12,6 @@ import com.badlogic.gdx.utils.Array;
 
 import fh.teamproject.interfaces.ISlide;
 import fh.teamproject.interfaces.ISlidePart;
-import fh.teamproject.screens.GameScreen;
 import fh.teamproject.utils.SlideBuilder;
 import fh.teamproject.utils.SlideGenerator;
 
@@ -26,6 +25,7 @@ import fh.teamproject.utils.SlideGenerator;
 public class Slide implements ISlide {
 	private static SlideGenerator slideGenerator = new SlideGenerator();
 	private SlideBuilder slideBuilder = new SlideBuilder();
+	private Coins coins;
 
 	Array<ISlidePart> slideParts = new Array<ISlidePart>();
 	btDiscreteDynamicsWorld dynamicsWorld;
@@ -39,8 +39,10 @@ public class Slide implements ISlide {
 	Model slideModel;
 	ModelInstance slideModelInstance;
 
-	public Slide(btDiscreteDynamicsWorld dynamicsWorld) {
+	public Slide(btDiscreteDynamicsWorld dynamicsWorld, Coins coins) {
 		this.dynamicsWorld = dynamicsWorld;
+		this.coins = coins;
+
 		tmpSlidePart = pool.obtain();
 		Array<Vector3> controlPoints = Slide.slideGenerator.initControlPoints();
 		controlPoints.shrink();
@@ -60,8 +62,9 @@ public class Slide implements ISlide {
 		}
 		for (Vector3 vector3 : controlPoints) {
 			Gdx.app.log("slide", "" + vector3);
+			// Coins adden.
+			this.coins.addCoin(vector3);
 		}
-
 	}
 
 	@Override
@@ -88,6 +91,7 @@ public class Slide implements ISlide {
 	public CatmullRomSpline<Vector3> getSpline() {
 		return spline;
 	}
+
 	@Override
 	public float getSlidedDistance() {
 		this.displayedPoints = Interpolation.linear.apply(this.displayedPoints,

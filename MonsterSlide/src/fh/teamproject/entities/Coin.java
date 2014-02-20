@@ -28,6 +28,12 @@ public class Coin extends CollisionEntity implements Poolable {
 		// TODO Auto-generated method stub
 	}
 
+	public void setToPosition(Vector3 position) {
+		this.position = position;
+		instance.transform.setToTranslation(position);
+		this.getRigidBody().translate(position);
+	}
+
 	/**
 	 * Erstellen des visuellen Repraesentation.
 	 */
@@ -55,9 +61,11 @@ public class Coin extends CollisionEntity implements Poolable {
 		setEntityWorldTransform(this.instance.transform);
 		createRigidBody();
 		this.getRigidBody().setContactCallbackFilter(Player.PLAYER_FLAG);
+
 		this.getRigidBody().setCollisionFlags(
 				this.getRigidBody().getCollisionFlags()
 						| btCollisionObject.CollisionFlags.CF_CUSTOM_MATERIAL_CALLBACK);
 
+		this.getRigidBody().setUserValue(this.getID());
 	}
 }

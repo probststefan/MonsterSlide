@@ -66,6 +66,7 @@ public class SlideBuilder {
 		mesh = null;
 		node = null;
 	}
+
 	private void createInterpolatedVertices(CatmullRomSpline<Vector3> spline) {
 		/* Die Schrittweite zum interpolieren der Spline */
 		float stepSize = 10f;
@@ -103,8 +104,6 @@ public class SlideBuilder {
 			binormals.add(binormal);
 			tangents.add(tangent);
 			vertices.add(new Vector3(interpolatedVertex));
-			Gdx.app.log("slidebuilder", "" + interpolatedVertex);
-
 		}
 	}
 

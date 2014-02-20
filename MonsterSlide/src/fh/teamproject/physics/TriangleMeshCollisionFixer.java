@@ -16,17 +16,4 @@ public class TriangleMeshCollisionFixer extends ContactListener {
 				index1, 0);
 		return true;
 	}
-
-	@Override
-	public void onContactEnded(int userValue0, boolean match0, int userValue1,
-			boolean match1) {
-		if (match0) {
-			System.out.println("match 0 ################");
-			// collision object 0 (userValue0) matches
-		}
-		if (match1) {
-			System.out.println("match 1 ################");
-			// collision object 1 (userValue1) matches
-		}
-	}
 }

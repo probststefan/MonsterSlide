@@ -100,6 +100,7 @@ public class GameScreen implements Screen {
 			GameScreen.camManager.update();
 			hud.update();
 			hud.setPoints((int) world.getSlide().getSlidedDistance());
+			hud.setCoinCount(world.getScore().getCoinsScore());
 
 			/* RENDER */
 			world.render();

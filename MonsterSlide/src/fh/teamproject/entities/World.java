@@ -23,6 +23,7 @@ import com.badlogic.gdx.utils.PerformanceCounter;
 import fh.teamproject.interfaces.IPlayer;
 import fh.teamproject.interfaces.ISlide;
 import fh.teamproject.interfaces.IWorld;
+import fh.teamproject.physics.CoinContactListener;
 import fh.teamproject.physics.PlayerTickCallback;
 import fh.teamproject.physics.TriangleMeshCollisionFixer;
 import fh.teamproject.screens.GameScreen;
@@ -34,6 +35,7 @@ public class World implements IWorld {
 	private Slide slide;
 	private Player player;
 	private Coins coins;
+	private Score score;
 	ModelInstance skydome;
 
 	// Rendering
@@ -52,6 +54,7 @@ public class World implements IWorld {
 	private final float checkPlayerOnSlideRayDepth = 100.0f;
 
 	private TriangleMeshCollisionFixer myContactListener;
+	private CoinContactListener coinContactListener;
 	private ClosestRayResultCallback resultCallback;
 
 	public PerformanceCounter performanceCounter = new PerformanceCounter(this.getClass()
@@ -90,14 +93,13 @@ public class World implements IWorld {
 		dynamicsWorld.setGravity(new Vector3(0, worldGravtiy, 0));
 
 		// Rutsche, Spieler und Coins erzeugen.
-		slide = new Slide(dynamicsWorld);
-		slide.getSlideParts().get(0).getRigidBody().setContactCallbackFlag(2);
+		coins = new Coins(dynamicsWorld);
+		score = new Score();
+		slide = new Slide(dynamicsWorld, this.coins);
 		player = new Player(new Vector3());
-		player.getRigidBody().setContactCallbackFlag(4);
+		player.getRigidBody().setContactCallbackFlag(0);
 		PlayerTickCallback playerCallback = new PlayerTickCallback(player);
 		playerCallback.attach(dynamicsWorld, false);
-
-		coins = new Coins(dynamicsWorld);
 
 		// Skydome laden.
 		AssetManager asset = new AssetManager();
@@ -117,6 +119,8 @@ public class World implements IWorld {
 		resultCallback = new ClosestRayResultCallback(player.position, new Vector3(
 				player.position.x, player.position.y - this.checkPlayerOnSlideRayDepth,
 				player.position.z));
+
+		coinContactListener = new CoinContactListener(this.coins, this.score);
 	}
 
 	public void update() {
@@ -172,6 +176,15 @@ public class World implements IWorld {
 	@Override
 	public ISlide getSlide() {
 		return slide;
+	}
+
+	/**
+	 * Liefert das aktuelle Score-Objekt.
+	 * 
+	 * @return Score
+	 */
+	public Score getScore() {
+		return this.score;
 	}
 
 	/**

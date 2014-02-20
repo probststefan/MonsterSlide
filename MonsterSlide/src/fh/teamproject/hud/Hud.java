@@ -1,30 +1,23 @@
 package fh.teamproject.hud;
 
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Pixmap.Format;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.badlogic.gdx.utils.Array;
 import com.esotericsoftware.tablelayout.BaseTableLayout.Debug;
 
-import fh.teamproject.interfaces.ISlidePart;
 import fh.teamproject.screens.GameScreen;
 import fh.teamproject.utils.SkinManager;
 
 public class Hud {
 
 	public Stage stage;
-	public Table hud, pause, points;
-	private Label labelPoints;
+	public Table hud, pause, points, coins;
+	private Label labelPoints, labelCoins;
 
 	// Abstand zu den Kanten.
 	private float padding = 15.0f;
@@ -32,11 +25,15 @@ public class Hud {
 	Skin skin;
 	GameScreen gameScreen;
 	HudEventListener listener;
-	Image mapOverview;
+	Image mapOverview, coin;
 
 	public Hud(GameScreen gameScreen) {
 		skin = SkinManager.skin;
 		mapOverview = new Image();
+
+		Texture coinTexture = new Texture(Gdx.files.internal("data/hud/coin.png"));
+		coin = new Image(coinTexture);
+
 		this.gameScreen = gameScreen;
 		listener = new HudEventListener(gameScreen);
 		stage = new Stage();
@@ -57,7 +54,16 @@ public class Hud {
 		pause.setVisible(false);
 		pause.debug(Debug.all);
 
-		points = new Table().bottom().left().padLeft(this.padding).padTop(this.padding);
+		coins = new Table().top().left().padLeft(this.padding).padTop(this.padding);
+		coins.setFillParent(true);
+		coins.add(coin);
+		labelCoins = new Label("0", skin);
+		labelCoins.setName("coins");
+		coins.add(labelCoins);
+		stage.addActor(coins);
+
+		points = new Table().bottom().left().padLeft(this.padding)
+				.padBottom(this.padding);
 		points.setFillParent(true);
 		labelPoints = new Label("1234m", skin);
 		labelPoints.setName("points");
@@ -72,6 +78,10 @@ public class Hud {
 	 */
 	public void setPoints(float points) {
 		this.labelPoints.setText((int) points + "");
+	}
+
+	public void setCoinCount(int count) {
+		this.labelCoins.setText(count + "");
 	}
 
 	public void setViewport(float width, float height) {
