@@ -3,22 +3,23 @@ package fh.teamproject.physics;
 import com.badlogic.gdx.physics.bullet.collision.ContactListener;
 
 import fh.teamproject.entities.Coins;
-import fh.teamproject.entities.Player;
 import fh.teamproject.entities.Score;
-import fh.teamproject.entities.Slide;
+import fh.teamproject.entities.World;
+import fh.teamproject.interfaces.IPlayer;
+import fh.teamproject.interfaces.ISlide;
 
 public class MonsterContactListener extends ContactListener {
 
 	private Coins coins;
 	private Score score;
-	private Slide slide;
-	private Player player;
+	private ISlide slide;
+	private IPlayer player;
 
-	public MonsterContactListener(Coins coins, Score score, Slide slide, Player player) {
-		this.coins = coins;
-		this.score = score;
-		this.slide = slide;
-		this.player = player;
+	public MonsterContactListener(World world) {
+		this.coins = world.getCoins();
+		this.score = world.getScore();
+		this.slide = world.getSlide();
+		this.player = world.getPlayer();
 	}
 
 	@Override

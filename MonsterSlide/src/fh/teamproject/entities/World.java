@@ -54,8 +54,8 @@ public class World implements IWorld {
 	private final float checkPlayerOnSlideRayDepth = 100.0f;
 
 	private TriangleMeshCollisionFixer myContactListener;
-	private MonsterContactListener coinContactListener;
 	private ClosestRayResultCallback resultCallback;
+	private MonsterContactListener monsterContactListener;
 
 	public PerformanceCounter performanceCounter = new PerformanceCounter(this.getClass()
 			.getSimpleName());
@@ -120,8 +120,7 @@ public class World implements IWorld {
 				player.position.x, player.position.y - this.checkPlayerOnSlideRayDepth,
 				player.position.z));
 
-		coinContactListener = new MonsterContactListener(this.coins, this.score,
-				this.slide, this.player);
+		monsterContactListener = new MonsterContactListener(this);
 	}
 
 	public void update() {
@@ -194,6 +193,11 @@ public class World implements IWorld {
 	@Override
 	public IPlayer getPlayer() {
 		return player;
+	}
+
+	@Override
+	public Coins getCoins() {
+		return this.coins;
 	}
 
 	public void reset() {

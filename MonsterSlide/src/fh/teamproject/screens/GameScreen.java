@@ -158,4 +158,8 @@ public class GameScreen implements Screen {
 			spriteBatch.end();
 		}
 	}
+
+	public World getWorld() {
+		return this.world;
+	}
 }
