@@ -5,11 +5,15 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g3d.Attributes;
+import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.utils.Json;
 
+import fh.teamproject.MonsterSlide;
 import fh.teamproject.controller.player.android.SwipeController;
 import fh.teamproject.entities.Player;
 import fh.teamproject.entities.World;
@@ -41,10 +45,13 @@ public class GameScreen implements Screen {
 	private BitmapFont font;
 
 	public Hud hud;
-	public Game game;
+	public MonsterSlide game;
 
 	public GameScreen(Game game) {
-		this.game = game;
+		this.game = (MonsterSlide) game;
+		/* Assets laden */
+		this.game.getAssets().load("model/coin.g3db", Model.class);
+		this.game.getAssets().finishLoading();
 		GameScreen.settings = new Json().fromJson(Settings.class,
 				Gdx.files.internal("settings.json"));
 		world = new World(this);
@@ -80,6 +87,7 @@ public class GameScreen implements Screen {
 			spriteBatch = new SpriteBatch();
 			font = new BitmapFont();
 		}
+
 
 	}
 
@@ -157,5 +165,9 @@ public class GameScreen implements Screen {
 					Gdx.graphics.getHeight() - 10);
 			spriteBatch.end();
 		}
+	}
+
+	public AssetManager getAssets() {
+		return game.getAssets();
 	}
 }

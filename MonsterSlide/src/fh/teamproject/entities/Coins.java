@@ -4,6 +4,8 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.dynamics.btDynamicsWorld;
 import com.badlogic.gdx.utils.Array;
 
+import fh.teamproject.screens.GameScreen;
+
 /**
  * Diese Klasse verwaltet alles Coins.
  * 
@@ -17,10 +19,12 @@ public class Coins {
 	private Array<Coin> coins = new Array<Coin>();
 	private CoinPool coinPool;
 	private btDynamicsWorld dynamicsWorld;
+	GameScreen gameScreen;
 
-	public Coins(btDynamicsWorld dynamicsWorld) {
+	public Coins(GameScreen gameScreen, btDynamicsWorld dynamicsWorld) {
 		this.dynamicsWorld = dynamicsWorld;
-		this.coinPool = new CoinPool();
+		this.gameScreen = gameScreen;
+		this.coinPool = new CoinPool(gameScreen);
 	}
 
 	public void addCoin(Vector3 position) {
