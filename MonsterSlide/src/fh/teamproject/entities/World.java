@@ -93,7 +93,7 @@ public class World implements IWorld {
 		dynamicsWorld.setGravity(new Vector3(0, worldGravtiy, 0));
 
 		// Rutsche, Spieler und Coins erzeugen.
-		coins = new Coins(dynamicsWorld);
+		coins = new Coins(gameScreen, dynamicsWorld);
 		score = new Score();
 		slide = new Slide(dynamicsWorld, this.coins);
 		player = new Player(new Vector3());
