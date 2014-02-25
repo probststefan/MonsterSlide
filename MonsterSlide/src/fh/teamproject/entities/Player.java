@@ -16,6 +16,7 @@ import com.badlogic.gdx.physics.bullet.collision.btCollisionObject;
 import fh.teamproject.controller.player.pc.InputHandling;
 import fh.teamproject.interfaces.IPlayer;
 import fh.teamproject.physics.PlayerMotionState;
+import fh.teamproject.physics.PlayerTickCallback;
 import fh.teamproject.screens.GameScreen;
 import fh.teamproject.utils.debug.Debug;
 
@@ -56,10 +57,10 @@ public class Player extends CollisionEntity implements IPlayer {
 	// wird benoetigt, um die update() methode von InputHandling aufzurufen
 	public InputHandling inputHandling;
 
-	public Player(Vector3 position) {
+	public Player() {
 		super();
 
-		this.position = position;
+
 		inputHandling = new InputHandling(this);
 
 		buildPlayer();
@@ -162,6 +163,7 @@ public class Player extends CollisionEntity implements IPlayer {
 
 		// Wird gebraucht um die Kollisionen mit den Coins zu filtern.
 		this.getRigidBody().setContactCallbackFlag(Player.PLAYER_FLAG);
+
 	}
 
 	@Override
@@ -172,5 +174,13 @@ public class Player extends CollisionEntity implements IPlayer {
 	@Override
 	public void setGrounded(boolean grounded) {
 		this.isGrounded = grounded;
+	}
+
+	@Override
+	public void initPhysix() {
+		getRigidBody().setContactCallbackFlag(0);
+		PlayerTickCallback playerCallback = new PlayerTickCallback(this);
+		playerCallback.attach(world.getPhysixManager().getWorld(), false);
+		world.getPhysixManager().getWorld().addRigidBody(getRigidBody());
 	}
 }

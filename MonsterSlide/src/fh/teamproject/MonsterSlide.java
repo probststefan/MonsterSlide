@@ -21,13 +21,6 @@ public class MonsterSlide extends Game {
 		setScreen(new GameScreen(this));
 	}
 
-	@Override
-	public void setScreen(Screen screen) {
-		// TODO Auto-generated method stub
-
-		super.setScreen(screen);
-	}
-
 	public AssetManager getAssets() {
 		return assets;
 	}

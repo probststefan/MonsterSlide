@@ -56,15 +56,10 @@ public class Slide implements ISlide {
 		slideParts.add(nextPart);
 		dynamicsWorld.addRigidBody(nextPart.getRigidBody());
 		addSlidePart();
-		// for (Vector3 vector3 : controlPoints) {
-		// Gdx.app.log("slide", "" + vector3);
-		// // Coins adden.
-		// this.coins.addCoin(vector3);
-		// }
 	}
 
 	@Override
-	public void update(Vector3 playerPosition) {
+	public void update() {
 
 	}
 

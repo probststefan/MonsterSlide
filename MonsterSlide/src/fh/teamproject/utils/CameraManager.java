@@ -10,6 +10,7 @@ import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.ObjectMap.Values;
 
 import fh.teamproject.controller.camera.ChaseCameraController;
+import fh.teamproject.entities.Player;
 import fh.teamproject.interfaces.ICameraController;
 import fh.teamproject.screens.GameScreen;
 import fh.teamproject.utils.debug.DebugCameraController;
@@ -32,7 +33,8 @@ public class CameraManager implements Disposable {
 		debugCamera.getCamera().far = 1000f;
 		ChaseCameraController chaseCamContr = new ChaseCameraController(
 				new PerspectiveCamera(67, Gdx.graphics.getWidth(),
-						Gdx.graphics.getHeight()), gameScreen.player);
+						Gdx.graphics.getHeight()), (Player) gameScreen.getWorld()
+						.getPlayer());
 		addCamera(debugCamera, Mode.FREE);
 		addCamera(chaseCamContr, Mode.CHASE);
 	}

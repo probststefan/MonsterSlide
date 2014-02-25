@@ -23,4 +23,6 @@ public interface ICollisionEntity extends IEntity {
 
 	public void dispose();
 
+	public void initPhysix();
+
 }

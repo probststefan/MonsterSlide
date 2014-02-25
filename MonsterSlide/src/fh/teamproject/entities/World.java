@@ -22,8 +22,10 @@ import com.badlogic.gdx.utils.PerformanceCounter;
 
 import fh.teamproject.interfaces.IPlayer;
 import fh.teamproject.interfaces.ISlide;
+import fh.teamproject.interfaces.ISlidePart;
 import fh.teamproject.interfaces.IWorld;
 import fh.teamproject.physics.MonsterContactListener;
+import fh.teamproject.physics.PhysixManager;
 import fh.teamproject.physics.PlayerTickCallback;
 import fh.teamproject.physics.TriangleMeshCollisionFixer;
 import fh.teamproject.screens.GameScreen;
@@ -39,135 +41,79 @@ public class World implements IWorld {
 	ModelInstance skydome;
 
 	// Rendering
-	public ModelBatch batch, batch2;
+	public ModelBatch batch;
 	public Environment lights;
-
-	// Bullet Infos.
-	private btDiscreteDynamicsWorld dynamicsWorld;
-	private btBroadphaseInterface broadphase;
-	private btSequentialImpulseConstraintSolver solver;
-	private btCollisionDispatcher dispatcher;
-	private btDefaultCollisionConfiguration collisionConfiguration;
-	private int maxSubSteps = 3;
-	private float fixedTimeStep = 1 / 60f;
-	private float worldGravtiy = -9.81f;
-	private final float checkPlayerOnSlideRayDepth = 100.0f;
-
-	private TriangleMeshCollisionFixer myContactListener;
+	public PhysixManager physixManager;
 	private ClosestRayResultCallback resultCallback;
-	private MonsterContactListener monsterContactListener;
+	final float checkPlayerOnSlideRayDepth = 100.0f;
 
-	public PerformanceCounter performanceCounter = new PerformanceCounter(this.getClass()
-			.getSimpleName());
 	GameScreen gameScreen;
 
 	public World(GameScreen gameScreen) {
 		this.gameScreen = gameScreen;
+
+		// Wird fuer checkIsPlayerOnSlide() benoetigt.
+
+
 		// Rendering
 		batch = new ModelBatch();
-		batch2 = new ModelBatch();
 		lights = new Environment();
 		lights.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f));
 		lights.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
 
-		// "Bullet-Welt" erstellen.
-		broadphase = new btDbvtBroadphase();
-		collisionConfiguration = new btDefaultCollisionConfiguration();
-		dispatcher = new btCollisionDispatcher(collisionConfiguration);
-		solver = new btSequentialImpulseConstraintSolver();
-		dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver,
-				collisionConfiguration);
+		physixManager = new PhysixManager(this);
+		player = new Player();
+		player.setWorld(this);
+		player.initPhysix();
 
-		btContactSolverInfo info = dynamicsWorld.getSolverInfo();
-		info.setRestitution(0.0f);
-		info.setNumIterations(20);
-
-		// info.setSplitImpulse(1); // enable split impulse feature
-		// optionally set the m_splitImpulsePenetrationThreshold (only used when
-		// m_splitImpulse is enabled)
-		// only enable split impulse position correction when the penetration is
-		// deeper than this m_splitImpulsePenetrationThreshold, otherwise use
-		// the regular velocity/position constraint coupling (Baumgarte).
-		// info.setSplitImpulsePenetrationThreshold(-0.02f);
-
-		dynamicsWorld.setGravity(new Vector3(0, worldGravtiy, 0));
-
+		btDiscreteDynamicsWorld dynamicsWorld = physixManager.getWorld();
 		// Rutsche, Spieler und Coins erzeugen.
 		coins = new Coins(gameScreen, dynamicsWorld);
 		score = new Score();
 		slide = new Slide(dynamicsWorld, this.coins);
-		player = new Player(new Vector3());
-		player.getRigidBody().setContactCallbackFlag(0);
-		PlayerTickCallback playerCallback = new PlayerTickCallback(player);
-		playerCallback.attach(dynamicsWorld, false);
 
+		resultCallback = new ClosestRayResultCallback(getPlayer().getPosition(),
+				new Vector3(getPlayer().getPosition().x, getPlayer().getPosition().y
+						- this.checkPlayerOnSlideRayDepth, getPlayer().getPosition().z));
 		// Skydome laden.
-		AssetManager asset = new AssetManager();
-		asset.load("data/g3d/skydome.g3db", Model.class);
-		asset.finishLoading();
-
-		skydome = new ModelInstance(asset.get("data/g3d/skydome.g3db", Model.class));
-
-		// Spieler zur Bullet-Welt hinzufuegen.
-		dynamicsWorld.addRigidBody(player.getRigidBody());
-
-		// ContactListener initialisieren.
-		myContactListener = new TriangleMeshCollisionFixer();
-		myContactListener.enable();
-
-		// Wird fuer checkIsPlayerOnSlide() benoetigt.
-		resultCallback = new ClosestRayResultCallback(player.position, new Vector3(
-				player.position.x, player.position.y - this.checkPlayerOnSlideRayDepth,
-				player.position.z));
-
-		monsterContactListener = new MonsterContactListener(this);
+		skydome = new ModelInstance(gameScreen.getAssets().get("data/g3d/skydome.g3db",
+				Model.class));
 	}
 
 	public void update() {
-		// Bullet update.
-		performanceCounter.tick();
-		performanceCounter.start();
-		dynamicsWorld.stepSimulation(Gdx.graphics.getDeltaTime(), getMaxSubSteps(),
-				getFixedTimeStep());
-		performanceCounter.stop();
+		if (!checkIsPlayerOnSlide()) {
+			gameScreen.getGame().setScreen(new MenuScreen(gameScreen.getGame()));
+		}
+		physixManager.update();
 		player.update();
-		slide.update(player.position);
+		slide.update();
 		// Der Skydome soll den Player verfolgen.
 		skydome.transform.setToTranslation(player.position);
 	}
 
-	public void dispose() {
-		dynamicsWorld.dispose();
-		solver.dispose();
-		broadphase.dispose();
-		dispatcher.dispose();
-		collisionConfiguration.dispose();
-		resultCallback.dispose();
+	@Override
+	public void render() {
+		batch.begin(GameScreen.camManager.getActiveCamera());
+		if (skydome != null)
+			batch.render(skydome, lights);
 
-		for (int i = 0; i < slide.getSlideParts().size; ++i) {
-			slide.getSlideParts().get(i).dispose();
-			slide.removeSlidePart(slide.getSlideParts().get(i));
+		batch.render(player.getModelInstance(), lights);
+		batch.render(slide.getModelInstance(), lights);
+
+		for (Coin coin : coins.getCoins()) {
+			batch.render(coin.getModelInstance(), lights);
 		}
+
+		batch.end();
 	}
 
-	public void addRigidBody(btRigidBody rigidBody) {
-		dynamicsWorld.addRigidBody(rigidBody);
-	}
-
-	public void removeRigidBody(btRigidBody rigidBody) {
-		dynamicsWorld.removeRigidBody(rigidBody);
-	}
-
-	public int getMaxSubSteps() {
-		return maxSubSteps;
-	}
-
-	public float getFixedTimeStep() {
-		return fixedTimeStep;
-	}
-
-	public btDiscreteDynamicsWorld getWorld() {
-		return dynamicsWorld;
+	public void dispose() {
+		physixManager.dispose();
+		for (ISlidePart part : slide.getSlideParts()) {
+			part.dispose();
+			slide.removeSlidePart(part);
+		}
+		resultCallback.dispose();
 	}
 
 	/**
@@ -205,22 +151,6 @@ public class World implements IWorld {
 		gameScreen.game.setScreen(new MenuScreen(gameScreen.game));
 	}
 
-	@Override
-	public void render() {
-		batch.begin(GameScreen.camManager.getActiveCamera());
-		if (skydome != null)
-
-			batch.render(skydome, lights);
-		batch.render(player.getModelInstance(), lights);
-		batch.render(slide.getModelInstance(), lights);
-
-		for (Coin coin : coins.getCoins()) {
-			batch.render(coin.getModelInstance(), lights);
-		}
-
-		batch.end();
-	}
-
 	/**
 	 * Gibt an ob der Player sich noch auf der Rutsche befindet oder schon
 	 * runtergefallen ist.
@@ -228,17 +158,23 @@ public class World implements IWorld {
 	 * @return boolean
 	 */
 	public boolean checkIsPlayerOnSlide() {
+		btDiscreteDynamicsWorld dynamicsWorld = physixManager.getWorld();
+
 		resultCallback.setCollisionObject(null);
 		resultCallback.setClosestHitFraction(1f);
 		resultCallback.getRayFromWorld().setValue(player.position.x, player.position.y,
 				player.position.z);
 		resultCallback.getRayToWorld().setValue(player.position.x,
-				player.position.y - this.checkPlayerOnSlideRayDepth, player.position.z);
+				player.position.y - checkPlayerOnSlideRayDepth, player.position.z);
 
 		dynamicsWorld.rayTest(player.position, new Vector3(player.position.x,
-				player.position.y - this.checkPlayerOnSlideRayDepth, player.position.z),
+				player.position.y - checkPlayerOnSlideRayDepth, player.position.z),
 				resultCallback);
 
 		return resultCallback.hasHit();
+	}
+
+	public PhysixManager getPhysixManager() {
+		return physixManager;
 	}
 }

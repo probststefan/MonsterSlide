@@ -33,28 +33,18 @@ public class GameScreen implements Screen {
 	private final boolean showFps = true;
 	public boolean isPaused = true;
 	public DebugDrawer debugDrawer;
-	// Controller
-	public SwipeController swipeController;
-
-	// Logic
 	public World world;
-	public Player player;
-
 	private SpriteBatch spriteBatch;
 	private BitmapFont font;
-
 	public Hud hud;
 	public MonsterSlide game;
 
 	public GameScreen(Game game) {
 		this.game = (MonsterSlide) game;
-		/* Assets laden */
-		this.game.getAssets().load("model/coin.g3db", Model.class);
-		this.game.getAssets().finishLoading();
+		loadAssets();
 		GameScreen.settings = new Json().fromJson(Settings.class,
 				Gdx.files.internal("settings.json"));
 		world = new World(this);
-		player = (Player) world.getPlayer();
 
 		GameScreen.camManager = new CameraManager(this);
 		GameScreen.camManager.setMode(Mode.FREE);
@@ -89,6 +79,12 @@ public class GameScreen implements Screen {
 
 	}
 
+	private void loadAssets() {
+		getAssets().load("model/coin.g3db", Model.class);
+		getAssets().load("data/g3d/skydome.g3db", Model.class);
+		getAssets().finishLoading();
+	}
+
 	@Override
 	public void render(float delta) {
 		Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1f);
@@ -98,26 +94,16 @@ public class GameScreen implements Screen {
 		if (!isPaused) {
 			world.update();
 		}
+		GameScreen.camManager.update();
+		hud.update();
 
-		if (!world.checkIsPlayerOnSlide() && !isPaused) {
-			this.game.setScreen(new MenuScreen(this.game));
-			this.dispose();
-		} else {
-			GameScreen.camManager.update();
-			hud.update();
-			hud.setPoints((int) world.getSlide().getSlidedDistance());
-			hud.setCoinCount(world.getScore().getCoinsScore());
-
-			/* RENDER */
-			world.render();
-			hud.render();
-
-			if (DebugDrawer.isDebug) {
-				debugDrawer.render();
-			}
-
-			showFPS();
+		/* RENDER */
+		world.render();
+		hud.render();
+		if (DebugDrawer.isDebug) {
+			debugDrawer.render();
 		}
+		showFPS();
 	}
 
 	@Override
@@ -135,6 +121,7 @@ public class GameScreen implements Screen {
 
 	@Override
 	public void hide() {
+
 	}
 
 	@Override
@@ -158,14 +145,25 @@ public class GameScreen implements Screen {
 		if (showFps) {
 			// FPS anzeigen.
 			spriteBatch.begin();
-			font.draw(spriteBatch, Gdx.graphics.getFramesPerSecond() + " fps, Bullet: "
-					+ (int) (world.performanceCounter.load.value * 100f) + "%", 10,
-					Gdx.graphics.getHeight() - 10);
+			font.draw(
+					spriteBatch,
+					Gdx.graphics.getFramesPerSecond()
+							+ " fps, Bullet: "
+							+ (int) (world.getPhysixManager().getPerformanceCounter().load.value * 100f)
+							+ "%", 10, Gdx.graphics.getHeight() - 10);
 			spriteBatch.end();
 		}
 	}
 
 	public AssetManager getAssets() {
 		return game.getAssets();
+	}
+
+	public MonsterSlide getGame() {
+		return game;
+	}
+
+	public World getWorld() {
+		return world;
 	}
 }

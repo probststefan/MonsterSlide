@@ -67,8 +67,14 @@ public class Coin extends CollisionEntity implements Poolable {
 		this.getRigidBody().setUserValue(this.getID());
 	}
 
-	public void setGameScreen(GameScreen gameScreen) {
+	public void setWorld(GameScreen gameScreen) {
 		this.gameScreen = gameScreen;
+	}
+
+	@Override
+	public void initPhysix() {
+		// TODO Auto-generated method stub
+
 	}
 
 }

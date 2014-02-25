@@ -38,11 +38,11 @@ public class DebugDrawer {
 		this.gameScreen = gameScreen;
 		renderer = new ShapeRenderer();
 		infoPanel = new DebugInfoPanel();
-		infoPanel.showInfo(this.gameScreen.player);
+		infoPanel.showInfo(this.gameScreen.getWorld().getPlayer());
 
 		setDebugMode(btIDebugDraw.DebugDrawModes.DBG_DrawWireframe,
 				GameScreen.camManager.getActiveCamera().combined);
-		toggleDebug();
+		// toggleDebug();
 	}
 
 	public void render() {
@@ -63,7 +63,7 @@ public class DebugDrawer {
 
 		if ((bulletdebugDrawer.getDebugMode() > 0)) {
 			bulletdebugDrawer.begin();
-			gameScreen.world.getWorld().debugDrawWorld();
+			gameScreen.getWorld().getPhysixManager().getWorld().debugDrawWorld();
 			bulletdebugDrawer.end();
 			Gdx.gl.glDisable(GL10.GL_DEPTH_TEST);
 			setDebugMode(getDebugMode(), GameScreen.camManager.getActiveCamera().combined);
@@ -139,7 +139,8 @@ public class DebugDrawer {
 			return;
 		}
 		if (bulletdebugDrawer == null) {
-			gameScreen.world.getWorld().setDebugDrawer(
+			gameScreen.getWorld().getPhysixManager().getWorld()
+					.setDebugDrawer(
 					bulletdebugDrawer = new BulletDebugDrawer());
 		}
 		bulletdebugDrawer.lineRenderer.setProjectionMatrix(projMatrix);

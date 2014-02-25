@@ -98,4 +98,10 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		getRigidBody().setFriction(0f);
 		getRigidBody().setRestitution(0f);
 	}
+
+	@Override
+	public void initPhysix() {
+		// TODO Auto-generated method stub
+
+	}
 }

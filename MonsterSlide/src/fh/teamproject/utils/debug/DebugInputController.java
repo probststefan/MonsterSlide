@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Plane;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.Ray;
 
+import fh.teamproject.entities.Player;
 import fh.teamproject.screens.GameScreen;
 import fh.teamproject.utils.CameraManager.Mode;
 
@@ -41,7 +42,7 @@ public class DebugInputController extends InputAdapter {
 			gameScreen.isPaused = !gameScreen.isPaused;
 			return true;
 		case Keys.G:
-			gameScreen.player.getRigidBody().activate(true);
+			gameScreen.getWorld().getPlayer().getRigidBody().activate(true);
 			return true;
 		}
 
@@ -59,11 +60,7 @@ public class DebugInputController extends InputAdapter {
 					Vector3.Y, 0f), intersection);
 			if (isIntersecting) {
 				intersection.add(0f, 2f, 0f);
-				// Matrix4 transform =
-				// gameScreen.player.getModelInstance().transform;
-				// transform.setToTranslation(intersection);
-				// gameScreen.player.getRigidBody().setWorldTransform(transform);
-				gameScreen.player.resetAt(intersection);
+				((Player) gameScreen.getWorld().getPlayer()).resetAt(intersection);
 				Gdx.app.log("DebugInput", "set to" + intersection);
 
 			}

@@ -5,6 +5,7 @@ import com.badlogic.gdx.physics.bullet.dynamics.InternalTickCallback;
 import com.badlogic.gdx.physics.bullet.dynamics.btDynamicsWorld;
 
 import fh.teamproject.entities.Player;
+import fh.teamproject.interfaces.IPlayer;
 
 public class PlayerTickCallback extends InternalTickCallback {
 

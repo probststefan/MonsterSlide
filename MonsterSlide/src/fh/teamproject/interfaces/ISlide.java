@@ -15,7 +15,7 @@ public interface ISlide {
 
 	public void removeSlidePart(ISlidePart slidePart);
 
-	public void update(Vector3 playerPosition);
+	public void update();
 
 	public float getSlidedDistance();
 

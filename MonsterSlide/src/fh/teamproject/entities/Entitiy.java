@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.math.Vector3;
 
 import fh.teamproject.interfaces.IEntity;
+import fh.teamproject.screens.GameScreen;
 
 public abstract class Entitiy implements IEntity {
 	private static int idCounter = 0;
@@ -11,6 +12,7 @@ public abstract class Entitiy implements IEntity {
 	protected final int id;
 	public ModelInstance instance;
 	Vector3 position = new Vector3();
+	World world;
 
 	public Entitiy() {
 		id = Entitiy.idCounter;
@@ -38,4 +40,8 @@ public abstract class Entitiy implements IEntity {
 		return id;
 	}
 
+	@Override
+	public void setWorld(World world) {
+		this.world = world;
+	}
 }
