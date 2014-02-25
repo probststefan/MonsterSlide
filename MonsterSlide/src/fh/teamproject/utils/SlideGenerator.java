@@ -13,11 +13,9 @@ public class SlideGenerator {
 		XY, XZ, YZ
 	}
 
-	float slope = GameScreen.settings.SLIDE_SLOPE;
 	float segments = GameScreen.settings.SLIDE_SEGMENTS;
-	float slideLength = GameScreen.settings.SLIDE_LENGTH;
 	float segment_Min_Length = 50f;
-	float segment_Max_Length = 100f;
+	float segment_Max_Length = 50f;
 	float curveDirection = 1f;// verschiebungsrichtung auf z achse
 	float maxSlope = -0.5f;
 	float minSlope = 0.1f;
@@ -42,7 +40,7 @@ public class SlideGenerator {
 	public Array<Vector3> addSpan(Array<Vector3> controlPoints) {
 		float segmentLength = MathUtils.random(segment_Min_Length, segment_Max_Length);
 		float x = controlPoints.peek().x + segmentLength;
-		slope = MathUtils.random(maxSlope, minSlope);
+		float slope = MathUtils.random(maxSlope, minSlope);
 		Vector3 tmp = getPointOnLine(controlPoints.peek(), slope, x, Plane.XY);
 		curvyness = MathUtils.random(maxCurvyness, minCurvyness);
 		Vector3 curvy = getPointOnLine(controlPoints.peek(), curvyness, x, Plane.XZ);
