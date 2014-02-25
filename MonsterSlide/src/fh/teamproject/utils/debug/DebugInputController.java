@@ -61,8 +61,6 @@ public class DebugInputController extends InputAdapter {
 			if (isIntersecting) {
 				intersection.add(0f, 2f, 0f);
 				((Player) gameScreen.getWorld().getPlayer()).resetAt(intersection);
-				Gdx.app.log("DebugInput", "set to" + intersection);
-
 			}
 		}
 		return super.touchUp(screenX, screenY, pointer, button);

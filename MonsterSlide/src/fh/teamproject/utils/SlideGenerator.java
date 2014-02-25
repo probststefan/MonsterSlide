@@ -30,7 +30,6 @@ public class SlideGenerator {
 		controlPoints.add(start.cpy()); // Erster Punkt
 
 		addSpan(controlPoints);
-		addSpan(controlPoints);
 
 		/* das dahinterliegende Array auf tatsächliche größe schrumpfen */
 		controlPoints.shrink();

@@ -14,6 +14,7 @@ import com.badlogic.gdx.physics.bullet.collision.btSphereShape;
 import com.badlogic.gdx.utils.Pool.Poolable;
 
 import fh.teamproject.MonsterSlide;
+import fh.teamproject.physics.PhysixBodyDef;
 import fh.teamproject.screens.GameScreen;
 
 public class Coin extends CollisionEntity implements Poolable {
@@ -25,7 +26,6 @@ public class Coin extends CollisionEntity implements Poolable {
 		this.position = new Vector3(0, 2.0f, 0);
 		this.gameScreen = gameScreen;
 		this.createModelInstance();
-		this.createCollisionShape();
 	}
 
 	@Override
@@ -49,32 +49,26 @@ public class Coin extends CollisionEntity implements Poolable {
 		instance.transform.scl(1f);
 	}
 
+	public void setWorld(GameScreen gameScreen) {
+		this.gameScreen = gameScreen;
+	}
 	/**
 	 * Erstellt das physikalische Kollisionsmodell. Es wird eine Sphere als
 	 * Shape benutzt, weil dieses, fuer die Berechnung, am guenstigsten ist.
 	 */
-	private void createCollisionShape() {
-		btCollisionShape collisionShape = new btSphereShape(this.radius);
-		setCollisionShape(collisionShape);
-		setEntityWorldTransform(this.instance.transform);
-		createRigidBody();
-		this.getRigidBody().setContactCallbackFilter(Player.PLAYER_FLAG);
-
-		this.getRigidBody().setCollisionFlags(
-				this.getRigidBody().getCollisionFlags()
-						| btCollisionObject.CollisionFlags.CF_CUSTOM_MATERIAL_CALLBACK);
-
-		this.getRigidBody().setUserValue(this.getID());
-	}
-
-	public void setWorld(GameScreen gameScreen) {
-		this.gameScreen = gameScreen;
-	}
-
 	@Override
 	public void initPhysix() {
-		// TODO Auto-generated method stub
+		btCollisionShape collisionShape = new btSphereShape(this.radius);
+		setCollisionShape(collisionShape);
+		rigidBody = new PhysixBodyDef(world.getPhysixManager(), mass, motionState,
+				collisionShape).create();
+		setEntityWorldTransform(this.instance.transform);
+		rigidBody.setContactCallbackFilter(Player.PLAYER_FLAG);
 
+		rigidBody.setCollisionFlags(rigidBody.getCollisionFlags()
+						| btCollisionObject.CollisionFlags.CF_CUSTOM_MATERIAL_CALLBACK);
+
+		rigidBody.setUserValue(this.getID());
 	}
 
 }

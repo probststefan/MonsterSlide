@@ -15,6 +15,8 @@ import com.badlogic.gdx.physics.bullet.collision.btCollisionObject;
 
 import fh.teamproject.controller.player.pc.InputHandling;
 import fh.teamproject.interfaces.IPlayer;
+import fh.teamproject.physics.PhysixBody;
+import fh.teamproject.physics.PhysixBodyDef;
 import fh.teamproject.physics.PlayerMotionState;
 import fh.teamproject.physics.PlayerTickCallback;
 import fh.teamproject.screens.GameScreen;
@@ -59,10 +61,7 @@ public class Player extends CollisionEntity implements IPlayer {
 
 	public Player() {
 		super();
-
-
 		inputHandling = new InputHandling(this);
-
 		buildPlayer();
 		this.ACCELERATION = GameScreen.settings.PLAYER_ACCEL;
 		this.TURN_INTENSITIY = GameScreen.settings.PLAYER_TURN_INTENSITY;
@@ -144,26 +143,6 @@ public class Player extends CollisionEntity implements IPlayer {
 				| Usage.Normal);
 		instance = new ModelInstance(m, position);
 		instance.userData = "player";
-		// Bullet-Eigenschaften setzen.
-		btCapsuleShape collisionShape = new btCapsuleShape(radius, height);
-		setCollisionShape(collisionShape);
-		setLocalInertia(new Vector3(0, 0, 0));
-		setMass(GameScreen.settings.PLAYER_MASS); // Masse der Sphere.
-		this.motionState = new PlayerMotionState(this);
-		createRigidBody();
-
-		// Damit rutscht die Sphere nur noch und rollt nicht mehr.
-		this.rigidBody.setAngularFactor(new Vector3(0, 1.0f, 0));
-		this.rigidBody.setFriction(0.1f);
-		this.rigidBody.setRestitution(0f);
-
-		this.rigidBody.setCollisionFlags(this.rigidBody.getCollisionFlags()
-				| btCollisionObject.CollisionFlags.CF_CUSTOM_MATERIAL_CALLBACK);
-		setEntityWorldTransform(instance.transform);
-
-		// Wird gebraucht um die Kollisionen mit den Coins zu filtern.
-		this.getRigidBody().setContactCallbackFlag(Player.PLAYER_FLAG);
-
 	}
 
 	@Override
@@ -178,9 +157,32 @@ public class Player extends CollisionEntity implements IPlayer {
 
 	@Override
 	public void initPhysix() {
-		getRigidBody().setContactCallbackFlag(0);
+		float height = radius * 2f; // FIXME: aus buildPlayer kopiert! magic
+									// number
+		btCapsuleShape collisionShape = new btCapsuleShape(radius, height);
+		setCollisionShape(collisionShape);
+		setLocalInertia(new Vector3(0, 0, 0));
+		setMass(GameScreen.settings.PLAYER_MASS);
+		this.motionState = new PlayerMotionState(this);
+
+		PhysixBodyDef bodyDef = new PhysixBodyDef(world.getPhysixManager(), mass,
+				motionState, collisionShape);
+		// Damit rutscht die Sphere nur noch und rollt nicht mehr.
+		bodyDef.setFriction(0.1f);
+		bodyDef.setRestitution(0f);
+
+		PhysixBody body = bodyDef.create();
+		body.setAngularFactor(new Vector3(0, 1.0f, 0));
+		body.setContactCallbackFlag(0);
+		body.setContactCallbackFlag(Player.PLAYER_FLAG);
+		// Wird gebraucht um die Kollisionen mit den Coins zu filtern.
+		body.setCollisionFlags(body.getCollisionFlags()
+				| btCollisionObject.CollisionFlags.CF_CUSTOM_MATERIAL_CALLBACK);
+
 		PlayerTickCallback playerCallback = new PlayerTickCallback(this);
 		playerCallback.attach(world.getPhysixManager().getWorld(), false);
-		world.getPhysixManager().getWorld().addRigidBody(getRigidBody());
+
+		rigidBody = body;
+		setEntityWorldTransform(instance.transform);
 	}
 }

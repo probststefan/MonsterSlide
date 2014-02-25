@@ -31,10 +31,8 @@ public class PhysixManager {
 	private int maxSubSteps = 3;
 	private float fixedTimeStep = 1 / 60f;
 	private float worldGravtiy = -9.81f;
-	private final float checkPlayerOnSlideRayDepth = 100.0f;
 
 	private TriangleMeshCollisionFixer myContactListener;
-	// private ClosestRayResultCallback resultCallback;
 	private MonsterContactListener monsterContactListener;
 
 	public PerformanceCounter performanceCounter = new PerformanceCounter(this.getClass()
@@ -69,6 +67,7 @@ public class PhysixManager {
 		myContactListener.enable();
 
 		monsterContactListener = new MonsterContactListener(world);
+		monsterContactListener.enable();
 	}
 
 	public void update() {

@@ -18,8 +18,11 @@ import com.badlogic.gdx.physics.bullet.dynamics.btContactSolverInfo;
 import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.physics.bullet.dynamics.btSequentialImpulseConstraintSolver;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.PerformanceCounter;
 
+import fh.teamproject.interfaces.ICollisionEntity;
+import fh.teamproject.interfaces.IEntity;
 import fh.teamproject.interfaces.IPlayer;
 import fh.teamproject.interfaces.ISlide;
 import fh.teamproject.interfaces.ISlidePart;
@@ -46,14 +49,11 @@ public class World implements IWorld {
 	public PhysixManager physixManager;
 	private ClosestRayResultCallback resultCallback;
 	final float checkPlayerOnSlideRayDepth = 100.0f;
-
+	Array<ICollisionEntity> entities = new Array<ICollisionEntity>(32);
 	GameScreen gameScreen;
 
 	public World(GameScreen gameScreen) {
 		this.gameScreen = gameScreen;
-
-		// Wird fuer checkIsPlayerOnSlide() benoetigt.
-
 
 		// Rendering
 		batch = new ModelBatch();
@@ -70,7 +70,7 @@ public class World implements IWorld {
 		// Rutsche, Spieler und Coins erzeugen.
 		coins = new Coins(gameScreen, dynamicsWorld);
 		score = new Score();
-		slide = new Slide(dynamicsWorld, this.coins);
+		slide = new Slide(this, dynamicsWorld, this.coins);
 
 		resultCallback = new ClosestRayResultCallback(getPlayer().getPosition(),
 				new Vector3(getPlayer().getPosition().x, getPlayer().getPosition().y
