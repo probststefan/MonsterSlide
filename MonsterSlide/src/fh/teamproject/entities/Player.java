@@ -168,4 +168,9 @@ public class Player extends CollisionEntity implements IPlayer {
 	public Vector3 getDirection() {
 		return direction;
 	}
+
+	@Override
+	public void setGrounded(boolean grounded) {
+		this.isGrounded = grounded;
+	}
 }

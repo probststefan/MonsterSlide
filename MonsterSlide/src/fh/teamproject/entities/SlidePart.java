@@ -94,6 +94,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 	public void init() {
 		createCollisionShape();
 		createRigidBody();
+		getRigidBody().setUserValue(this.getID());
 		getRigidBody().setFriction(0f);
 		getRigidBody().setRestitution(0f);
 	}

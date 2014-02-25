@@ -26,13 +26,12 @@ public class Slide implements ISlide {
 	private static SlideGenerator slideGenerator = new SlideGenerator();
 	private SlideBuilder slideBuilder = new SlideBuilder();
 	private Coins coins;
+	private int actualSlidePartId;
 
 	Array<ISlidePart> slideParts = new Array<ISlidePart>();
 	btDiscreteDynamicsWorld dynamicsWorld;
 	SlidePartPool pool = new SlidePartPool();
 	Array<SlideBorder> borders = new Array<SlideBorder>();
-	private ISlidePart tmpSlidePart;
-	private Vector3 nearestControlPoint = null;
 	private float slidedDistance = 0.0f;
 	private float displayedPoints = 0.0f;
 	CatmullRomSpline<Vector3> spline = new CatmullRomSpline<Vector3>();
@@ -43,7 +42,6 @@ public class Slide implements ISlide {
 		this.dynamicsWorld = dynamicsWorld;
 		this.coins = coins;
 
-		tmpSlidePart = pool.obtain();
 		Array<Vector3> controlPoints = Slide.slideGenerator.initControlPoints();
 		controlPoints.shrink();
 		spline.set(controlPoints.items, false);
@@ -84,7 +82,6 @@ public class Slide implements ISlide {
 		// nearestControlPoint = controlPoint;
 		// }
 		// }
-
 	}
 
 	@Override
@@ -128,5 +125,19 @@ public class Slide implements ISlide {
 		nextPart.init();
 		slideParts.add(nextPart);
 		dynamicsWorld.addRigidBody(nextPart.getRigidBody());
+	}
+
+	/**
+	 * Setzt die ID des aktuell berutschten SlideParts.
+	 */
+	public void setActualSlidePartId(int id) {
+		this.actualSlidePartId = id;
+	}
+
+	/**
+	 * Liefert die ID der SlidePart die zur Zeit berutscht wird.
+	 */
+	public int getActualSlidePartId() {
+		return this.actualSlidePartId;
 	}
 }
