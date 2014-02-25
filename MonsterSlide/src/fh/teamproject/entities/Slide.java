@@ -55,33 +55,17 @@ public class Slide implements ISlide {
 		nextPart.init();
 		slideParts.add(nextPart);
 		dynamicsWorld.addRigidBody(nextPart.getRigidBody());
-		for (int i = 0; i < 20; i++) {
-			addSlidePart();
-		}
-		for (Vector3 vector3 : controlPoints) {
-			Gdx.app.log("slide", "" + vector3);
-			// Coins adden.
-			this.coins.addCoin(vector3);
-		}
+		addSlidePart();
+		// for (Vector3 vector3 : controlPoints) {
+		// Gdx.app.log("slide", "" + vector3);
+		// // Coins adden.
+		// this.coins.addCoin(vector3);
+		// }
 	}
 
 	@Override
 	public void update(Vector3 playerPosition) {
-		ISlidePart slidePart = slideParts.get(0);
 
-		// // Update slideDistance.
-		// for (Vector3 controlPoint : slidePart.getGraphicVertices()) {
-		// if (nearestControlPoint == null) {
-		// nearestControlPoint = controlPoint;
-		// slidedDistance += nearestControlPoint.dst(new Vector3());
-		// }
-		//
-		// if (playerPosition.dst(controlPoint) < playerPosition
-		// .dst(nearestControlPoint)) {
-		// slidedDistance += nearestControlPoint.dst(controlPoint);
-		// nearestControlPoint = controlPoint;
-		// }
-		// }
 	}
 
 	@Override
@@ -131,6 +115,14 @@ public class Slide implements ISlide {
 	 * Setzt die ID des aktuell berutschten SlideParts.
 	 */
 	public void setActualSlidePartId(int id) {
+		if (actualSlidePartId != id) {
+			for (ISlidePart part : slideParts) {
+				if (part.getID() == id) {
+					part.dispose();
+				}
+			}
+			addSlidePart();
+		}
 		this.actualSlidePartId = id;
 	}
 
