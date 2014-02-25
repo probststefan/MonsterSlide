@@ -14,6 +14,8 @@ public interface IPlayer extends ICollisionEntity {
 
 	public void jump();
 
+	public void setGrounded(boolean grounded);
+
 	public Vector3 getDirection();
 
 }

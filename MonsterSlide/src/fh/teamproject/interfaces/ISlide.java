@@ -1,7 +1,5 @@
 package fh.teamproject.interfaces;
 
-import com.badlogic.gdx.graphics.g3d.Environment;
-import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.math.CatmullRomSpline;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
@@ -20,6 +18,10 @@ public interface ISlide {
 	public void update(Vector3 playerPosition);
 
 	public float getSlidedDistance();
+
+	public void setActualSlidePartId(int id);
+
+	public int getActualSlidePartId();
 
 	public abstract CatmullRomSpline<Vector3> getSpline();
 }

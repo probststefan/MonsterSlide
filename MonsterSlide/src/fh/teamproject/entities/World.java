@@ -23,7 +23,7 @@ import com.badlogic.gdx.utils.PerformanceCounter;
 import fh.teamproject.interfaces.IPlayer;
 import fh.teamproject.interfaces.ISlide;
 import fh.teamproject.interfaces.IWorld;
-import fh.teamproject.physics.CoinContactListener;
+import fh.teamproject.physics.MonsterContactListener;
 import fh.teamproject.physics.PlayerTickCallback;
 import fh.teamproject.physics.TriangleMeshCollisionFixer;
 import fh.teamproject.screens.GameScreen;
@@ -54,7 +54,7 @@ public class World implements IWorld {
 	private final float checkPlayerOnSlideRayDepth = 100.0f;
 
 	private TriangleMeshCollisionFixer myContactListener;
-	private CoinContactListener coinContactListener;
+	private MonsterContactListener coinContactListener;
 	private ClosestRayResultCallback resultCallback;
 
 	public PerformanceCounter performanceCounter = new PerformanceCounter(this.getClass()
@@ -120,7 +120,8 @@ public class World implements IWorld {
 				player.position.x, player.position.y - this.checkPlayerOnSlideRayDepth,
 				player.position.z));
 
-		coinContactListener = new CoinContactListener(this.coins, this.score);
+		coinContactListener = new MonsterContactListener(this.coins, this.score,
+				this.slide, this.player);
 	}
 
 	public void update() {
