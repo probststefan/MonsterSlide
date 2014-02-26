@@ -20,4 +20,6 @@ public interface IEntity {
 	public int getID();
 
 	public void setWorld(World world);
+
+	public void dispose();
 }

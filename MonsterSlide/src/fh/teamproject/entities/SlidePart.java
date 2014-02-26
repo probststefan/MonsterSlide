@@ -9,6 +9,7 @@ import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
 import com.badlogic.gdx.physics.bullet.collision.btIndexedMesh;
 import com.badlogic.gdx.physics.bullet.collision.btTriangleIndexVertexArray;
 import com.badlogic.gdx.physics.bullet.collision.btTriangleInfoMap;
+import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.utils.Pool.Poolable;
 
 import fh.teamproject.interfaces.ISlidePart;
@@ -26,11 +27,9 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 	private btTriangleInfoMap triangleInfoMap;
 
 	Slide slide;
-	String id;
 
-	public SlidePart(Slide slide, String id) {
+	public SlidePart(Slide slide) {
 		this.slide = slide;
-		this.id = id;
 	}
 
 	public SlidePart() {
@@ -42,11 +41,6 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		return this;
 	}
 
-	@Override
-	public ISlidePart setID(String id) {
-		this.id = id;
-		return this;
-	}
 
 	@Override
 	public void reset() {
@@ -55,7 +49,15 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
 	public void dispose() {
 		indexedMesh.dispose();
-		this.world.getPhysixManager().getWorld().removeRigidBody(getRigidBody());
+		Node node = slide.getModelInstance().getNode(String.valueOf(getID()));
+		slide.getModelInstance().nodes.removeValue(node, true);
+		super.dispose();
+	}
+
+	@Override
+	public void releaseAll() {
+		indexedMesh.release();
+		super.releaseAll();
 	}
 
 	@Override
@@ -72,11 +74,11 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 	@Override
 	public void initPhysix() {
 
-		btCollisionShape collisionShape = null;
 		// FIXME: Node könnte in zukunft auch mehrere parts haben oder sogar
 		// mehrere child-nodes!
-		Node node = slide.getModelInstance().getNode(id);
+		Node node = slide.getModelInstance().getNode(String.valueOf(getID()));
 		indexedMesh = new btIndexedMesh(node.parts.first().meshPart.mesh);
+		System.out.println("" + node.parts.first().meshPart.mesh);
 		triangleVertexArray = new btTriangleIndexVertexArray();
 		triangleVertexArray.addIndexedMesh(indexedMesh);
 
@@ -93,8 +95,6 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		// (collisionShape->setUserPointer(triangleInfoMap))
 		Collision.btGenerateInternalEdgeInfo((btBvhTriangleMeshShape) collisionShape,
 				triangleInfoMap);
-
-		setCollisionShape(collisionShape);
 
 		PhysixBodyDef bodyDef = new PhysixBodyDef(world.getPhysixManager(), mass,
 				motionState, collisionShape);

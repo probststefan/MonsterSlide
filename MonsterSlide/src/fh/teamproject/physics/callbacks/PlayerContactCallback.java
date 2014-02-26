@@ -27,15 +27,12 @@ public class PlayerContactCallback implements IContactCallback {
 			// Player sitzt auf der Slide.
 			// this.world.getPlayer().setGrounded(true);
 		}
-
-		// super.onContactStarted(userValue0, match0, userValue1, match1);
 	}
 
 	@Override
 	public void onContactEnded(int userValue0, boolean match0, int userValue1,
 			boolean match1) {
-		// TODO Auto-generated method stub
-		// super.onContactEnded(userValue0, match0, userValue1, match1);
+
 	}
 
 	@Override

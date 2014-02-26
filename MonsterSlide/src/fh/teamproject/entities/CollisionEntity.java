@@ -18,7 +18,6 @@ import fh.teamproject.physics.PhysixBody;
 public abstract class CollisionEntity extends Entitiy implements ICollisionEntity {
 	protected btCollisionShape collisionShape;
 	public MotionState motionState;
-	private btRigidBodyConstructionInfo rigidBodyInfo;
 	public PhysixBody rigidBody;
 	private Vector3 localInertia;
 	protected float mass;
@@ -37,19 +36,23 @@ public abstract class CollisionEntity extends Entitiy implements ICollisionEntit
 
 	@Override
 	public void dispose() {
-		rigidBody.dispose();
+		this.world.getPhysixManager().getWorld()
+				.removeRigidBody((btRigidBody) getRigidBody());
+		((btRigidBody) rigidBody).dispose();
 		if (motionState != null) {
 			motionState.dispose();
 		}
 		collisionShape.dispose();
-		rigidBodyInfo.dispose();
+		super.dispose();
 	}
 
 	@Override
 	public void releaseAll() {
-		collisionShape.release();
-		motionState.release();
 		rigidBody.release();
+		if (motionState != null) {
+			motionState.release();
+		}
+		collisionShape.release();
 		localInertia = null;
 	}
 

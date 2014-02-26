@@ -44,4 +44,11 @@ public abstract class Entitiy implements IEntity {
 	public void setWorld(World world) {
 		this.world = world;
 	}
+
+	@Override
+	public void dispose() {
+		// TODO Auto-generated method stub
+
+	}
+
 }

@@ -54,14 +54,16 @@ public class Slide implements ISlide {
 
 	@Override
 	public void update() {
-		for (ISlidePart p : disposables) {
-			p.dispose();
-		}
-		disposables.clear();
 		if (addNextPart) {
 			addSlidePart();
 			addNextPart = false;
 		}
+		for (ISlidePart p : disposables) {
+			p.releaseAll();
+			p.dispose();
+			slideParts.removeValue(p, false);
+		}
+		disposables.clear();
 	}
 
 	@Override
@@ -84,8 +86,6 @@ public class Slide implements ISlide {
 	@Override
 	public void removeSlidePart(ISlidePart slidePart) {
 		this.disposables.add(slidePart);
-
-		slideParts.removeValue(slidePart, false);
 	}
 
 	public ModelInstance getModelInstance() {
@@ -94,17 +94,16 @@ public class Slide implements ISlide {
 
 	@Override
 	public void addSlidePart() {
-		System.out.println("addSlidePart");
-		String id = "slidePart_" + slideParts.size + 1;
+		ISlidePart nextPart = pool.obtain().setSlide(this).setSpline(spline);
+		System.out.println("addSlidePart " + String.valueOf(nextPart.getID()));
 		Array<Vector3> controlPoints = new Array<Vector3>(spline.controlPoints);
 		Slide.slideGenerator.addSpan(controlPoints);
 		controlPoints.shrink();
 		spline.set(controlPoints.items, false);
 
 		Node slidePartNode = slideBuilder.createSlidePart(spline);
-		slidePartNode.id = id;
+		slidePartNode.id = String.valueOf(nextPart.getID());
 		slideModelInstance.nodes.add(slidePartNode);
-		ISlidePart nextPart = pool.obtain().setSlide(this).setID(id).setSpline(spline);
 		nextPart.setWorld(world);
 		nextPart.initPhysix();
 		slideParts.add(nextPart);
@@ -119,8 +118,8 @@ public class Slide implements ISlide {
 		if (actualSlidePartId != id && actualSlidePartId < id) {
 			System.out.println("current " + actualSlidePartId + " --- new " + id);
 			for (ISlidePart part : slideParts) {
-				if (part.getID() == id) {
-					// removeSlidePart(part);
+				if (part.getID() == actualSlidePartId) {
+					removeSlidePart(part);
 				}
 			}
 			System.out.println("adding");

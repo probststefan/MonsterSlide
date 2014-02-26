@@ -10,8 +10,6 @@ public interface ISlidePart extends ICollisionEntity {
 
 	public ISlidePart setSpline(CatmullRomSpline<Vector3> spline);
 
-	public abstract ISlidePart setID(String id);
-
 	public abstract ISlidePart setSlide(Slide slide);
 
 	public void init();
