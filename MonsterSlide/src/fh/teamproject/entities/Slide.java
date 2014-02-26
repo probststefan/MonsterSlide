@@ -114,6 +114,7 @@ public class Slide implements ISlide {
 					disposables.add(part);
 				}
 			}
+			System.out.println("adding");
 			addSlidePart();
 		}
 		this.actualSlidePartId = id;

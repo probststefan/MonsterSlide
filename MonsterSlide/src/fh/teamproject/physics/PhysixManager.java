@@ -14,8 +14,9 @@ import com.badlogic.gdx.physics.bullet.dynamics.btSequentialImpulseConstraintSol
 import com.badlogic.gdx.utils.PerformanceCounter;
 
 import fh.teamproject.entities.World;
-import fh.teamproject.physics.listener.MonsterContactListener;
-import fh.teamproject.physics.listener.TriangleMeshCollisionFixer;
+import fh.teamproject.physics.callbacks.MonsterContactListener;
+import fh.teamproject.physics.callbacks.PlayerContactCallback;
+import fh.teamproject.physics.callbacks.TriangleMeshCollisionFixer;
 
 public class PhysixManager {
 
@@ -32,7 +33,7 @@ public class PhysixManager {
 	private float worldGravtiy = -9.81f;
 	private final float checkPlayerOnSlideRayDepth = 100.0f;
 
-	private GameContactListener gameContactListener;
+	private MonsterContactListener gameContactListener;
 
 	public PerformanceCounter performanceCounter = new PerformanceCounter(this.getClass()
 			.getSimpleName());
@@ -62,13 +63,9 @@ public class PhysixManager {
 		dynamicsWorld.setGravity(new Vector3(0, worldGravtiy, 0));
 
 		// ContactListener initialisieren.
-		// MonsterContactListener contactListener = new
-		// MonsterContactListener(world);
-		// TriangleMeshCollisionFixer contactListener2 = new
-		// TriangleMeshCollisionFixer();
-		gameContactListener = new GameContactListener();
-		// gameContactListener.addListener(contactListener);
-		// gameContactListener.addListener(contactListener2);
+		gameContactListener = new MonsterContactListener(world);
+		gameContactListener.addListener(new TriangleMeshCollisionFixer());
+		gameContactListener.addListener(new PlayerContactCallback(world));
 		gameContactListener.enable();
 
 	}
