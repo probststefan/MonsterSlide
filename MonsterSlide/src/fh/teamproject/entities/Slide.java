@@ -101,7 +101,7 @@ public class Slide implements ISlide {
 		controlPoints.shrink();
 		spline.set(controlPoints.items, false);
 
-		Node slidePartNode = slideBuilder.createSlidePart(spline);
+		Node slidePartNode = slideBuilder.createSlidePart(spline, 1);
 		slidePartNode.id = String.valueOf(nextPart.getID());
 		slideModelInstance.nodes.add(slidePartNode);
 		nextPart.setWorld(world);

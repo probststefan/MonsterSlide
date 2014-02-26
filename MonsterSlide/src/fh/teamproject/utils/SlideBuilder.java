@@ -42,14 +42,16 @@ public class SlideBuilder {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Node createSlidePart(CatmullRomSpline<Vector3> spline) {
+	public Node createSlidePart(CatmullRomSpline<Vector3> spline, int spanCount) {
 		begin();
-		/**
-		 * 1. Punkte auf letzem span interpolieren 2. Tangent, Normale und
-		 * Binormale berechnen 3. Punkte duplizieren um rechtecke zu bilden 4.
-		 * mesh bauen, material bauen
-		 */
-		createInterpolatedVertices(spline);
+			/**
+			 * 1. Punkte auf letzem span interpolieren 2. Tangent, Normale und
+			 * Binormale berechnen 3. Punkte duplizieren um rechtecke zu bilden
+			 * 4. mesh bauen, material bauen
+			 */
+		for (int i = 0; i < spanCount; i++) {
+			createInterpolatedVertices(spline, spline.spanCount - 1);
+		}
 		createVertexInfos();
 		createNode();
 		return node;
@@ -67,7 +69,7 @@ public class SlideBuilder {
 		node = null;
 	}
 
-	private void createInterpolatedVertices(CatmullRomSpline<Vector3> spline) {
+	private void createInterpolatedVertices(CatmullRomSpline<Vector3> spline, int span) {
 		/* Die Schrittweite zum interpolieren der Spline */
 		float stepSize = 10f;
 		/*
@@ -80,12 +82,12 @@ public class SlideBuilder {
 		float epsilon = 0.01f;
 
 		for (float i = 0; i <= (1 + epsilon); i += splitting) {
-			spline.valueAt(interpolatedVertex, spline.spanCount - 1, i);
+			spline.valueAt(interpolatedVertex, span, i);
 			// spline.valueAt(interpolatedVertex, i);
 
 			// 1. und 2. Ableitung bilden.
 			Vector3 derivation = new Vector3();
-			derivation = spline.derivativeAt(derivation, spline.spanCount - 1, i);
+			derivation = spline.derivativeAt(derivation, span, i);
 			// derivation = spline.derivativeAt(derivation, i);
 
 			Vector3 tangent = derivation.cpy().nor();

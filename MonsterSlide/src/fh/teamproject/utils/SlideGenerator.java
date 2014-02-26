@@ -15,7 +15,7 @@ public class SlideGenerator {
 
 	float segments = GameScreen.settings.SLIDE_SEGMENTS;
 	float segment_Min_Length = 50f;
-	float segment_Max_Length = 50f;
+	float segment_Max_Length = 100f;
 	float curveDirection = 1f;// verschiebungsrichtung auf z achse
 	float maxSlope = -0.5f;
 	float minSlope = 0.1f;
