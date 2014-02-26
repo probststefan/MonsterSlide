@@ -31,7 +31,6 @@ public class GameContactListener extends ContactListener {
 			listener.onContactAdded(cp, colObj0Wrap, partId0, index0, colObj1Wrap,
 					partId1, index1);
 		}
-
 		return true;
 	}
 

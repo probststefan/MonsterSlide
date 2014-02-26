@@ -65,6 +65,7 @@ public class PhysixManager {
 		gameContactListener = new GameContactListener();
 		gameContactListener.addListener(new MonsterContactListener(world));
 		gameContactListener.addListener(new TriangleMeshCollisionFixer());
+		gameContactListener.enable();
 	}
 
 	public void update() {

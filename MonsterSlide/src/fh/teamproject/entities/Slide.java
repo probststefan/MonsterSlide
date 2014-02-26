@@ -26,7 +26,7 @@ public class Slide implements ISlide {
 	private static SlideGenerator slideGenerator = new SlideGenerator();
 	private SlideBuilder slideBuilder = new SlideBuilder();
 	private Coins coins;
-	private int actualSlidePartId;
+	private int actualSlidePartId = -1;
 
 	Array<ISlidePart> slideParts = new Array<ISlidePart>();
 	btDiscreteDynamicsWorld dynamicsWorld;
@@ -49,11 +49,15 @@ public class Slide implements ISlide {
 		spline.set(controlPoints.items, false);
 		slideModelInstance = new ModelInstance(new Model());
 		addSlidePart();
+		// addSlidePart();
 	}
 
 	@Override
 	public void update() {
-
+		for (ISlidePart p : disposables) {
+			p.dispose();
+		}
+		disposables.clear();
 	}
 
 	@Override
@@ -99,6 +103,7 @@ public class Slide implements ISlide {
 		slideParts.add(nextPart);
 	}
 
+	private Array<ISlidePart> disposables = new Array<ISlidePart>(4);
 	/**
 	 * Setzt die ID des aktuell berutschten SlideParts.
 	 */
@@ -106,11 +111,10 @@ public class Slide implements ISlide {
 		if (actualSlidePartId != id) {
 			for (ISlidePart part : slideParts) {
 				if (part.getID() == id) {
-					part.dispose();
+					disposables.add(part);
 				}
 			}
 			addSlidePart();
-			System.out.println("S");
 		}
 		this.actualSlidePartId = id;
 	}

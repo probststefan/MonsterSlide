@@ -56,7 +56,6 @@ public class DebugDrawer {
 	public void toggleDebug() {
 		DebugDrawer.isDebug = !DebugDrawer.isDebug;
 		infoPanel.root.setVisible(!infoPanel.root.isVisible());
-		Gdx.app.log("Debugger", "" + infoPanel.root.isVisible());
 	}
 
 	private void renderBullet() {
