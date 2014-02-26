@@ -1,41 +1,43 @@
 package fh.teamproject.entities;
 
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.physics.bullet.dynamics.btDynamicsWorld;
 import com.badlogic.gdx.utils.Array;
-
-import fh.teamproject.screens.GameScreen;
+import com.badlogic.gdx.utils.IntArray;
 
 /**
- * Diese Klasse verwaltet alles Coins.
- * 
- * Hallo Torsten; Test
+ * Diese Klasse verwaltet alle Coins.
  * 
  * @author stefanprobst
  * 
  */
 public class Coins {
 
-	private Array<Coin> coins = new Array<Coin>();
+	private Array<Coin> coins;
+	private IntArray toDeleteIDs;
 	private CoinPool coinPool;
-	private btDynamicsWorld dynamicsWorld;
-	GameScreen gameScreen;
+	private World world;
 
-	public Coins(GameScreen gameScreen, btDynamicsWorld dynamicsWorld) {
-		this.dynamicsWorld = dynamicsWorld;
-		this.gameScreen = gameScreen;
-		this.coinPool = new CoinPool(gameScreen);
+	// public Coins(GameScreen gameScreen, btDynamicsWorld dynamicsWorld) {
+	public Coins(World world) {
+		this.world = world;
+		this.coins = new Array<Coin>();
+		this.toDeleteIDs = new IntArray();
+		this.coinPool = new CoinPool(this.world);
+	}
+
+	public void update() {
+		this.removeCoins();
 	}
 
 	public void addCoin(Vector3 position) {
 		Coin tmpCoin = coinPool.obtain();
 		tmpCoin.setToPosition(position);
 		coins.add(tmpCoin);
-		this.dynamicsWorld.addRigidBody(tmpCoin.getRigidBody());
+		this.world.getPhysixManager().addRigidBody(tmpCoin.getRigidBody());
 	}
 
 	/**
-	 * Entfernt einen Coin aus dem coins-Array.
+	 * Markiert einen Coin als "aufgehoben" vom Spieler.
 	 * 
 	 * @param id
 	 */
@@ -43,10 +45,8 @@ public class Coins {
 		int index = this.getCoinIndex(id);
 
 		if (index >= 0) {
-			// Coins duerfen hier nicht geloescht werden (Als geloescht
-			// markieren).
-			// this.dynamicsWorld.removeRigidBody(this.coins.get(index).getRigidBody());
-			// this.coins.removeIndex(index);
+			// Coins als geloescht markieren.
+			this.toDeleteIDs.add(index);
 		}
 	}
 
@@ -76,5 +76,20 @@ public class Coins {
 		}
 
 		return index;
+	}
+
+	/**
+	 * Entfernt die als geloescht markierten Coins aus der Bullet-Welt und dem
+	 * coins-Array.
+	 */
+	private void removeCoins() {
+		if (this.toDeleteIDs.size > 0) {
+			for (int i = 0; i < this.toDeleteIDs.size; i++) {
+				this.world.getPhysixManager().removeRigidBody(
+						this.coins.get(this.toDeleteIDs.get(i)).getRigidBody());
+				this.coins.removeIndex(this.toDeleteIDs.get(i));
+				this.toDeleteIDs.removeIndex(i);
+			}
+		}
 	}
 }

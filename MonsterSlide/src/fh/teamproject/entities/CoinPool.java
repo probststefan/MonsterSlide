@@ -2,18 +2,16 @@ package fh.teamproject.entities;
 
 import com.badlogic.gdx.utils.Pool;
 
-import fh.teamproject.screens.GameScreen;
-
 public class CoinPool extends Pool<Coin> {
 
-	GameScreen screen;
+	private World world;
 
-	public CoinPool(GameScreen screen) {
-		this.screen = screen;
+	public CoinPool(World world) {
+		this.world = world;
 	}
+
 	@Override
 	protected Coin newObject() {
-		Coin coin = new Coin(screen);
-		return coin;
+		return new Coin(this.world);
 	}
 }

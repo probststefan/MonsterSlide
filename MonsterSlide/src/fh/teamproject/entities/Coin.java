@@ -1,29 +1,21 @@
 package fh.teamproject.entities;
 
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.VertexAttributes.Usage;
-import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
-import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionObject;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
 import com.badlogic.gdx.physics.bullet.collision.btSphereShape;
 import com.badlogic.gdx.utils.Pool.Poolable;
 
-import fh.teamproject.MonsterSlide;
-import fh.teamproject.screens.GameScreen;
-
 public class Coin extends CollisionEntity implements Poolable {
 
 	private float radius = 1f;
-	private GameScreen gameScreen;
+	private World world;
 
-	public Coin(GameScreen gameScreen) {
+	public Coin(World world) {
 		this.position = new Vector3(0, 2.0f, 0);
-		this.gameScreen = gameScreen;
+		this.world = world;
 		this.createModelInstance();
 		this.createCollisionShape();
 	}
@@ -43,7 +35,7 @@ public class Coin extends CollisionEntity implements Poolable {
 	 * Erstellen des visuellen Repraesentation.
 	 */
 	private void createModelInstance() {
-		Model m = gameScreen.getAssets().get("model/coin.g3db", Model.class);
+		Model m = this.world.gameScreen.getAssets().get("model/coin.g3db", Model.class);
 		instance = new ModelInstance(m, position);
 		instance.transform.rotate(new Vector3(1.0f, 0, 0), 90.0f);
 		instance.transform.scl(1f);
@@ -67,14 +59,9 @@ public class Coin extends CollisionEntity implements Poolable {
 		this.getRigidBody().setUserValue(this.getID());
 	}
 
-	public void setWorld(GameScreen gameScreen) {
-		this.gameScreen = gameScreen;
-	}
-
 	@Override
 	public void initPhysix() {
 		// TODO Auto-generated method stub
 
 	}
-
 }
