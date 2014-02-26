@@ -12,6 +12,8 @@ import com.badlogic.gdx.physics.bullet.collision.btTriangleInfoMap;
 import com.badlogic.gdx.utils.Pool.Poolable;
 
 import fh.teamproject.interfaces.ISlidePart;
+import fh.teamproject.physics.PhysixBody;
+import fh.teamproject.physics.PhysixBodyDef;
 
 public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
@@ -47,7 +49,31 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		return this;
 	}
 
-	private void createCollisionShape() {
+	@Override
+	public void reset() {
+
+	}
+
+	public void dispose() {
+		triangleInfoMap.dispose();
+		triangleVertexArray.dispose();
+		indexedMesh.dispose();
+	}
+
+	@Override
+	public ISlidePart setSpline(CatmullRomSpline<Vector3> spline) {
+		this.spline = spline;
+		return this;
+	}
+
+	@Override
+	public void init() {
+
+	}
+
+	@Override
+	public void initPhysix() {
+
 		btCollisionShape collisionShape = null;
 		// FIXME: Node könnte in zukunft auch mehrere parts haben oder sogar
 		// mehrere child-nodes!
@@ -71,37 +97,13 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 				triangleInfoMap);
 
 		setCollisionShape(collisionShape);
-	}
 
-	@Override
-	public void reset() {
+		PhysixBodyDef bodyDef = new PhysixBodyDef(world.getPhysixManager(), mass,
+				motionState, collisionShape);
+		bodyDef.setFriction(0.1f);
+		bodyDef.setRestitution(0f);
 
-	}
-
-	public void dispose() {
-		triangleInfoMap.dispose();
-		triangleVertexArray.dispose();
-		indexedMesh.dispose();
-	}
-
-	@Override
-	public ISlidePart setSpline(CatmullRomSpline<Vector3> spline) {
-		this.spline = spline;
-		return this;
-	}
-
-	@Override
-	public void init() {
-		createCollisionShape();
-		createRigidBody();
-		getRigidBody().setUserValue(this.getID());
-		getRigidBody().setFriction(0f);
-		getRigidBody().setRestitution(0f);
-	}
-
-	@Override
-	public void initPhysix() {
-		// TODO Auto-generated method stub
-
+		rigidBody = bodyDef.create();
+		rigidBody.setUserValue(this.getID());
 	}
 }

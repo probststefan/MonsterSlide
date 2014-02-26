@@ -26,7 +26,7 @@ public class MonsterContactListener extends ContactListener {
 
 		if (match1) {
 			// Setzen des aktuellen berutschten SlideParts.
-			// this.world.getSlide().setActualSlidePartId(userValue1);
+			this.world.getSlide().setActualSlidePartId(userValue1);
 			// Player sitzt auf der Slide.
 			this.world.getPlayer().setGrounded(true);
 		}
@@ -46,7 +46,6 @@ public class MonsterContactListener extends ContactListener {
 	public boolean onContactAdded(btManifoldPoint cp,
 			btCollisionObjectWrapper colObj0Wrap, int partId0, int index0,
 			btCollisionObjectWrapper colObj1Wrap, int partId1, int index1) {
-
 		Collision.btAdjustInternalEdgeContacts(cp, colObj1Wrap, colObj0Wrap, partId1,
 				index1, 0);
 		return true;

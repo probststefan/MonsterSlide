@@ -32,7 +32,6 @@ public class SlideBorder extends CollisionEntity implements Poolable {
 		setCollisionShape(new btSphereShape(SlideBorder.diameter / 2f));
 		setEntityWorldTransform(instance.transform);
 		setLocalInertia(new Vector3(0, 0, 0));
-		createRigidBody();
 
 	}
 

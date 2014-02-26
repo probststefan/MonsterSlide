@@ -26,7 +26,7 @@ public class Slide implements ISlide {
 	private static SlideGenerator slideGenerator = new SlideGenerator();
 	private SlideBuilder slideBuilder = new SlideBuilder();
 	private Coins coins;
-	private int actualSlidePartId;
+	private int actualSlidePartId = -1;
 
 	Array<ISlidePart> slideParts = new Array<ISlidePart>();
 	btDiscreteDynamicsWorld dynamicsWorld;
@@ -37,30 +37,27 @@ public class Slide implements ISlide {
 	CatmullRomSpline<Vector3> spline = new CatmullRomSpline<Vector3>();
 	Model slideModel;
 	ModelInstance slideModelInstance;
+	World world;
 
-	public Slide(btDiscreteDynamicsWorld dynamicsWorld, Coins coins) {
+	public Slide(World world, btDiscreteDynamicsWorld dynamicsWorld, Coins coins) {
 		this.dynamicsWorld = dynamicsWorld;
+		this.world = world;
 		this.coins = coins;
 
 		Array<Vector3> controlPoints = Slide.slideGenerator.initControlPoints();
 		controlPoints.shrink();
 		spline.set(controlPoints.items, false);
 		slideModelInstance = new ModelInstance(new Model());
-
-		Node slidePartNode = slideBuilder.createSlidePart(spline);
-		String id = "slidePart_" + slideParts.size + 1;
-		slidePartNode.id = id;
-		slideModelInstance.nodes.add(slidePartNode);
-		ISlidePart nextPart = pool.obtain().setSlide(this).setID(id).setSpline(spline);
-		nextPart.init();
-		slideParts.add(nextPart);
-		dynamicsWorld.addRigidBody(nextPart.getRigidBody());
 		addSlidePart();
+		// addSlidePart();
 	}
 
 	@Override
 	public void update() {
-
+		for (ISlidePart p : disposables) {
+			p.dispose();
+		}
+		disposables.clear();
 	}
 
 	@Override
@@ -101,11 +98,12 @@ public class Slide implements ISlide {
 		slidePartNode.id = id;
 		slideModelInstance.nodes.add(slidePartNode);
 		ISlidePart nextPart = pool.obtain().setSlide(this).setID(id).setSpline(spline);
-		nextPart.init();
+		nextPart.setWorld(world);
+		nextPart.initPhysix();
 		slideParts.add(nextPart);
-		dynamicsWorld.addRigidBody(nextPart.getRigidBody());
 	}
 
+	private Array<ISlidePart> disposables = new Array<ISlidePart>(4);
 	/**
 	 * Setzt die ID des aktuell berutschten SlideParts.
 	 */
@@ -113,7 +111,7 @@ public class Slide implements ISlide {
 		if (actualSlidePartId != id) {
 			for (ISlidePart part : slideParts) {
 				if (part.getID() == id) {
-					part.dispose();
+					disposables.add(part);
 				}
 			}
 			addSlidePart();

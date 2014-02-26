@@ -7,7 +7,6 @@ import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 
 public interface ICollisionEntity extends IEntity {
 
-	public void createRigidBody();
 
 	public btRigidBody getRigidBody();
 

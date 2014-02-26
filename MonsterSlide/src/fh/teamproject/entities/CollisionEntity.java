@@ -8,6 +8,7 @@ import com.badlogic.gdx.physics.bullet.dynamics.btRigidBodyConstructionInfo;
 
 import fh.teamproject.interfaces.ICollisionEntity;
 import fh.teamproject.physics.MotionState;
+import fh.teamproject.physics.PhysixBody;
 
 /**
  * Abstrahiert ein Kollisionsobjekt fuer die Bullet-World.
@@ -15,12 +16,12 @@ import fh.teamproject.physics.MotionState;
  * @author stefanprobst
  */
 public abstract class CollisionEntity extends Entitiy implements ICollisionEntity {
-	private btCollisionShape collisionShape;
+	protected btCollisionShape collisionShape;
 	public MotionState motionState;
 	private btRigidBodyConstructionInfo rigidBodyInfo;
-	public btRigidBody rigidBody;
+	public PhysixBody rigidBody;
 	private Vector3 localInertia;
-	private float mass;
+	protected float mass;
 
 	CollisionEntity() {
 		super();
@@ -52,18 +53,7 @@ public abstract class CollisionEntity extends Entitiy implements ICollisionEntit
 		localInertia = null;
 	}
 
-	/**
-	 * Erstellt den endgueltigen RigidBody der von Bullet benutzt wird.
-	 */
-	@Override
-	public void createRigidBody() {
-		rigidBodyInfo = new btRigidBodyConstructionInfo(mass, motionState,
-				collisionShape, localInertia);
 
-		// rigidBody.setFriction(.0f);
-
-		rigidBody = new btRigidBody(rigidBodyInfo);
-	}
 
 	public void createMotionState() {
 		// this.motionState = new MotionState(this.instance.transform);
@@ -77,7 +67,7 @@ public abstract class CollisionEntity extends Entitiy implements ICollisionEntit
 	 * @return btRigidBody
 	 */
 	@Override
-	public btRigidBody getRigidBody() {
+	public PhysixBody getRigidBody() {
 		return rigidBody;
 	}
 
@@ -103,7 +93,6 @@ public abstract class CollisionEntity extends Entitiy implements ICollisionEntit
 		if (null == motionState) {
 			createMotionState();
 		}
-
 		motionState.setWorldTransform(transform);
 	}
 
