@@ -2,6 +2,7 @@ package fh.teamproject.physics.listener;
 
 import com.badlogic.gdx.physics.bullet.collision.Collision;
 import com.badlogic.gdx.physics.bullet.collision.ContactListener;
+import com.badlogic.gdx.physics.bullet.collision.btCollisionObject;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionObjectWrapper;
 import com.badlogic.gdx.physics.bullet.collision.btManifoldPoint;
 
@@ -41,6 +42,7 @@ public class MonsterContactListener extends ContactListener {
 			this.world.getPlayer().setGrounded(false);
 		}
 	}
+
 
 	@Override
 	public boolean onContactAdded(btManifoldPoint cp,

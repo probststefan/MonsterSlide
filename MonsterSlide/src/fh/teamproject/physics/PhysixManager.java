@@ -62,10 +62,15 @@ public class PhysixManager {
 		dynamicsWorld.setGravity(new Vector3(0, worldGravtiy, 0));
 
 		// ContactListener initialisieren.
+		// MonsterContactListener contactListener = new
+		// MonsterContactListener(world);
+		// TriangleMeshCollisionFixer contactListener2 = new
+		// TriangleMeshCollisionFixer();
 		gameContactListener = new GameContactListener();
-		gameContactListener.addListener(new MonsterContactListener(world));
-		gameContactListener.addListener(new TriangleMeshCollisionFixer());
+		// gameContactListener.addListener(contactListener);
+		// gameContactListener.addListener(contactListener2);
 		gameContactListener.enable();
+
 	}
 
 	public void update() {

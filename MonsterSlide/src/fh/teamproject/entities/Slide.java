@@ -49,7 +49,7 @@ public class Slide implements ISlide {
 		spline.set(controlPoints.items, false);
 		slideModelInstance = new ModelInstance(new Model());
 		addSlidePart();
-		// addSlidePart();
+		addSlidePart();
 	}
 
 	@Override
