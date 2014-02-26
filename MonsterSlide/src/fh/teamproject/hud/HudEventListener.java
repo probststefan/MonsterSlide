@@ -3,20 +3,21 @@ package fh.teamproject.hud;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
+import fh.teamproject.entities.World;
 import fh.teamproject.screens.GameScreen;
 
 public class HudEventListener extends ChangeListener {
 
-	GameScreen gameScreen;
+	World world;
 
-	public HudEventListener(GameScreen gameScreen) {
-		this.gameScreen = gameScreen;
+	public HudEventListener(World world) {
+		this.world = world;
 	}
 
 	@Override
 	public void changed(ChangeEvent event, Actor actor) {
 		if (actor.getName().equals("reset")) {
-			this.gameScreen.world.reset();
+			this.world.reset();
 		}
 	}
 }

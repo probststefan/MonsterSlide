@@ -52,7 +52,7 @@ public class GameScreen implements Screen {
 		// Debug
 		debugDrawer = new DebugDrawer(this);
 
-		hud = new Hud(this);
+		hud = new Hud(world);
 		hud.generateSlideOverview();
 
 		// Input

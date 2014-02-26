@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.esotericsoftware.tablelayout.BaseTableLayout.Debug;
 
+import fh.teamproject.entities.World;
 import fh.teamproject.screens.GameScreen;
 import fh.teamproject.utils.SkinManager;
 
@@ -23,19 +24,19 @@ public class Hud {
 	private float padding = 15.0f;
 
 	Skin skin;
-	GameScreen gameScreen;
 	HudEventListener listener;
 	Image mapOverview, coin;
+	World world;
 
-	public Hud(GameScreen gameScreen) {
+	public Hud(World world) {
 		skin = SkinManager.skin;
+		this.world = world;
 		mapOverview = new Image();
 
 		Texture coinTexture = new Texture(Gdx.files.internal("data/hud/coin.png"));
 		coin = new Image(coinTexture);
 
-		this.gameScreen = gameScreen;
-		listener = new HudEventListener(gameScreen);
+		listener = new HudEventListener(world);
 		stage = new Stage();
 		hud = new Table().top().left();
 		hud.setFillParent(true);
@@ -94,6 +95,8 @@ public class Hud {
 
 	public void update() {
 		stage.act();
+		setCoinCount(world.getScore().getCoinsScore());
+		setPoints(world.getSlide().getSlidedDistance());
 	}
 
 	public void render() {
