@@ -2,7 +2,6 @@ package fh.teamproject.physics;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.physics.bullet.collision.ClosestRayResultCallback;
 import com.badlogic.gdx.physics.bullet.collision.btBroadphaseInterface;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionDispatcher;
 import com.badlogic.gdx.physics.bullet.collision.btDbvtBroadphase;
@@ -13,10 +12,9 @@ import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.physics.bullet.dynamics.btSequentialImpulseConstraintSolver;
 import com.badlogic.gdx.utils.PerformanceCounter;
 
-import fh.teamproject.entities.Player;
 import fh.teamproject.entities.World;
-import fh.teamproject.interfaces.IPlayer;
-import fh.teamproject.screens.GameScreen;
+import fh.teamproject.physics.listener.MonsterContactListener;
+import fh.teamproject.physics.listener.TriangleMeshCollisionFixer;
 
 public class PhysixManager {
 
@@ -33,9 +31,8 @@ public class PhysixManager {
 	private float worldGravtiy = -9.81f;
 	private final float checkPlayerOnSlideRayDepth = 100.0f;
 
-	private TriangleMeshCollisionFixer myContactListener;
 	// private ClosestRayResultCallback resultCallback;
-	private MonsterContactListener monsterContactListener;
+	private GameContactListener gameContactListener;
 
 	public PerformanceCounter performanceCounter = new PerformanceCounter(this.getClass()
 			.getSimpleName());
@@ -65,10 +62,9 @@ public class PhysixManager {
 		dynamicsWorld.setGravity(new Vector3(0, worldGravtiy, 0));
 
 		// ContactListener initialisieren.
-		myContactListener = new TriangleMeshCollisionFixer();
-		myContactListener.enable();
-
-		monsterContactListener = new MonsterContactListener(world);
+		gameContactListener = new GameContactListener();
+		gameContactListener.addListener(new MonsterContactListener(world));
+		gameContactListener.addListener(new TriangleMeshCollisionFixer());
 	}
 
 	public void update() {
@@ -98,6 +94,7 @@ public class PhysixManager {
 	public void removeRigidBody(btRigidBody rigidBody) {
 		dynamicsWorld.removeRigidBody(rigidBody);
 	}
+
 	public void dispose() {
 		dynamicsWorld.dispose();
 		solver.dispose();
@@ -109,6 +106,5 @@ public class PhysixManager {
 	public PerformanceCounter getPerformanceCounter() {
 		return performanceCounter;
 	}
-
 
 }

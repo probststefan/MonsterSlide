@@ -1,7 +1,6 @@
 package fh.teamproject.entities;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
@@ -10,24 +9,13 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.ClosestRayResultCallback;
-import com.badlogic.gdx.physics.bullet.collision.btBroadphaseInterface;
-import com.badlogic.gdx.physics.bullet.collision.btCollisionDispatcher;
-import com.badlogic.gdx.physics.bullet.collision.btDbvtBroadphase;
-import com.badlogic.gdx.physics.bullet.collision.btDefaultCollisionConfiguration;
-import com.badlogic.gdx.physics.bullet.dynamics.btContactSolverInfo;
 import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld;
-import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
-import com.badlogic.gdx.physics.bullet.dynamics.btSequentialImpulseConstraintSolver;
-import com.badlogic.gdx.utils.PerformanceCounter;
 
 import fh.teamproject.interfaces.IPlayer;
 import fh.teamproject.interfaces.ISlide;
 import fh.teamproject.interfaces.ISlidePart;
 import fh.teamproject.interfaces.IWorld;
-import fh.teamproject.physics.MonsterContactListener;
 import fh.teamproject.physics.PhysixManager;
-import fh.teamproject.physics.PlayerTickCallback;
-import fh.teamproject.physics.TriangleMeshCollisionFixer;
 import fh.teamproject.screens.GameScreen;
 import fh.teamproject.screens.MenuScreen;
 
@@ -53,7 +41,6 @@ public class World implements IWorld {
 		this.gameScreen = gameScreen;
 
 		// Wird fuer checkIsPlayerOnSlide() benoetigt.
-
 
 		// Rendering
 		batch = new ModelBatch();
@@ -81,14 +68,18 @@ public class World implements IWorld {
 	}
 
 	public void update() {
-		if (!checkIsPlayerOnSlide()) {
-			gameScreen.getGame().setScreen(new MenuScreen(gameScreen.getGame()));
+		if (!gameScreen.isPaused) {
+			physixManager.update();
 		}
-		physixManager.update();
-		player.update();
-		slide.update();
-		// Der Skydome soll den Player verfolgen.
-		skydome.transform.setToTranslation(player.position);
+
+		if (!checkIsPlayerOnSlide() && !gameScreen.isPaused) {
+			gameScreen.getGame().setScreen(new MenuScreen(gameScreen.getGame()));
+		} else {
+			player.update();
+			slide.update();
+			// Der Skydome soll den Player verfolgen.
+			skydome.transform.setToTranslation(player.position);
+		}
 	}
 
 	@Override

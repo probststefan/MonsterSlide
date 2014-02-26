@@ -43,8 +43,10 @@ public class Coins {
 		int index = this.getCoinIndex(id);
 
 		if (index >= 0) {
-			this.dynamicsWorld.removeRigidBody(this.coins.get(index).getRigidBody());
-			this.coins.removeIndex(index);
+			// Coins duerfen hier nicht geloescht werden (Als geloescht
+			// markieren).
+			// this.dynamicsWorld.removeRigidBody(this.coins.get(index).getRigidBody());
+			// this.coins.removeIndex(index);
 		}
 	}
 
