@@ -12,7 +12,6 @@ import com.badlogic.gdx.physics.bullet.collision.btTriangleInfoMap;
 import com.badlogic.gdx.utils.Pool.Poolable;
 
 import fh.teamproject.interfaces.ISlidePart;
-import fh.teamproject.physics.PhysixBody;
 import fh.teamproject.physics.PhysixBodyDef;
 
 public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
@@ -55,8 +54,8 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 	}
 
 	public void dispose() {
-		triangleInfoMap.dispose();
-		triangleVertexArray.dispose();
+		// triangleInfoMap.dispose();
+		// triangleVertexArray.dispose();
 		indexedMesh.dispose();
 	}
 

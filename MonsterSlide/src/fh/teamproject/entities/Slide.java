@@ -1,6 +1,5 @@
 package fh.teamproject.entities;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.model.Node;
@@ -79,6 +78,9 @@ public class Slide implements ISlide {
 
 	@Override
 	public void removeSlidePart(ISlidePart slidePart) {
+		this.disposables.add(slidePart);
+		this.world.getPhysixManager().getWorld()
+				.removeRigidBody(slidePart.getRigidBody());
 		slideParts.removeValue(slidePart, false);
 	}
 
@@ -104,6 +106,7 @@ public class Slide implements ISlide {
 	}
 
 	private Array<ISlidePart> disposables = new Array<ISlidePart>(4);
+
 	/**
 	 * Setzt die ID des aktuell berutschten SlideParts.
 	 */
@@ -111,7 +114,7 @@ public class Slide implements ISlide {
 		if (actualSlidePartId != id) {
 			for (ISlidePart part : slideParts) {
 				if (part.getID() == id) {
-					disposables.add(part);
+					removeSlidePart(part);
 				}
 			}
 			System.out.println("adding");
