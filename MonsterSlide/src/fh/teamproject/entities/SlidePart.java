@@ -1,5 +1,6 @@
 package fh.teamproject.entities;
 
+import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.model.Node;
 import com.badlogic.gdx.math.CatmullRomSpline;
 import com.badlogic.gdx.math.Vector3;
@@ -47,6 +48,10 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
 	}
 
+	@Override
+	public ModelInstance getModelInstance() {
+		return slide.getModelInstance();
+	}
 	public void dispose() {
 		indexedMesh.dispose();
 		Node node = slide.getModelInstance().getNode(String.valueOf(getID()));
