@@ -1,18 +1,14 @@
-package fh.teamproject.physics.listener;
+package fh.teamproject.physics.callbacks;
 
-import com.badlogic.gdx.physics.bullet.collision.Collision;
-import com.badlogic.gdx.physics.bullet.collision.ContactListener;
-import com.badlogic.gdx.physics.bullet.collision.btCollisionObject;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionObjectWrapper;
 import com.badlogic.gdx.physics.bullet.collision.btManifoldPoint;
 
 import fh.teamproject.entities.World;
 
-public class MonsterContactListener extends ContactListener {
+public class PlayerContactCallback implements IContactCallback {
+	World world;
 
-	private World world;
-
-	public MonsterContactListener(World world) {
+	public PlayerContactCallback(World world) {
 		this.world = world;
 	}
 
@@ -31,25 +27,24 @@ public class MonsterContactListener extends ContactListener {
 			// Player sitzt auf der Slide.
 			this.world.getPlayer().setGrounded(true);
 		}
+
+		// super.onContactStarted(userValue0, match0, userValue1, match1);
 	}
 
 	@Override
 	public void onContactEnded(int userValue0, boolean match0, int userValue1,
 			boolean match1) {
-		if (match1) {
-			// Player sitzt nicht mehr auf der Slide (er ist abgehoben bzw.
-			// springt).
-			this.world.getPlayer().setGrounded(false);
-		}
+		// TODO Auto-generated method stub
+		// super.onContactEnded(userValue0, match0, userValue1, match1);
 	}
-
 
 	@Override
 	public boolean onContactAdded(btManifoldPoint cp,
 			btCollisionObjectWrapper colObj0Wrap, int partId0, int index0,
-			btCollisionObjectWrapper colObj1Wrap, int partId1, int index1) {
-		Collision.btAdjustInternalEdgeContacts(cp, colObj1Wrap, colObj0Wrap, partId1,
-				index1, 0);
-		return true;
+			boolean match0, btCollisionObjectWrapper colObj1Wrap, int partId1,
+			int index1, boolean match1) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }
+
