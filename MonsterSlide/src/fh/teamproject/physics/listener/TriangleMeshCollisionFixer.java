@@ -1,4 +1,4 @@
-package fh.teamproject.physics;
+package fh.teamproject.physics.listener;
 
 import com.badlogic.gdx.physics.bullet.collision.Collision;
 import com.badlogic.gdx.physics.bullet.collision.ContactListener;
