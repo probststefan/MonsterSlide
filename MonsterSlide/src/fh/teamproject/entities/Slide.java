@@ -25,7 +25,7 @@ public class Slide implements ISlide {
 	private static SlideGenerator slideGenerator = new SlideGenerator();
 	private SlideBuilder slideBuilder = new SlideBuilder();
 	private Coins coins;
-	private int actualSlidePartId = -1;
+	private int actualSlidePartId = 0;
 
 	Array<ISlidePart> slideParts = new Array<ISlidePart>();
 	btDiscreteDynamicsWorld dynamicsWorld;
@@ -49,6 +49,7 @@ public class Slide implements ISlide {
 		slideModelInstance = new ModelInstance(new Model());
 		addSlidePart();
 		addSlidePart();
+		actualSlidePartId = slideParts.first().getID();
 	}
 
 	@Override
@@ -57,6 +58,10 @@ public class Slide implements ISlide {
 			p.dispose();
 		}
 		disposables.clear();
+		if (addNextPart) {
+			addSlidePart();
+			addNextPart = false;
+		}
 	}
 
 	@Override
@@ -79,8 +84,7 @@ public class Slide implements ISlide {
 	@Override
 	public void removeSlidePart(ISlidePart slidePart) {
 		this.disposables.add(slidePart);
-		this.world.getPhysixManager().getWorld()
-				.removeRigidBody(slidePart.getRigidBody());
+
 		slideParts.removeValue(slidePart, false);
 	}
 
@@ -90,6 +94,7 @@ public class Slide implements ISlide {
 
 	@Override
 	public void addSlidePart() {
+		System.out.println("addSlidePart");
 		String id = "slidePart_" + slideParts.size + 1;
 		Array<Vector3> controlPoints = new Array<Vector3>(spline.controlPoints);
 		Slide.slideGenerator.addSpan(controlPoints);
@@ -106,21 +111,22 @@ public class Slide implements ISlide {
 	}
 
 	private Array<ISlidePart> disposables = new Array<ISlidePart>(4);
-
+	private boolean addNextPart = false;
 	/**
 	 * Setzt die ID des aktuell berutschten SlideParts.
 	 */
-	public void setActualSlidePartId(int id) {
-		if (actualSlidePartId != id) {
+	public synchronized void setActualSlidePartId(int id) {
+		if (actualSlidePartId != id && actualSlidePartId < id) {
+			System.out.println("current " + actualSlidePartId + " --- new " + id);
 			for (ISlidePart part : slideParts) {
 				if (part.getID() == id) {
-					removeSlidePart(part);
+					// removeSlidePart(part);
 				}
 			}
 			System.out.println("adding");
-			addSlidePart();
+			addNextPart = true;
+			this.actualSlidePartId = id;
 		}
-		this.actualSlidePartId = id;
 	}
 
 	/**

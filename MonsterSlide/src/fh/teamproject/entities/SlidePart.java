@@ -54,9 +54,8 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 	}
 
 	public void dispose() {
-		// triangleInfoMap.dispose();
-		// triangleVertexArray.dispose();
 		indexedMesh.dispose();
+		this.world.getPhysixManager().getWorld().removeRigidBody(getRigidBody());
 	}
 
 	@Override
