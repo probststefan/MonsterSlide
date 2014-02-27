@@ -72,11 +72,6 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 	}
 
 	@Override
-	public void init() {
-
-	}
-
-	@Override
 	public void initPhysix() {
 
 		// FIXME: Node könnte in zukunft auch mehrere parts haben oder sogar
