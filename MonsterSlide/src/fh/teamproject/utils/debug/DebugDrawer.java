@@ -42,7 +42,7 @@ public class DebugDrawer {
 
 		setDebugMode(btIDebugDraw.DebugDrawModes.DBG_DrawWireframe,
 				GameScreen.camManager.getActiveCamera().combined);
-		// toggleDebug();
+		toggleDebug();
 	}
 
 	public void render() {
@@ -93,7 +93,7 @@ public class DebugDrawer {
 	}
 
 	Pool<ModelInstance> spherePool = new Pool<ModelInstance>() {
-		float diameter = 0.3f;
+		float diameter = 2f;
 		Model sphereModel = new ModelBuilder().createSphere(diameter, diameter, diameter,
 				4, 4, new Material(ColorAttribute.createDiffuse(Color.WHITE)),
 				Usage.Position);
@@ -112,6 +112,8 @@ public class DebugDrawer {
 		Vector3 position = gameScreen.world.getPlayer().getPosition();
 		Vector3 direction = gameScreen.world.getPlayer().getDirection();
 		renderer.line(position, position.cpy().add(direction));
+
+		renderer.line(new Vector3(), new Vector3(1000f, 0f, 0f));
 		renderer.end();
 	}
 

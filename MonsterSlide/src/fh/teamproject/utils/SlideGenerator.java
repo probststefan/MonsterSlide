@@ -14,13 +14,13 @@ public class SlideGenerator {
 	}
 
 	float segments = GameScreen.settings.SLIDE_SEGMENTS;
-	float segment_Min_Length = 50f;
+	float segment_Min_Length = 100f;
 	float segment_Max_Length = 100f;
 	float curveDirection = 1f;// verschiebungsrichtung auf z achse
-	float maxSlope = -0.5f;
-	float minSlope = 0.1f;
-	float maxCurvyness = 0.1f;
-	float minCurvyness = -0.1f;
+	float maxSlope = -0.1f;
+	float minSlope = -0.4f;
+	float maxCurvyness = 1f;
+	float minCurvyness = 1f;
 	float curvyness;
 
 	public Array<Vector3> initControlPoints() {
@@ -38,14 +38,18 @@ public class SlideGenerator {
 
 	public Array<Vector3> addSpan(Array<Vector3> controlPoints) {
 		float segmentLength = MathUtils.random(segment_Min_Length, segment_Max_Length);
-		float x = controlPoints.peek().x + segmentLength;
-		float slope = MathUtils.random(maxSlope, minSlope);
-		Vector3 tmp = getPointOnLine(controlPoints.peek(), slope, x, Plane.XY);
-		curvyness = MathUtils.random(maxCurvyness, minCurvyness);
-		Vector3 curvy = getPointOnLine(controlPoints.peek(), curvyness, x, Plane.XZ);
-		tmp.z += curvy.z * curveDirection;
-		controlPoints.add(tmp);
+		Vector3 refPoint = controlPoints.get(controlPoints.size - 1);
+		float x = refPoint.x + segmentLength;
 
+		float slope = MathUtils.random(maxSlope, minSlope);
+		Vector3 tmp = getPointOnLine(refPoint, slope, x, Plane.XY);
+		curvyness = MathUtils.random(maxCurvyness, minCurvyness);
+		Vector3 curvy = getPointOnLine(refPoint, curvyness, x, Plane.XZ);
+		tmp.z = curvy.z * curveDirection;
+		curveDirection *= -1f;
+		controlPoints.add(tmp);
+		Gdx.app.log("slide generator", "Point: " + tmp + " -- Curvyness: " + curvyness
+				+ " -- Slope: " + slope);
 		return controlPoints;
 	}
 
@@ -63,7 +67,7 @@ public class SlideGenerator {
 		case XY:
 			return new Vector3(value, (slope * (value - point.x)) + point.y, 0f);
 		case XZ:
-			return new Vector3(value, 0f, (slope * (value - point.z)));
+			return new Vector3(value, 0f, (slope * (value - point.x)) + point.z);
 		case YZ:
 			return new Vector3(0f, value, (slope * (value - point.z)));
 		default:

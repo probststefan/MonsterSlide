@@ -50,6 +50,9 @@ public class Slide implements ISlide {
 		if (!world.gameScreen.settings.DEBUG_HILL) {
 			addSlidePart();
 			addSlidePart();
+			for (int i = 0; i < 15; i++) {
+				addSlidePart();
+			}
 		} else {
 			DebugSlidePart part = new DebugSlidePart();
 			part.setWorld(world);
