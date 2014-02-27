@@ -15,6 +15,8 @@ import com.badlogic.gdx.graphics.g3d.model.NodePart;
 import com.badlogic.gdx.graphics.g3d.utils.MeshBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder.VertexInfo;
 import com.badlogic.gdx.math.CatmullRomSpline;
+import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.math.Interpolation.Elastic;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
@@ -70,25 +72,18 @@ public class SlideBuilder {
 	}
 
 	private void createInterpolatedVertices(CatmullRomSpline<Vector3> spline, int span) {
-		/* Die Schrittweite zum interpolieren der Spline */
-		float stepSize = 10f;
-		/*
-		 * Der SlidePart wird im Abstand von jeweils stepSize Meter
-		 * diskretisiert
-		 */
-		splitting = 1f / 10f;
+		/* Anzahl diskreter Intervalle */
+		splitting = 1f / 12f;
 
 		Vector3 interpolatedVertex = new Vector3();
 		float epsilon = 0.01f;
-
 		for (float i = 0; i <= (1 + epsilon); i += splitting) {
-			spline.valueAt(interpolatedVertex, span, i);
-			// spline.valueAt(interpolatedVertex, i);
-
+			/* Damit werden die Endstücke kleiner */
+			float t = Interpolation.sine.apply(i);
+			spline.valueAt(interpolatedVertex, span, t);
 			// 1. und 2. Ableitung bilden.
 			Vector3 derivation = new Vector3();
-			derivation = spline.derivativeAt(derivation, span, i);
-			// derivation = spline.derivativeAt(derivation, i);
+			derivation = spline.derivativeAt(derivation, span, t);
 
 			Vector3 tangent = derivation.cpy().nor();
 			/*
