@@ -1,4 +1,4 @@
-package fh.teamproject.physics;
+package fh.teamproject.physics.callbacks;
 
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.physics.bullet.linearmath.btMotionState;

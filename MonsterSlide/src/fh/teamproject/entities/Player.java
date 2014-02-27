@@ -17,8 +17,8 @@ import fh.teamproject.controller.player.pc.InputHandling;
 import fh.teamproject.interfaces.IPlayer;
 import fh.teamproject.physics.PhysixBody;
 import fh.teamproject.physics.PhysixBodyDef;
-import fh.teamproject.physics.PlayerMotionState;
-import fh.teamproject.physics.PlayerTickCallback;
+import fh.teamproject.physics.callbacks.PlayerMotionState;
+import fh.teamproject.physics.callbacks.PlayerTickCallback;
 import fh.teamproject.screens.GameScreen;
 import fh.teamproject.utils.debug.Debug;
 

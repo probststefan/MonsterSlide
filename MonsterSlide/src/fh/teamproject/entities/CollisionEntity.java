@@ -7,8 +7,8 @@ import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBodyConstructionInfo;
 
 import fh.teamproject.interfaces.ICollisionEntity;
-import fh.teamproject.physics.MotionState;
 import fh.teamproject.physics.PhysixBody;
+import fh.teamproject.physics.callbacks.MotionState;
 
 /**
  * Abstrahiert ein Kollisionsobjekt fuer die Bullet-World.

@@ -102,6 +102,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		bodyDef.setRestitution(0f);
 
 		rigidBody = bodyDef.create();
+		rigidBody.userData = this;
 		rigidBody.setUserValue(this.getID());
 		rigidBody.setContactCallbackFilter(Player.PLAYER_FLAG);
 		rigidBody.setContactCallbackFlag(0);
