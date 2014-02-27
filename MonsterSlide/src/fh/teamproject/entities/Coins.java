@@ -1,8 +1,9 @@
 package fh.teamproject.entities;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.IntArray;
 
 /**
  * Diese Klasse verwaltet alle Coins.
@@ -13,7 +14,7 @@ import com.badlogic.gdx.utils.IntArray;
 public class Coins {
 
 	private Array<Coin> coins;
-	private IntArray toDeleteIDs;
+	private ArrayList<Integer> toDeleteIDs;
 	private CoinPool coinPool;
 	private World world;
 
@@ -21,7 +22,7 @@ public class Coins {
 	public Coins(World world) {
 		this.world = world;
 		this.coins = new Array<Coin>();
-		this.toDeleteIDs = new IntArray();
+		this.toDeleteIDs = new ArrayList<Integer>();
 		this.coinPool = new CoinPool(this.world);
 	}
 
@@ -47,6 +48,9 @@ public class Coins {
 		if (index >= 0) {
 			// Coins als geloescht markieren.
 			this.toDeleteIDs.add(index);
+			// Filter auf 0 setzen, damit keine Kollision mehr auftreten kann.
+			this.coins.get(index).getRigidBody().setContactCallbackFilter(0);
+			this.coins.get(index).getRigidBody().setActivationState(0);
 		}
 	}
 
@@ -66,16 +70,13 @@ public class Coins {
 	 * @return int
 	 */
 	private int getCoinIndex(int id) {
-		int index = -1;
-
 		for (int i = 0; i < this.coins.size; i++) {
 			if (this.coins.get(i).getID() == id) {
-				index = i;
-				continue;
+				return i;
 			}
 		}
 
-		return index;
+		return -1;
 	}
 
 	/**
@@ -83,13 +84,13 @@ public class Coins {
 	 * coins-Array.
 	 */
 	private void removeCoins() {
-		if (this.toDeleteIDs.size > 0) {
-			for (int i = 0; i < this.toDeleteIDs.size; i++) {
-				this.world.getPhysixManager().removeRigidBody(
-						this.coins.get(this.toDeleteIDs.get(i)).getRigidBody());
+		if (this.toDeleteIDs.size() > 0) {
+			for (int i = 0; i < this.toDeleteIDs.size(); i++) {
+				coinPool.free(this.coins.get(this.toDeleteIDs.get(i)));
 				this.coins.removeIndex(this.toDeleteIDs.get(i));
-				this.toDeleteIDs.removeIndex(i);
 			}
+
+			this.toDeleteIDs.clear();
 		}
 	}
 }

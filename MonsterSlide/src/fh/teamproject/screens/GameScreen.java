@@ -13,8 +13,6 @@ import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.utils.Json;
 
 import fh.teamproject.MonsterSlide;
-import fh.teamproject.controller.player.android.SwipeController;
-import fh.teamproject.entities.Player;
 import fh.teamproject.entities.World;
 import fh.teamproject.hud.Hud;
 import fh.teamproject.utils.CameraManager;

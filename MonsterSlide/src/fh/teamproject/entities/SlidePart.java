@@ -6,11 +6,9 @@ import com.badlogic.gdx.math.CatmullRomSpline;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.Collision;
 import com.badlogic.gdx.physics.bullet.collision.btBvhTriangleMeshShape;
-import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
 import com.badlogic.gdx.physics.bullet.collision.btIndexedMesh;
 import com.badlogic.gdx.physics.bullet.collision.btTriangleIndexVertexArray;
 import com.badlogic.gdx.physics.bullet.collision.btTriangleInfoMap;
-import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.utils.Pool.Poolable;
 
 import fh.teamproject.interfaces.ISlidePart;
@@ -42,7 +40,6 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		return this;
 	}
 
-
 	@Override
 	public void reset() {
 
@@ -52,6 +49,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 	public ModelInstance getModelInstance() {
 		return slide.getModelInstance();
 	}
+
 	public void dispose() {
 		indexedMesh.dispose();
 		Node node = slide.getModelInstance().getNode(String.valueOf(getID()));
@@ -108,7 +106,6 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
 		rigidBody = bodyDef.create();
 		rigidBody.setUserValue(this.getID());
-		rigidBody.setContactCallbackFilter(Player.PLAYER_FLAG);
-		rigidBody.setContactCallbackFlag(0);
+		rigidBody.setContactCallbackFlag(Slide.SLIDE_FLAG);
 	}
 }
