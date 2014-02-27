@@ -184,4 +184,10 @@ public class Player extends CollisionEntity implements IPlayer {
 		rigidBody = body;
 		setEntityWorldTransform(instance.transform);
 	}
+
+	@Override
+	public void initGraphix() {
+		// TODO Auto-generated method stub
+
+	}
 }

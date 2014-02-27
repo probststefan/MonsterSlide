@@ -60,4 +60,10 @@ public class Coin extends CollisionEntity implements Poolable {
 
 		rigidBody.setUserValue(this.getID());
 	}
+
+	@Override
+	public void initGraphix() {
+		// TODO Auto-generated method stub
+
+	}
 }

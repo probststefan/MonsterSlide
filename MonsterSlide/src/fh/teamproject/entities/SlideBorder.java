@@ -53,4 +53,10 @@ public class SlideBorder extends CollisionEntity implements Poolable {
 
 	}
 
+	@Override
+	public void initGraphix() {
+		// TODO Auto-generated method stub
+
+	}
+
 }

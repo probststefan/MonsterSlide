@@ -22,4 +22,6 @@ public interface IEntity {
 	public void setWorld(World world);
 
 	public void dispose();
+
+	public void initGraphix();
 }

@@ -53,6 +53,8 @@ public class Slide implements ISlide {
 		} else {
 			DebugSlidePart part = new DebugSlidePart();
 			part.setWorld(world);
+			part.setSlide(this);
+			part.initGraphix();
 			part.initPhysix();
 			slideParts.add(part);
 		}
@@ -90,6 +92,10 @@ public class Slide implements ISlide {
 		return slideParts;
 	}
 
+	public ISlide setModelInstance(ModelInstance instance) {
+		this.slideModelInstance = instance;
+		return this;
+	}
 	@Override
 	public void removeSlidePart(ISlidePart slidePart) {
 		this.disposables.add(slidePart);

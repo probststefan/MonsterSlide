@@ -106,4 +106,10 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		rigidBody.setContactCallbackFilter(Player.PLAYER_FLAG);
 		rigidBody.setContactCallbackFlag(0);
 	}
+
+	@Override
+	public void initGraphix() {
+		// TODO Auto-generated method stub
+
+	}
 }
