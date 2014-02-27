@@ -14,13 +14,13 @@ public class SlideGenerator {
 	}
 
 	float segments = GameScreen.settings.SLIDE_SEGMENTS;
-	float segment_Min_Length = 100f;
-	float segment_Max_Length = 100f;
+	float segment_Min_Length = 50f;
+	float segment_Max_Length = 200f;
 	float curveDirection = 1f;// verschiebungsrichtung auf z achse
 	float maxSlope = -0.1f;
-	float minSlope = -0.4f;
-	float maxCurvyness = 1f;
-	float minCurvyness = 1f;
+	float minSlope = -0.6f;
+	float maxCurvyness = 0.5f;
+	float minCurvyness = -0.5f;
 	float curvyness;
 
 	public Array<Vector3> initControlPoints() {
@@ -43,12 +43,15 @@ public class SlideGenerator {
 
 		float slope = MathUtils.random(maxSlope, minSlope);
 		Vector3 tmp = getPointOnLine(refPoint, slope, x, Plane.XY);
-		curvyness = MathUtils.random(maxCurvyness, minCurvyness);
-		Vector3 curvy = getPointOnLine(refPoint, curvyness, x, Plane.XZ);
-		tmp.z = curvy.z * curveDirection;
-		curveDirection *= -1f;
+		if (controlPoints.size % 2 == 0) {
+			curvyness = MathUtils.random(maxCurvyness, minCurvyness);
+			Vector3 curvy = getPointOnLine(refPoint, curvyness, x, Plane.XZ);
+			tmp.z = curvy.z * curveDirection;
+			// curveDirection *= -1f;
+		}
 		controlPoints.add(tmp);
-		Gdx.app.log("slide generator", "Point: " + tmp + " -- Curvyness: " + curvyness
+		Gdx.app.log("slide generator", "Length: " + segmentLength + "Point: " + tmp
+				+ " -- Curvyness: " + curvyness
 				+ " -- Slope: " + slope);
 		return controlPoints;
 	}
