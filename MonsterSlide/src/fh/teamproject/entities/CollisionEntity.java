@@ -18,12 +18,10 @@ import fh.teamproject.physics.callbacks.MotionState;
 public abstract class CollisionEntity extends Entity implements ICollisionEntity {
 	protected btCollisionShape collisionShape;
 	public PhysixBody rigidBody;
-	private Vector3 localInertia;
 	protected float mass;
 
 	CollisionEntity(World world) {
 		super(world);
-		localInertia = new Vector3();
 		// Standardmaessig erstmal keine Masse setzen.
 		mass = 0;
 	}
@@ -46,7 +44,6 @@ public abstract class CollisionEntity extends Entity implements ICollisionEntity
 	public void releaseAll() {
 		rigidBody.release();
 		collisionShape.release();
-		localInertia = null;
 	}
 
 
@@ -74,16 +71,6 @@ public abstract class CollisionEntity extends Entity implements ICollisionEntity
 
 
 	/**
-	 * Hier kann die Traegheit eines Objekt gesetzt werden.
-	 * 
-	 * @param localInertia
-	 */
-	@Override
-	public void setLocalInertia(Vector3 localInertia) {
-		this.localInertia = localInertia;
-	}
-
-	/**
 	 * Masse eines Objekts setzen.
 	 * 
 	 * @param mass
@@ -91,7 +78,6 @@ public abstract class CollisionEntity extends Entity implements ICollisionEntity
 	@Override
 	public void setMass(float mass) {
 		this.mass = mass;
-		collisionShape.calculateLocalInertia(this.mass, localInertia);
 	}
 
 }

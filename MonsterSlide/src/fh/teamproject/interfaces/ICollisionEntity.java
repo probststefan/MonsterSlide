@@ -12,8 +12,6 @@ public interface ICollisionEntity extends IEntity {
 
 	public void setCollisionShape(btCollisionShape shape);
 
-	public void setLocalInertia(Vector3 localInertia);
-
 	public void setMass(float mass);
 
 	public void releaseAll();

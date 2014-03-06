@@ -162,7 +162,6 @@ public class Player extends CollisionEntity implements IPlayer {
 									// number
 		btCapsuleShape collisionShape = new btCapsuleShape(radius, height);
 		setCollisionShape(collisionShape);
-		setLocalInertia(new Vector3(0, 0, 0));
 		setMass(GameScreen.settings.PLAYER_MASS);
 		MotionState motionState = new PlayerMotionState(this);
 
