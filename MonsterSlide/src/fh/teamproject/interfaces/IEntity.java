@@ -1,6 +1,6 @@
 package fh.teamproject.interfaces;
 
-import fh.teamproject.entities.Entitiy;
+import fh.teamproject.entities.Entity;
 import fh.teamproject.entities.World;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -18,8 +18,6 @@ public interface IEntity {
 	public ModelInstance getModelInstance();
 
 	public int getID();
-
-	public void setWorld(World world);
 
 	public void dispose();
 

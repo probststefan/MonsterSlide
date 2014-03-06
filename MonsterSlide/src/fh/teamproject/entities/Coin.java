@@ -15,9 +15,9 @@ public class Coin extends CollisionEntity implements Poolable {
 	private World world;
 
 	public Coin(World world) {
+		super(world);
 		this.position = new Vector3(0, 2.0f, 0);
 		this.world = world;
-		this.setWorld(world);
 		this.createModelInstance();
 		this.initPhysix();
 	}

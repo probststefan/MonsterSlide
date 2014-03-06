@@ -26,7 +26,8 @@ public class SlideBorder extends CollisionEntity implements Poolable {
 		}
 	};
 
-	public SlideBorder(Vector3 position) {
+	public SlideBorder(World world, Vector3 position) {
+		super(world);
 		instance = SlideBorder.spherePool.obtain();
 		instance.transform.setToTranslation(position);
 		setCollisionShape(new btSphereShape(SlideBorder.diameter / 2f));

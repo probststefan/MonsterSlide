@@ -23,6 +23,11 @@ import fh.teamproject.physics.PhysixBodyDef;
 
 public class DebugSlidePart extends CollisionEntity implements ISlidePart {
 
+	DebugSlidePart(World world) {
+		super(world);
+		// TODO Auto-generated constructor stub
+	}
+
 	Slide slide;
 	@Override
 	public void initPhysix() {

@@ -15,15 +15,15 @@ import fh.teamproject.physics.callbacks.MotionState;
  * 
  * @author stefanprobst
  */
-public abstract class CollisionEntity extends Entitiy implements ICollisionEntity {
+public abstract class CollisionEntity extends Entity implements ICollisionEntity {
 	protected btCollisionShape collisionShape;
 	public MotionState motionState;
 	public PhysixBody rigidBody;
 	private Vector3 localInertia;
 	protected float mass;
 
-	CollisionEntity() {
-		super();
+	CollisionEntity(World world) {
+		super(world);
 		localInertia = new Vector3();
 		// Standardmaessig erstmal keine Masse setzen.
 		mass = 0;

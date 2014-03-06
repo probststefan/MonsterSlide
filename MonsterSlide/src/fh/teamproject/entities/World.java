@@ -51,8 +51,7 @@ public class World implements IWorld {
 		lights.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
 
 		physixManager = new PhysixManager(this);
-		player = new Player();
-		player.setWorld(this);
+		player = new Player(this);
 		player.initPhysix();
 
 		btDiscreteDynamicsWorld dynamicsWorld = physixManager.getWorld();

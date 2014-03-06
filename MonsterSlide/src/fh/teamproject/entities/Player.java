@@ -59,8 +59,8 @@ public class Player extends CollisionEntity implements IPlayer {
 	// wird benoetigt, um die update() methode von InputHandling aufzurufen
 	public InputHandling inputHandling;
 
-	public Player() {
-		super();
+	public Player(World world) {
+		super(world);
 		inputHandling = new InputHandling(this);
 		buildPlayer();
 		this.ACCELERATION = GameScreen.settings.PLAYER_ACCEL;

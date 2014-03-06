@@ -27,11 +27,13 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
 	Slide slide;
 
-	public SlidePart(Slide slide) {
+	public SlidePart(World world, Slide slide) {
+		super(world);
 		this.slide = slide;
 	}
 
-	public SlidePart() {
+	public SlidePart(World world) {
+		super(world);
 	}
 
 	@Override

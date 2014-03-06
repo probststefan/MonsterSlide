@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector3;
 import fh.teamproject.interfaces.IEntity;
 import fh.teamproject.screens.GameScreen;
 
-public abstract class Entitiy implements IEntity {
+public abstract class Entity implements IEntity {
 	private static int idCounter = 0;
 
 	protected final int id;
@@ -14,9 +14,10 @@ public abstract class Entitiy implements IEntity {
 	Vector3 position = new Vector3();
 	World world;
 
-	public Entitiy() {
-		id = Entitiy.idCounter;
-		Entitiy.idCounter++;
+	public Entity(World world) {
+		id = Entity.idCounter;
+		Entity.idCounter++;
+		this.world = world;
 	}
 
 	@Override
@@ -38,11 +39,6 @@ public abstract class Entitiy implements IEntity {
 	@Override
 	public int getID() {
 		return id;
-	}
-
-	@Override
-	public void setWorld(World world) {
-		this.world = world;
 	}
 
 	@Override

@@ -31,7 +31,7 @@ public class Slide implements ISlide {
 
 	Array<ISlidePart> slideParts = new Array<ISlidePart>();
 	btDiscreteDynamicsWorld dynamicsWorld;
-	SlidePartPool pool = new SlidePartPool();
+	SlidePartPool pool;
 	Array<SlideBorder> borders = new Array<SlideBorder>();
 	private float slidedDistance = 0.0f;
 	private float displayedPoints = 0.0f;
@@ -44,7 +44,7 @@ public class Slide implements ISlide {
 		this.dynamicsWorld = world.getPhysixManager().getWorld();
 		this.world = world;
 		this.coins = this.world.getCoins();
-
+		this.pool = new SlidePartPool(world);
 		Array<Vector3> controlPoints = Slide.slideGenerator.initControlPoints();
 		controlPoints.shrink();
 		spline.set(controlPoints.items, false);
@@ -56,8 +56,7 @@ public class Slide implements ISlide {
 			// addSlidePart();
 			// }
 		} else {
-			DebugSlidePart part = new DebugSlidePart();
-			part.setWorld(world);
+			DebugSlidePart part = new DebugSlidePart(world);
 			part.setSlide(this);
 			part.initGraphix();
 			part.initPhysix();
@@ -122,7 +121,6 @@ public class Slide implements ISlide {
 		Node slidePartNode = slideBuilder.createSlidePart(spline, 1);
 		slidePartNode.id = String.valueOf(nextPart.getID());
 		slideModelInstance.nodes.add(slidePartNode);
-		nextPart.setWorld(world);
 		nextPart.initPhysix();
 		slideParts.add(nextPart);
 	}
