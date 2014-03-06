@@ -115,7 +115,7 @@ public class Player extends CollisionEntity implements IPlayer {
 
 	@Override
 	public void jump() {
-		getRigidBody().applyForce(new Vector3(0, 1, 0).scl(50000), position);
+		getRigidBody().applyCentralForce(new Vector3(0, 1, 0).scl(50000));
 	}
 
 	@Override

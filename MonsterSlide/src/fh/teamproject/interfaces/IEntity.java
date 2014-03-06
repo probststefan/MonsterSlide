@@ -13,6 +13,8 @@ public interface IEntity {
 
 	public Vector3 getPosition();
 
+	public void setPosition(Vector3 position);
+
 	public void update();
 
 	public ModelInstance getModelInstance();

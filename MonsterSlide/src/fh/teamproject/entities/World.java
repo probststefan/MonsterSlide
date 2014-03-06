@@ -80,7 +80,7 @@ public class World implements IWorld {
 			slide.update();
 			coins.update();
 			// Der Skydome soll den Player verfolgen.
-			skydome.transform.setToTranslation(player.position);
+			skydome.transform.setToTranslation(player.getPosition());
 		}
 	}
 
@@ -155,14 +155,15 @@ public class World implements IWorld {
 
 		resultCallback.setCollisionObject(null);
 		resultCallback.setClosestHitFraction(1f);
-		resultCallback.getRayFromWorld().setValue(player.position.x, player.position.y,
-				player.position.z);
-		resultCallback.getRayToWorld().setValue(player.position.x,
-				player.position.y - checkPlayerOnSlideRayDepth, player.position.z);
+		resultCallback.getRayFromWorld().setValue(player.getPosition().x,
+				player.getPosition().y, player.getPosition().z);
+		resultCallback.getRayToWorld().setValue(player.getPosition().x,
+				player.getPosition().y - checkPlayerOnSlideRayDepth,
+				player.getPosition().z);
 
-		dynamicsWorld.rayTest(player.position, new Vector3(player.position.x,
-				player.position.y - checkPlayerOnSlideRayDepth, player.position.z),
-				resultCallback);
+		dynamicsWorld.rayTest(player.getPosition(), new Vector3(player.getPosition().x,
+				player.getPosition().y - checkPlayerOnSlideRayDepth,
+				player.getPosition().z), resultCallback);
 
 		return resultCallback.hasHit();
 	}
