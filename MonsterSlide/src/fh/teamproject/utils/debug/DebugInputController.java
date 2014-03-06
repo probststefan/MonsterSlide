@@ -1,6 +1,5 @@
 package fh.teamproject.utils.debug;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputAdapter;
@@ -29,6 +28,9 @@ public class DebugInputController extends InputAdapter {
 			return true;
 		case Keys.NUM_2:
 			GameScreen.camManager.setMode(Mode.FREE);
+			return true;
+		case Keys.NUM_3:
+			GameScreen.camManager.setMode(Mode.SMOOTH);
 			return true;
 		case Keys.P:
 			gameScreen.debugDrawer.toggleDebug();
