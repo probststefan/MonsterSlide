@@ -12,6 +12,7 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.btCapsuleShape;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionObject;
+import com.badlogic.gdx.physics.bullet.collision.btSphereShape;
 
 import fh.teamproject.controller.player.pc.InputHandling;
 import fh.teamproject.interfaces.IPlayer;
@@ -126,7 +127,6 @@ public class Player extends CollisionEntity implements IPlayer {
 	public void resetAt(Vector3 position) {
 		Matrix4 transform = getModelInstance().transform;
 		transform.setToTranslation(position);
-		transform.rotate(Vector3.Z, 90);
 
 		getRigidBody().setWorldTransform(transform);
 		rigidBody.setLinearVelocity(Vector3.X);
@@ -148,6 +148,7 @@ public class Player extends CollisionEntity implements IPlayer {
 		float height = radius * 2f; // FIXME: aus buildPlayer kopiert! magic
 									// number
 		btCapsuleShape collisionShape = new btCapsuleShape(radius, height);
+		// btSphereShape collisionShape = new btSphereShape(radius);
 		setMass(GameScreen.settings.PLAYER_MASS);
 		MotionState motionState = new PlayerMotionState(this);
 
@@ -158,15 +159,19 @@ public class Player extends CollisionEntity implements IPlayer {
 		bodyDef.setRestitution(1f);
 
 		PhysixBody body = bodyDef.create();
-		body.setAngularFactor(new Vector3(0, 1.0f, 0));
+		bodyDef.dispose();
 		body.setContactCallbackFlag(Player.PLAYER_FLAG);
 		body.setContactCallbackFilter(Slide.SLIDE_FLAG);
 		// Wird gebraucht um die Kollisionen mit den Coins zu filtern.
 		body.setCollisionFlags(body.getCollisionFlags()
 				| btCollisionObject.CollisionFlags.CF_CUSTOM_MATERIAL_CALLBACK);
+		Vector3 inertia = new Vector3();
+		body.getCollisionShape().calculateLocalInertia(50f, inertia);
+		body.setMassProps(50f, inertia);
 
 		PlayerTickCallback playerCallback = new PlayerTickCallback(this);
 		playerCallback.attach(world.getPhysixManager().getWorld(), false);
+
 
 		rigidBody = body;
 	}
