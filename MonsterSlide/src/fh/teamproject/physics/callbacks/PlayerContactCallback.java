@@ -15,17 +15,18 @@ public class PlayerContactCallback implements IContactCallback {
 	@Override
 	public void onContactStarted(int userValue0, boolean match0, int userValue1,
 			boolean match1) {
-		if (match0) {
+
+		if (match1) {
 			// Kollision mit einem Coin.
-			this.world.getCoins().pickCoin(userValue0);
+			this.world.getCoins().pickCoin(userValue1);
 			this.world.getScore().incrementCoinScore();
 		}
 
-		if (match1) {
+		if (match0) {
 			// Setzen des aktuellen berutschten SlideParts.
 			this.world.getSlide().setActualSlidePartId(userValue1);
 			// Player sitzt auf der Slide.
-			// this.world.getPlayer().setGrounded(true);
+			this.world.getPlayer().setGrounded(true);
 		}
 	}
 

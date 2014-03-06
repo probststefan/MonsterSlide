@@ -174,6 +174,7 @@ public class Player extends CollisionEntity implements IPlayer {
 		PhysixBody body = bodyDef.create();
 		body.setAngularFactor(new Vector3(0, 1.0f, 0));
 		body.setContactCallbackFlag(Player.PLAYER_FLAG);
+		body.setContactCallbackFilter(Slide.SLIDE_FLAG);
 		// Wird gebraucht um die Kollisionen mit den Coins zu filtern.
 		body.setCollisionFlags(body.getCollisionFlags()
 				| btCollisionObject.CollisionFlags.CF_CUSTOM_MATERIAL_CALLBACK);

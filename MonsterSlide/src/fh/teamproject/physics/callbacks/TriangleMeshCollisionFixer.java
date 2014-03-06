@@ -1,11 +1,8 @@
 package fh.teamproject.physics.callbacks;
 
 import com.badlogic.gdx.physics.bullet.collision.Collision;
-import com.badlogic.gdx.physics.bullet.collision.ContactListener;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionObjectWrapper;
 import com.badlogic.gdx.physics.bullet.collision.btManifoldPoint;
-
-import fh.teamproject.interfaces.ICameraController;
 
 public class TriangleMeshCollisionFixer implements IContactCallback {
 

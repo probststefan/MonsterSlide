@@ -22,6 +22,8 @@ import fh.teamproject.utils.SlideGenerator;
  * 
  */
 public class Slide implements ISlide {
+	public static final int SLIDE_FLAG = 4;
+
 	private static SlideGenerator slideGenerator = new SlideGenerator();
 	private SlideBuilder slideBuilder = new SlideBuilder();
 	private Coins coins;
@@ -38,10 +40,10 @@ public class Slide implements ISlide {
 	ModelInstance slideModelInstance;
 	World world;
 
-	public Slide(World world, btDiscreteDynamicsWorld dynamicsWorld, Coins coins) {
-		this.dynamicsWorld = dynamicsWorld;
+	public Slide(World world) {
+		this.dynamicsWorld = world.getPhysixManager().getWorld();
 		this.world = world;
-		this.coins = coins;
+		this.coins = this.world.getCoins();
 
 		Array<Vector3> controlPoints = Slide.slideGenerator.initControlPoints();
 		controlPoints.shrink();
@@ -127,6 +129,7 @@ public class Slide implements ISlide {
 
 	private Array<ISlidePart> disposables = new Array<ISlidePart>(4);
 	private boolean addNextPart = false;
+
 	/**
 	 * Setzt die ID des aktuell berutschten SlideParts.
 	 */

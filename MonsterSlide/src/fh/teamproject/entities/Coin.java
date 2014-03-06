@@ -3,7 +3,6 @@ package fh.teamproject.entities;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.physics.bullet.collision.btCollisionObject;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
 import com.badlogic.gdx.physics.bullet.collision.btSphereShape;
 import com.badlogic.gdx.utils.Pool.Poolable;
@@ -18,7 +17,9 @@ public class Coin extends CollisionEntity implements Poolable {
 	public Coin(World world) {
 		this.position = new Vector3(0, 2.0f, 0);
 		this.world = world;
+		this.setWorld(world);
 		this.createModelInstance();
+		this.initPhysix();
 	}
 
 	@Override
@@ -54,9 +55,6 @@ public class Coin extends CollisionEntity implements Poolable {
 				collisionShape).create();
 		setEntityWorldTransform(this.instance.transform);
 		rigidBody.setContactCallbackFilter(Player.PLAYER_FLAG);
-
-		rigidBody.setCollisionFlags(rigidBody.getCollisionFlags()
-				| btCollisionObject.CollisionFlags.CF_CUSTOM_MATERIAL_CALLBACK);
 
 		rigidBody.setUserValue(this.getID());
 	}

@@ -1,7 +1,6 @@
 package fh.teamproject.entities;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
@@ -15,7 +14,6 @@ import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
 import com.badlogic.gdx.utils.Array;
 
 import fh.teamproject.interfaces.ICollisionEntity;
-import fh.teamproject.interfaces.IEntity;
 import fh.teamproject.interfaces.IPlayer;
 import fh.teamproject.interfaces.ISlide;
 import fh.teamproject.interfaces.ISlidePart;
@@ -60,8 +58,9 @@ public class World implements IWorld {
 		btDiscreteDynamicsWorld dynamicsWorld = physixManager.getWorld();
 		// Rutsche, Spieler und Coins erzeugen.
 		coins = new Coins(this);
+		coins.addCoin(new Vector3());
 		score = new Score();
-		slide = new Slide(this, dynamicsWorld, this.coins);
+		slide = new Slide(this);
 
 		resultCallback = new ClosestRayResultCallback(getPlayer().getPosition(),
 				new Vector3(getPlayer().getPosition().x, getPlayer().getPosition().y
@@ -81,6 +80,7 @@ public class World implements IWorld {
 		} else {
 			player.update();
 			slide.update();
+			coins.update();
 			// Der Skydome soll den Player verfolgen.
 			skydome.transform.setToTranslation(player.position);
 		}
