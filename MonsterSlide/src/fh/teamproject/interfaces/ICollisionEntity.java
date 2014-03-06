@@ -10,8 +10,6 @@ public interface ICollisionEntity extends IEntity {
 
 	public btRigidBody getRigidBody();
 
-	public void setCollisionShape(btCollisionShape shape);
-
 	public void setMass(float mass);
 
 	public void releaseAll();

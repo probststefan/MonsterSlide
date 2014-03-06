@@ -84,7 +84,8 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		triangleVertexArray = new btTriangleIndexVertexArray();
 		triangleVertexArray.addIndexedMesh(indexedMesh);
 
-		collisionShape = new btBvhTriangleMeshShape(triangleVertexArray, true);
+		btBvhTriangleMeshShape collisionShape = new btBvhTriangleMeshShape(
+				triangleVertexArray, true);
 		collisionShape.setMargin(0.01f);
 
 		triangleInfoMap = new btTriangleInfoMap();

@@ -33,7 +33,7 @@ public class DebugSlidePart extends CollisionEntity implements ISlidePart {
 	@Override
 	public void initPhysix() {
 		Vector3 rotate = Vector3.Y.rotate(-15f, 0f, 0f, 1f);
-		collisionShape = new btStaticPlaneShape(rotate, 2f);
+		btStaticPlaneShape collisionShape = new btStaticPlaneShape(rotate, 2f);
 		PhysixBodyDef bodyDef = new PhysixBodyDef(world.getPhysixManager(), mass,
 				new MotionState(getModelInstance().transform), collisionShape);
 		rigidBody = bodyDef.create();

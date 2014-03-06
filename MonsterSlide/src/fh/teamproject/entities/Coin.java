@@ -54,7 +54,6 @@ public class Coin extends CollisionEntity implements Poolable {
 	@Override
 	public void initPhysix() {
 		btCollisionShape collisionShape = new btSphereShape(this.radius);
-		setCollisionShape(collisionShape);
 		PhysixBodyDef rigidBodyDef = new PhysixBodyDef(world.getPhysixManager(), mass,
 				new MotionState(instance.transform), collisionShape);
 		rigidBodyDef.setStartWorldTransform(new btTransform(instance.transform));

@@ -16,7 +16,6 @@ import fh.teamproject.physics.callbacks.MotionState;
  * @author stefanprobst
  */
 public abstract class CollisionEntity extends Entity implements ICollisionEntity {
-	protected btCollisionShape collisionShape;
 	public PhysixBody rigidBody;
 	protected float mass;
 
@@ -24,6 +23,7 @@ public abstract class CollisionEntity extends Entity implements ICollisionEntity
 		super(world);
 		// Standardmaessig erstmal keine Masse setzen.
 		mass = 0;
+
 	}
 
 	@Override
@@ -36,14 +36,12 @@ public abstract class CollisionEntity extends Entity implements ICollisionEntity
 		this.world.getPhysixManager().getWorld()
 				.removeRigidBody((btRigidBody) getRigidBody());
 		((btRigidBody) rigidBody).dispose();
-		collisionShape.dispose();
 		super.dispose();
 	}
 
 	@Override
 	public void releaseAll() {
 		rigidBody.release();
-		collisionShape.release();
 	}
 
 
@@ -57,18 +55,6 @@ public abstract class CollisionEntity extends Entity implements ICollisionEntity
 	public PhysixBody getRigidBody() {
 		return rigidBody;
 	}
-
-	/**
-	 * Typ des Shape setzen. Soll es zum Beispiel eine Sphere oder eine Ebene
-	 * sein.
-	 * 
-	 * @param collisionShape
-	 */
-	@Override
-	public void setCollisionShape(btCollisionShape collisionShape) {
-		this.collisionShape = collisionShape;
-	}
-
 
 	/**
 	 * Masse eines Objekts setzen.

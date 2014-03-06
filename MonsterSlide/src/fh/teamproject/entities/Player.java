@@ -161,7 +161,6 @@ public class Player extends CollisionEntity implements IPlayer {
 		float height = radius * 2f; // FIXME: aus buildPlayer kopiert! magic
 									// number
 		btCapsuleShape collisionShape = new btCapsuleShape(radius, height);
-		setCollisionShape(collisionShape);
 		setMass(GameScreen.settings.PLAYER_MASS);
 		MotionState motionState = new PlayerMotionState(this);
 

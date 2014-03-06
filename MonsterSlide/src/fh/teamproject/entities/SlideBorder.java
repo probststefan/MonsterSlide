@@ -30,7 +30,6 @@ public class SlideBorder extends CollisionEntity implements Poolable {
 		super(world);
 		instance = SlideBorder.spherePool.obtain();
 		instance.transform.setToTranslation(position);
-		setCollisionShape(new btSphereShape(SlideBorder.diameter / 2f));
 	}
 
 	@Override
