@@ -155,7 +155,7 @@ public class Player extends CollisionEntity implements IPlayer {
 				motionState, collisionShape);
 		// Damit rutscht die Sphere nur noch und rollt nicht mehr.
 		bodyDef.setFriction(0.1f);
-		bodyDef.setRestitution(0f);
+		bodyDef.setRestitution(1f);
 
 		PhysixBody body = bodyDef.create();
 		body.setAngularFactor(new Vector3(0, 1.0f, 0));

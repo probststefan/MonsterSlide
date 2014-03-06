@@ -2,7 +2,6 @@ package fh.teamproject.physics;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.physics.bullet.collision.ClosestRayResultCallback;
 import com.badlogic.gdx.physics.bullet.collision.btBroadphaseInterface;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionDispatcher;
 import com.badlogic.gdx.physics.bullet.collision.btDbvtBroadphase;
@@ -49,8 +48,8 @@ public class PhysixManager {
 				collisionConfiguration);
 
 		btContactSolverInfo info = dynamicsWorld.getSolverInfo();
-		info.setRestitution(0.0f);
-		info.setNumIterations(20);
+		// info.setRestitution(0.0f);
+		// info.setNumIterations(20);
 
 		// info.setSplitImpulse(1); // enable split impulse feature
 		// optionally set the m_splitImpulsePenetrationThreshold (only used when

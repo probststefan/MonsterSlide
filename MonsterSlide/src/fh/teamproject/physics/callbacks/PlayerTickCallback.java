@@ -7,7 +7,6 @@ import com.badlogic.gdx.physics.bullet.dynamics.btDynamicsWorld;
 import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
 
 import fh.teamproject.entities.Player;
-import fh.teamproject.interfaces.IPlayer;
 
 public class PlayerTickCallback extends InternalTickCallback {
 
@@ -46,7 +45,6 @@ public class PlayerTickCallback extends InternalTickCallback {
 		Vector3 target = new Vector3(hitPointWorld.x(), hitPointWorld.y(),
 				hitPointWorld.z());
 		target.sub(player.getPosition());
-		System.out.println("collisionobject " + target);
 		if (target.len() > 1f) {
 			player.getRigidBody().applyCentralForce(target.scl(1500f));
 		}
