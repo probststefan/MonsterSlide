@@ -19,10 +19,9 @@ public class Coin extends CollisionEntity implements Poolable {
 
 	public Coin(World world) {
 		super(world);
-		this.position = new Vector3(0, 2.0f, 0);
-		this.createModelInstance();
 		initGraphix();
 		initPhysix();
+		setPosition(new Vector3(0, 2.0f, 0));
 	}
 
 	@Override
@@ -31,20 +30,9 @@ public class Coin extends CollisionEntity implements Poolable {
 	}
 
 	public void setToPosition(Vector3 position) {
-		this.position = position;
+		setPosition(position);
 		instance.transform.setToTranslation(position);
 		this.getRigidBody().translate(position);
-	}
-
-	/**
-	 * Erstellen des visuellen Repraesentation.
-	 */
-	private void createModelInstance() {
-		// Model m = this.world.gameScreen.getAssets().get("model/coin.g3db",
-		// Model.class);
-		// instance = new ModelInstance(m, position);
-		// instance.transform.rotate(new Vector3(1.0f, 0, 0), 90.0f);
-		// instance.transform.scl(1f);
 	}
 
 	/**
@@ -68,7 +56,7 @@ public class Coin extends CollisionEntity implements Poolable {
 	@Override
 	public void initGraphix() {
 		Model m = this.world.gameScreen.getAssets().get("model/coin.g3db", Model.class);
-		instance = new ModelInstance(m, position);
+		instance = new ModelInstance(m);
 		instance.transform.rotate(new Vector3(1.0f, 0, 0), 90.0f);
 		instance.transform.scl(1f);
 	}

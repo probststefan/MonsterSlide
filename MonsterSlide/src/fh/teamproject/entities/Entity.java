@@ -11,8 +11,8 @@ public abstract class Entity implements IEntity {
 
 	protected final int id;
 	protected ModelInstance instance;
-	Vector3 position = new Vector3();
-	World world;
+	private Vector3 position = new Vector3();
+	protected World world;
 
 	public Entity(World world) {
 		id = Entity.idCounter;
@@ -26,6 +26,12 @@ public abstract class Entity implements IEntity {
 		return instance.transform.getTranslation(position);
 	}
 
+	@Override
+	public void setPosition(Vector3 position) {
+		Vector3 currentPos = new Vector3();
+		getModelInstance().transform.getTranslation(currentPos);
+		getModelInstance().transform.translate(currentPos.sub(position));
+	}
 	@Override
 	public void update() {
 		// TODO Auto-generated method stub
