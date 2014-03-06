@@ -10,7 +10,6 @@ import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.ClosestRayResultCallback;
 import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld;
-import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
 import com.badlogic.gdx.utils.Array;
 
 import fh.teamproject.interfaces.ICollisionEntity;

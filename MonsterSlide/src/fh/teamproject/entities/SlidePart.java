@@ -9,7 +9,6 @@ import com.badlogic.gdx.physics.bullet.collision.btBvhTriangleMeshShape;
 import com.badlogic.gdx.physics.bullet.collision.btIndexedMesh;
 import com.badlogic.gdx.physics.bullet.collision.btTriangleIndexVertexArray;
 import com.badlogic.gdx.physics.bullet.collision.btTriangleInfoMap;
-import com.badlogic.gdx.physics.bullet.linearmath.btMotionState;
 import com.badlogic.gdx.utils.Pool.Poolable;
 
 import fh.teamproject.interfaces.ISlidePart;
@@ -83,7 +82,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
 		btBvhTriangleMeshShape collisionShape = new btBvhTriangleMeshShape(
 				triangleVertexArray, true);
-		collisionShape.setMargin(0.01f);
+		collisionShape.setMargin(1.1f);
 
 		triangleInfoMap = new btTriangleInfoMap();
 		// now you can adjust some thresholds in triangleInfoMap if needed.

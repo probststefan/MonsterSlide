@@ -46,7 +46,7 @@ public class Player extends CollisionEntity implements IPlayer {
 	public float ACCELERATION;
 
 	@Debug(name = "Radius", isModifiable = false)
-	public float radius = 1f;
+	public float radius = 3f;
 
 	@Debug(name = "Is Grounded?", isModifiable = false)
 	public boolean isGrounded = false;
