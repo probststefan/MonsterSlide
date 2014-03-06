@@ -1,7 +1,5 @@
 package fh.teamproject.utils;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.math.CatmullRomSpline;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
@@ -14,8 +12,8 @@ public class SlideGenerator {
 	}
 
 	float segments = GameScreen.settings.SLIDE_SEGMENTS;
-	float segment_Min_Length = 50f;
-	float segment_Max_Length = 200f;
+	float segment_Min_Length = 100f;
+	float segment_Max_Length = 100f;
 	float curveDirection = 1f;// verschiebungsrichtung auf z achse
 	float maxSlope = -0.1f;
 	float minSlope = -0.6f;
