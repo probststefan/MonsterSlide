@@ -50,9 +50,10 @@ public class SlideGenerator {
 			// curveDirection *= -1f;
 		}
 		controlPoints.add(tmp);
-		Gdx.app.log("slide generator", "Length: " + segmentLength + "Point: " + tmp
-				+ " -- Curvyness: " + curvyness
-				+ " -- Slope: " + slope);
+		// Gdx.app.log("slide generator", "Length: " + segmentLength + "Point: "
+		// + tmp
+		// + " -- Curvyness: " + curvyness
+		// + " -- Slope: " + slope);
 		return controlPoints;
 	}
 

@@ -27,8 +27,8 @@ public class Player extends CollisionEntity implements IPlayer {
 
 	public static final int PLAYER_FLAG = 2;
 
-	@Debug(name = "Position", isModifiable = false)
-	public Vector3 position = new Vector3(-5.0f, 0.0f, -5.0f);
+	// @Debug(name = "Position", isModifiable = false)
+	// public Vector3 position = new Vector3(-5.0f, 0.0f, -5.0f);
 
 	@Debug(name = "Direction", isModifiable = false)
 	public Vector3 direction = new Vector3(0, 0, 1);
@@ -63,10 +63,11 @@ public class Player extends CollisionEntity implements IPlayer {
 	public Player(World world) {
 		super(world);
 		inputHandling = new InputHandling(this);
-		buildPlayer();
 		this.ACCELERATION = GameScreen.settings.PLAYER_ACCEL;
 		this.TURN_INTENSITIY = GameScreen.settings.PLAYER_TURN_INTENSITY;
 		this.MAX_SPEED = GameScreen.settings.PLAYER_MAX_SPEED;
+		initGraphix();
+		initPhysix();
 	}
 
 	@Override
@@ -132,20 +133,6 @@ public class Player extends CollisionEntity implements IPlayer {
 		rigidBody.setAngularVelocity(new Vector3());
 	}
 
-	private void buildPlayer() {
-		// Grafische Darstellung erstellen
-		ModelBuilder builder = new ModelBuilder();
-		Material material = new Material(ColorAttribute.createDiffuse(new Color(1f, 1f,
-				1f, 1f)));
-
-		// Durchmesser der Sphere berechnen.
-		float height = radius * 2f;
-		Model m = builder.createCapsule(radius, height * 2, 16, material, Usage.Position
-				| Usage.Normal);
-		instance = new ModelInstance(m, position);
-		instance.userData = "player";
-	}
-
 	@Override
 	public Vector3 getDirection() {
 		return direction;
@@ -186,7 +173,16 @@ public class Player extends CollisionEntity implements IPlayer {
 
 	@Override
 	public void initGraphix() {
-		// TODO Auto-generated method stub
+		// Grafische Darstellung erstellen
+		ModelBuilder builder = new ModelBuilder();
+		Material material = new Material(ColorAttribute.createDiffuse(new Color(1f, 1f,
+				1f, 1f)));
 
+		// Durchmesser der Sphere berechnen.
+		float height = radius * 2f;
+		Model m = builder.createCapsule(radius, height * 2, 16, material, Usage.Position
+				| Usage.Normal);
+		instance = new ModelInstance(m);
+		instance.userData = "player";
 	}
 }

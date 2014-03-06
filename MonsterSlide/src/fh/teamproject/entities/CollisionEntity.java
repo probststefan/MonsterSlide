@@ -23,7 +23,7 @@ public abstract class CollisionEntity extends Entity implements ICollisionEntity
 		super(world);
 		// Standardmaessig erstmal keine Masse setzen.
 		mass = 0;
-
+		// initPhysix();
 	}
 
 	@Override

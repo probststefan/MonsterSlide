@@ -34,13 +34,13 @@ public class PlayerTickCallback extends InternalTickCallback {
 		}
 		resultCallback.setCollisionObject(null);
 		resultCallback.setClosestHitFraction(1f);
-		resultCallback.getRayFromWorld().setValue(player.position.x, player.position.y,
-				player.position.z);
-		resultCallback.getRayToWorld().setValue(player.position.x,
-				player.position.y - checkPlayerOnSlideRayDepth, player.position.z);
+		Vector3 playerPos = player.getPosition();
+		resultCallback.getRayFromWorld().setValue(playerPos.x, playerPos.y, playerPos.z);
+		resultCallback.getRayToWorld().setValue(playerPos.x,
+				playerPos.y - checkPlayerOnSlideRayDepth, playerPos.z);
 
-		dynamicsWorld.rayTest(player.position, new Vector3(player.position.x,
-				player.position.y - checkPlayerOnSlideRayDepth, player.position.z),
+		dynamicsWorld.rayTest(playerPos, new Vector3(playerPos.x, playerPos.y
+				- checkPlayerOnSlideRayDepth, playerPos.z),
 				resultCallback);
 		btVector3 hitPointWorld = resultCallback.getHitPointWorld();
 		Vector3 target = new Vector3(hitPointWorld.x(), hitPointWorld.y(),

@@ -30,6 +30,8 @@ public class SlideBorder extends CollisionEntity implements Poolable {
 		super(world);
 		instance = SlideBorder.spherePool.obtain();
 		instance.transform.setToTranslation(position);
+		initGraphix();
+		initPhysix();
 	}
 
 	@Override

@@ -26,7 +26,8 @@ public class DebugSlidePart extends CollisionEntity implements ISlidePart {
 
 	DebugSlidePart(World world) {
 		super(world);
-		// TODO Auto-generated constructor stub
+		initGraphix();
+		initPhysix();
 	}
 
 	Slide slide;

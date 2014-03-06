@@ -9,7 +9,7 @@ public class PlayerMotionState extends MotionState {
 	Player player;
 
 	public PlayerMotionState(Player player) {
-		super(player.instance.transform);
+		super(player.getModelInstance().transform);
 		this.player = player;
 
 	}
@@ -22,7 +22,6 @@ public class PlayerMotionState extends MotionState {
 	@Override
 	public void setWorldTransform(final Matrix4 worldTrans) {
 		super.setWorldTransform(worldTrans);
-		worldTrans.getTranslation(this.player.position);
 		this.player.syncWithBullet();
 	}
 

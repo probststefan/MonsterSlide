@@ -16,14 +16,13 @@ import fh.teamproject.physics.callbacks.MotionState;
 public class Coin extends CollisionEntity implements Poolable {
 
 	private float radius = 1f;
-	private World world;
 
 	public Coin(World world) {
 		super(world);
 		this.position = new Vector3(0, 2.0f, 0);
-		this.world = world;
 		this.createModelInstance();
-		this.initPhysix();
+		initGraphix();
+		initPhysix();
 	}
 
 	@Override
@@ -41,10 +40,11 @@ public class Coin extends CollisionEntity implements Poolable {
 	 * Erstellen des visuellen Repraesentation.
 	 */
 	private void createModelInstance() {
-		Model m = this.world.gameScreen.getAssets().get("model/coin.g3db", Model.class);
-		instance = new ModelInstance(m, position);
-		instance.transform.rotate(new Vector3(1.0f, 0, 0), 90.0f);
-		instance.transform.scl(1f);
+		// Model m = this.world.gameScreen.getAssets().get("model/coin.g3db",
+		// Model.class);
+		// instance = new ModelInstance(m, position);
+		// instance.transform.rotate(new Vector3(1.0f, 0, 0), 90.0f);
+		// instance.transform.scl(1f);
 	}
 
 	/**
@@ -67,7 +67,9 @@ public class Coin extends CollisionEntity implements Poolable {
 
 	@Override
 	public void initGraphix() {
-		// TODO Auto-generated method stub
-
+		Model m = this.world.gameScreen.getAssets().get("model/coin.g3db", Model.class);
+		instance = new ModelInstance(m, position);
+		instance.transform.rotate(new Vector3(1.0f, 0, 0), 90.0f);
+		instance.transform.scl(1f);
 	}
 }

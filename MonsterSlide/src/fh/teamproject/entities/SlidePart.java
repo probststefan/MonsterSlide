@@ -29,13 +29,10 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
 	Slide slide;
 
-	public SlidePart(World world, Slide slide) {
-		super(world);
-		this.slide = slide;
-	}
-
 	public SlidePart(World world) {
 		super(world);
+		initGraphix();
+		initPhysix();
 	}
 
 	@Override
@@ -78,9 +75,9 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
 		// FIXME: Node könnte in zukunft auch mehrere parts haben oder sogar
 		// mehrere child-nodes!
+
 		Node node = slide.getModelInstance().getNode(String.valueOf(getID()));
 		indexedMesh = new btIndexedMesh(node.parts.first().meshPart.mesh);
-		System.out.println("" + node.parts.first().meshPart.mesh);
 		triangleVertexArray = new btTriangleIndexVertexArray();
 		triangleVertexArray.addIndexedMesh(indexedMesh);
 
@@ -112,7 +109,11 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
 	@Override
 	public void initGraphix() {
-		// TODO Auto-generated method stub
+		slide = (Slide) world.getSlide();
+		Node slidePartNode = slide.getSlideBuilder()
+				.createSlidePart(slide.getSpline(), 1);
+		slidePartNode.id = String.valueOf(getID());
+		getModelInstance().nodes.add(slidePartNode);
 
 	}
 }

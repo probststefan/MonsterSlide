@@ -10,7 +10,7 @@ public abstract class Entity implements IEntity {
 	private static int idCounter = 0;
 
 	protected final int id;
-	public ModelInstance instance;
+	protected ModelInstance instance;
 	Vector3 position = new Vector3();
 	World world;
 
@@ -18,6 +18,7 @@ public abstract class Entity implements IEntity {
 		id = Entity.idCounter;
 		Entity.idCounter++;
 		this.world = world;
+		// initGraphix();
 	}
 
 	@Override

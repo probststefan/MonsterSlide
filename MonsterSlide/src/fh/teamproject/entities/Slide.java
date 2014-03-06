@@ -24,7 +24,7 @@ import fh.teamproject.utils.SlideGenerator;
 public class Slide implements ISlide {
 	public static final int SLIDE_FLAG = 4;
 
-	private static SlideGenerator slideGenerator = new SlideGenerator();
+	private SlideGenerator slideGenerator = new SlideGenerator();
 	private SlideBuilder slideBuilder = new SlideBuilder();
 	private Coins coins;
 	private int actualSlidePartId = 0;
@@ -41,20 +41,21 @@ public class Slide implements ISlide {
 	World world;
 
 	public Slide(World world) {
-		this.dynamicsWorld = world.getPhysixManager().getWorld();
 		this.world = world;
+
+	}
+
+	public void init() {
+		this.dynamicsWorld = world.getPhysixManager().getWorld();
 		this.coins = this.world.getCoins();
 		this.pool = new SlidePartPool(world);
-		Array<Vector3> controlPoints = Slide.slideGenerator.initControlPoints();
+		Array<Vector3> controlPoints = slideGenerator.initControlPoints();
 		controlPoints.shrink();
 		spline.set(controlPoints.items, false);
 		slideModelInstance = new ModelInstance(new Model());
 		if (!world.gameScreen.settings.DEBUG_HILL) {
 			addSlidePart();
 			addSlidePart();
-			// for (int i = 0; i < 15; i++) {
-			// addSlidePart();
-			// }
 		} else {
 			DebugSlidePart part = new DebugSlidePart(world);
 			part.setSlide(this);
@@ -111,19 +112,14 @@ public class Slide implements ISlide {
 
 	@Override
 	public void addSlidePart() {
-		ISlidePart nextPart = pool.obtain().setSlide(this).setSpline(spline);
-		System.out.println("addSlidePart " + String.valueOf(nextPart.getID()));
 		Array<Vector3> controlPoints = new Array<Vector3>(spline.controlPoints);
-		Slide.slideGenerator.addSpan(controlPoints);
+		slideGenerator.addSpan(controlPoints);
 		controlPoints.shrink();
 		spline.set(controlPoints.items, false);
-
-		Node slidePartNode = slideBuilder.createSlidePart(spline, 1);
-		slidePartNode.id = String.valueOf(nextPart.getID());
-		slideModelInstance.nodes.add(slidePartNode);
-		nextPart.initPhysix();
+		ISlidePart nextPart = pool.obtain().setSlide(this);
 		slideParts.add(nextPart);
 	}
+
 
 	private Array<ISlidePart> disposables = new Array<ISlidePart>(4);
 	private boolean addNextPart = false;
@@ -133,13 +129,11 @@ public class Slide implements ISlide {
 	 */
 	public synchronized void setActualSlidePartId(int id) {
 		if (actualSlidePartId != id && actualSlidePartId < id) {
-			System.out.println("current " + actualSlidePartId + " --- new " + id);
 			for (ISlidePart part : slideParts) {
 				if (part.getID() == actualSlidePartId) {
 					removeSlidePart(part);
 				}
 			}
-			System.out.println("adding");
 			addNextPart = true;
 			this.actualSlidePartId = id;
 		}
@@ -151,4 +145,13 @@ public class Slide implements ISlide {
 	public int getActualSlidePartId() {
 		return this.actualSlidePartId;
 	}
+
+	public SlideGenerator getSlideGenerator() {
+		return slideGenerator;
+	}
+
+	public SlideBuilder getSlideBuilder() {
+		return slideBuilder;
+	}
+
 }
