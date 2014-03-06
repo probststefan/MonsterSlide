@@ -17,6 +17,7 @@ import fh.teamproject.controller.player.pc.InputHandling;
 import fh.teamproject.interfaces.IPlayer;
 import fh.teamproject.physics.PhysixBody;
 import fh.teamproject.physics.PhysixBodyDef;
+import fh.teamproject.physics.callbacks.MotionState;
 import fh.teamproject.physics.callbacks.PlayerMotionState;
 import fh.teamproject.physics.callbacks.PlayerTickCallback;
 import fh.teamproject.screens.GameScreen;
@@ -163,7 +164,7 @@ public class Player extends CollisionEntity implements IPlayer {
 		setCollisionShape(collisionShape);
 		setLocalInertia(new Vector3(0, 0, 0));
 		setMass(GameScreen.settings.PLAYER_MASS);
-		this.motionState = new PlayerMotionState(this);
+		MotionState motionState = new PlayerMotionState(this);
 
 		PhysixBodyDef bodyDef = new PhysixBodyDef(world.getPhysixManager(), mass,
 				motionState, collisionShape);
@@ -183,7 +184,6 @@ public class Player extends CollisionEntity implements IPlayer {
 		playerCallback.attach(world.getPhysixManager().getWorld(), false);
 
 		rigidBody = body;
-		setEntityWorldTransform(instance.transform);
 	}
 
 	@Override

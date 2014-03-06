@@ -9,10 +9,12 @@ import com.badlogic.gdx.physics.bullet.collision.btBvhTriangleMeshShape;
 import com.badlogic.gdx.physics.bullet.collision.btIndexedMesh;
 import com.badlogic.gdx.physics.bullet.collision.btTriangleIndexVertexArray;
 import com.badlogic.gdx.physics.bullet.collision.btTriangleInfoMap;
+import com.badlogic.gdx.physics.bullet.linearmath.btMotionState;
 import com.badlogic.gdx.utils.Pool.Poolable;
 
 import fh.teamproject.interfaces.ISlidePart;
 import fh.teamproject.physics.PhysixBodyDef;
+import fh.teamproject.physics.callbacks.MotionState;
 
 public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
@@ -97,7 +99,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 				triangleInfoMap);
 
 		PhysixBodyDef bodyDef = new PhysixBodyDef(world.getPhysixManager(), mass,
-				motionState, collisionShape);
+				new MotionState(getModelInstance().transform), collisionShape);
 		bodyDef.setFriction(0.1f);
 		bodyDef.setRestitution(0f);
 

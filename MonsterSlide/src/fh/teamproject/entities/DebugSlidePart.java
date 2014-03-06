@@ -20,6 +20,7 @@ import com.badlogic.gdx.physics.bullet.collision.btStaticPlaneShape;
 
 import fh.teamproject.interfaces.ISlidePart;
 import fh.teamproject.physics.PhysixBodyDef;
+import fh.teamproject.physics.callbacks.MotionState;
 
 public class DebugSlidePart extends CollisionEntity implements ISlidePart {
 
@@ -34,7 +35,7 @@ public class DebugSlidePart extends CollisionEntity implements ISlidePart {
 		Vector3 rotate = Vector3.Y.rotate(-15f, 0f, 0f, 1f);
 		collisionShape = new btStaticPlaneShape(rotate, 2f);
 		PhysixBodyDef bodyDef = new PhysixBodyDef(world.getPhysixManager(), mass,
-				motionState, collisionShape);
+				new MotionState(getModelInstance().transform), collisionShape);
 		rigidBody = bodyDef.create();
 		rigidBody.translate(new Vector3(0f, 0f, 0f));
 	}

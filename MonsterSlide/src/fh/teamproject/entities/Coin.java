@@ -5,9 +5,13 @@ import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
 import com.badlogic.gdx.physics.bullet.collision.btSphereShape;
+import com.badlogic.gdx.physics.bullet.linearmath.btMotionState;
+import com.badlogic.gdx.physics.bullet.linearmath.btTransform;
 import com.badlogic.gdx.utils.Pool.Poolable;
 
+import fh.teamproject.physics.PhysixBody;
 import fh.teamproject.physics.PhysixBodyDef;
+import fh.teamproject.physics.callbacks.MotionState;
 
 public class Coin extends CollisionEntity implements Poolable {
 
@@ -51,12 +55,15 @@ public class Coin extends CollisionEntity implements Poolable {
 	public void initPhysix() {
 		btCollisionShape collisionShape = new btSphereShape(this.radius);
 		setCollisionShape(collisionShape);
-		rigidBody = new PhysixBodyDef(world.getPhysixManager(), mass, motionState,
-				collisionShape).create();
-		setEntityWorldTransform(this.instance.transform);
+		PhysixBodyDef rigidBodyDef = new PhysixBodyDef(world.getPhysixManager(), mass,
+				new MotionState(instance.transform), collisionShape);
+		rigidBodyDef.setStartWorldTransform(new btTransform(instance.transform));
+
+		rigidBody = rigidBodyDef.create();
 		rigidBody.setContactCallbackFilter(Player.PLAYER_FLAG);
 
 		rigidBody.setUserValue(this.getID());
+
 	}
 
 	@Override

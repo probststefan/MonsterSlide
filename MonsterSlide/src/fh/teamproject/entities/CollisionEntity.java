@@ -17,7 +17,6 @@ import fh.teamproject.physics.callbacks.MotionState;
  */
 public abstract class CollisionEntity extends Entity implements ICollisionEntity {
 	protected btCollisionShape collisionShape;
-	public MotionState motionState;
 	public PhysixBody rigidBody;
 	private Vector3 localInertia;
 	protected float mass;
@@ -39,9 +38,6 @@ public abstract class CollisionEntity extends Entity implements ICollisionEntity
 		this.world.getPhysixManager().getWorld()
 				.removeRigidBody((btRigidBody) getRigidBody());
 		((btRigidBody) rigidBody).dispose();
-		if (motionState != null) {
-			motionState.dispose();
-		}
 		collisionShape.dispose();
 		super.dispose();
 	}
@@ -49,19 +45,10 @@ public abstract class CollisionEntity extends Entity implements ICollisionEntity
 	@Override
 	public void releaseAll() {
 		rigidBody.release();
-		if (motionState != null) {
-			motionState.release();
-		}
 		collisionShape.release();
 		localInertia = null;
 	}
 
-
-
-	public void createMotionState() {
-		// this.motionState = new MotionState(this.instance.transform);
-		motionState = new MotionState(new Matrix4());
-	}
 
 	/**
 	 * Gibt den RigidBody des Kollisionsobjekts zurueck der dann an die
@@ -85,19 +72,6 @@ public abstract class CollisionEntity extends Entity implements ICollisionEntity
 		this.collisionShape = collisionShape;
 	}
 
-	/**
-	 * Position des Kollisionskoerpers setzen. Dieser sollte sich dort befinden
-	 * wo auch das Objekt gerendert wird. ;)
-	 * 
-	 * @param transform
-	 */
-	@Override
-	public void setEntityWorldTransform(Matrix4 transform) {
-		if (null == motionState) {
-			createMotionState();
-		}
-		motionState.setWorldTransform(transform);
-	}
 
 	/**
 	 * Hier kann die Traegheit eines Objekt gesetzt werden.
