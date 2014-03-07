@@ -54,6 +54,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		indexedMesh.dispose();
 		Node node = slide.getModelInstance().getNode(String.valueOf(getID()));
 		slide.getModelInstance().nodes.removeValue(node, true);
+		this.triangleInfoMap.dispose();
 		super.dispose();
 	}
 
