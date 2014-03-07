@@ -1,22 +1,17 @@
 package fh.teamproject.entities;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
-import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.model.Node;
-import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.btCapsuleShape;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionObject;
 import com.badlogic.gdx.physics.bullet.collision.btCompoundShape;
-import com.badlogic.gdx.physics.bullet.collision.btSphereShape;
 
 import fh.teamproject.controller.player.pc.InputHandling;
 import fh.teamproject.interfaces.IPlayer;
@@ -155,11 +150,9 @@ public class Player extends CollisionEntity implements IPlayer {
 		btCapsuleShape collisionShape = new btCapsuleShape(radius, height);
 		btCapsuleShape collisionShape2 = new btCapsuleShape(radius, height);
 
-		Matrix4 rotate = new Matrix4().idt()
-				.rotate(new Vector3(1f, 0f, 0f), -90f)
+		Matrix4 rotate = new Matrix4().idt().rotate(new Vector3(1f, 0f, 0f), -90f)
 				.rotate(new Vector3(0f, 0f, 1f), -90f).translate(-2f, 0f, 0f);
-		Matrix4 rotate2 = new Matrix4().idt()
-				.rotate(new Vector3(1f, 0f, 0f), -90f)
+		Matrix4 rotate2 = new Matrix4().idt().rotate(new Vector3(1f, 0f, 0f), -90f)
 				.rotate(new Vector3(0f, 0f, 1f), -90f).translate(2f, 0f, 0f);
 		compound.addChildShape(rotate, collisionShape);
 		compound.addChildShape(rotate2, collisionShape);

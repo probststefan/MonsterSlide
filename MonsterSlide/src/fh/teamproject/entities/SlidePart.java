@@ -83,7 +83,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
 		btBvhTriangleMeshShape collisionShape = new btBvhTriangleMeshShape(
 				triangleVertexArray, true);
-		collisionShape.setMargin(1.1f);
+		// collisionShape.setMargin(1.1f);
 
 		triangleInfoMap = new btTriangleInfoMap();
 		// now you can adjust some thresholds in triangleInfoMap if needed.

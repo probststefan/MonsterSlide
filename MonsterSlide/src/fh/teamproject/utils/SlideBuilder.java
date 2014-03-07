@@ -16,7 +16,6 @@ import com.badlogic.gdx.graphics.g3d.utils.MeshBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder.VertexInfo;
 import com.badlogic.gdx.math.CatmullRomSpline;
 import com.badlogic.gdx.math.Interpolation;
-import com.badlogic.gdx.math.Interpolation.Elastic;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
@@ -46,11 +45,11 @@ public class SlideBuilder {
 
 	public Node createSlidePart(CatmullRomSpline<Vector3> spline, int spanCount) {
 		begin();
-			/**
-			 * 1. Punkte auf letzem span interpolieren 2. Tangent, Normale und
-			 * Binormale berechnen 3. Punkte duplizieren um rechtecke zu bilden
-			 * 4. mesh bauen, material bauen
-			 */
+		/**
+		 * 1. Punkte auf letzem span interpolieren 2. Tangent, Normale und
+		 * Binormale berechnen 3. Punkte duplizieren um rechtecke zu bilden 4.
+		 * mesh bauen, material bauen
+		 */
 		for (int i = 0; i < spanCount; i++) {
 			createInterpolatedVertices(spline, spline.spanCount - 1);
 		}
@@ -118,7 +117,7 @@ public class SlideBuilder {
 
 		Material material = new Material();
 		TextureAttribute texAttr = TextureAttribute.createDiffuse(new Texture(Gdx.files
-				.internal("data/floor.jpg")));
+				.internal("data/slide/stone.png")));
 		material.set(texAttr);
 
 		MeshPart meshPart = new MeshPart("meshPart1", mesh, 0, mesh.getNumVertices(),

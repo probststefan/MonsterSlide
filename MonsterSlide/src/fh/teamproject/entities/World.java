@@ -74,14 +74,17 @@ public class World implements IWorld {
 		}
 
 		if (!checkIsPlayerOnSlide() && !gameScreen.isPaused) {
-			gameScreen.getGame().setScreen(new MenuScreen(gameScreen.getGame()));
+			// gameScreen.getGame().setScreen(new
+			// MenuScreen(gameScreen.getGame()));
 		} else {
-			player.update();
-			slide.update();
-			coins.update();
-			// Der Skydome soll den Player verfolgen.
-			skydome.transform.setToTranslation(player.getPosition());
+
 		}
+
+		player.update();
+		slide.update();
+		coins.update();
+		// Der Skydome soll den Player verfolgen.
+		skydome.transform.setToTranslation(player.getPosition());
 	}
 
 	@Override
