@@ -45,6 +45,7 @@ public class Coin extends CollisionEntity implements Poolable {
 		btCollisionShape collisionShape = new btSphereShape(this.radius);
 		PhysixBodyDef rigidBodyDef = new PhysixBodyDef(world.getPhysixManager(), mass,
 				new MotionState(instance.transform), collisionShape);
+
 		btTransform btTransform = new btTransform(instance.transform);
 		rigidBodyDef.setStartWorldTransform(btTransform);
 
@@ -64,7 +65,7 @@ public class Coin extends CollisionEntity implements Poolable {
 		Model m = this.world.getGameScreen().getAssets()
 				.get("model/pumpkin/pumpkin_04_01_a.g3db", Model.class);
 		for (Node node : m.nodes) {
-			node.scale.set(0.5f, .5f, .5f);
+			node.scale.set(0.1f, .1f, .1f);
 			// node.translation.set(0f, -3f, 0f);
 			node.rotation.set(new Vector3(0f, 1f, 0f), 200f);
 			node.calculateTransforms(true);

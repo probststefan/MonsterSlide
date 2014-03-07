@@ -2,8 +2,13 @@ package fh.teamproject.entities;
 
 import java.util.ArrayList;
 
+import com.badlogic.gdx.math.CatmullRomSpline;
+import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
+
+import fh.teamproject.screens.GameScreen;
 
 /**
  * Diese Klasse verwaltet alle Coins.
@@ -34,7 +39,7 @@ public class Coins {
 		Coin tmpCoin = coinPool.obtain();
 		tmpCoin.setToPosition(position);
 		coins.add(tmpCoin);
-		this.world.getPhysixManager().addRigidBody(tmpCoin.getRigidBody());
+		// this.world.getPhysixManager().addRigidBody(tmpCoin.getRigidBody());
 	}
 
 	/**
@@ -91,6 +96,38 @@ public class Coins {
 			}
 
 			this.toDeleteIDs.clear();
+		}
+	}
+
+	public void generateCoinsforSpan(int span) {
+		CatmullRomSpline<Vector3> spline = world.getSlide().getSpline();
+		float epsilon = 0.01f;
+		float splitting = 0.2f;
+		Vector3 interpolatedVertex = new Vector3();
+		float scale = MathUtils.random(0.1f, 0.9f);
+		for (float i = 0; i <= (1 + epsilon); i += splitting) {
+			/* Damit werden die Endstücke kleiner */
+			float t = Interpolation.sine.apply(i);
+			spline.valueAt(interpolatedVertex, span, t);
+			// 1. und 2. Ableitung bilden.
+			Vector3 derivation = new Vector3();
+			derivation = spline.derivativeAt(derivation, span, t);
+			derivation.nor();
+			Vector3 tangent = derivation.cpy();
+			/*
+			 * Mit dem upVector wird das Problem der springenden Normalen
+			 * behoben.
+			 * 
+			 * @link
+			 * http://www.it.hiof.no/~borres/j3d/explain/frames/p-frames.html
+			 */
+			Vector3 upVector = new Vector3(0.0f, -1.0f, 0.0f);
+			Vector3 binormal = derivation.cpy().crs(upVector).nor();
+			Vector3 normal = tangent.cpy().crs(binormal);
+			// warum wird derivation nicht normiert aber tangent schon
+			binormal.scl(GameScreen.settings.SLIDE_WIDTH * scale);
+
+			addCoin(interpolatedVertex.cpy().add(binormal));
 		}
 	}
 }

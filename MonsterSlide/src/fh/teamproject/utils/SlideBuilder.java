@@ -95,7 +95,8 @@ public class SlideBuilder {
 			Vector3 upVector = new Vector3(0.0f, -1.0f, 0.0f);
 			Vector3 binormal = derivation.cpy().crs(upVector).nor();
 			Vector3 normal = tangent.cpy().crs(binormal);
-
+			// warum wird derivation nicht normiert aber tangent schon
+			//
 			normals.add(normal);
 			binormals.add(binormal);
 			tangents.add(tangent);
