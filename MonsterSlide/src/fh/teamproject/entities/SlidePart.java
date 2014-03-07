@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.CatmullRomSpline;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.Collision;
 import com.badlogic.gdx.physics.bullet.collision.btBvhTriangleMeshShape;
+import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
 import com.badlogic.gdx.physics.bullet.collision.btIndexedMesh;
 import com.badlogic.gdx.physics.bullet.collision.btTriangleIndexVertexArray;
 import com.badlogic.gdx.physics.bullet.collision.btTriangleInfoMap;
@@ -51,10 +52,11 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 	}
 
 	public void dispose() {
-		indexedMesh.dispose();
 		Node node = slide.getModelInstance().getNode(String.valueOf(getID()));
 		slide.getModelInstance().nodes.removeValue(node, true);
-		this.triangleInfoMap.dispose();
+		indexedMesh.dispose();
+		triangleInfoMap.dispose();
+		triangleVertexArray.dispose();
 		super.dispose();
 	}
 
@@ -95,7 +97,6 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		// (collisionShape->setUserPointer(triangleInfoMap))
 		Collision.btGenerateInternalEdgeInfo((btBvhTriangleMeshShape) collisionShape,
 				triangleInfoMap);
-
 		PhysixBodyDef bodyDef = new PhysixBodyDef(world.getPhysixManager(), mass,
 				new MotionState(getModelInstance().transform), collisionShape);
 		bodyDef.setFriction(0.1f);
@@ -105,6 +106,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		rigidBody.userData = this;
 		rigidBody.setUserValue(this.getID());
 		rigidBody.setContactCallbackFlag(Slide.SLIDE_FLAG);
+		bodyDef.dispose();
 	}
 
 	@Override
