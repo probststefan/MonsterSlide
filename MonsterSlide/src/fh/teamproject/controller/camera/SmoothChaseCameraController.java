@@ -8,52 +8,53 @@ import com.badlogic.gdx.math.Vector3;
 
 import fh.teamproject.entities.Player;
 
+/**
+ * Eine gedaempfte Verfolgerkamera aus den Unity3D-Beispielen uebernommen und
+ * modifiziert.
+ * 
+ * @author stefanprobst
+ * @see <a
+ *      href="http://answers.unity3d.com/questions/38526/smooth-follow-camera.html">http://answers.unity3d.com/questions/38526/smooth-follow-camera.html</a>
+ * 
+ */
 public class SmoothChaseCameraController extends CameraController {
 
 	private Player target;
-	private float radius = 10;
-	private Vector3 offset;
 
 	// The distance in the x-z plane to the target
-	private float distance = 10.0f;
+	private float distance = 2.0f;
 	// the height we want the camera to be above the target
-	private float height = 5.0f;
+	private float height = 15.0f;
 	// How much we
 	private float heightDamping = 2.0f;
 	private float rotationDamping = 3.0f;
-	private double heading, attitude, bank;
+	// Folgende Variablen werden waehrend den Berechnungen benoetigt.
+	private double attitude;
+	private Vector3 tmpForward;
+	private Quaternion currentRotation, rotation;
+	private Matrix4 camTransform;
 
 	public SmoothChaseCameraController(Camera camera, Player player) {
 		super(camera);
 		this.target = player;
-
-		camera.up.set(0, 1, 0);
-		offset = player.direction.cpy().scl(-1f * radius);
-		Vector3 rotAxis = player.direction.cpy().crs(Vector3.Y);
-		Vector3 pos = player.getPosition();
-		Vector3 orbitPos = pos.cpy().add(offset);
-		camera.position.set(orbitPos);
-		camera.rotateAround(pos, rotAxis, 315);
-		camera.lookAt(pos.cpy().add(player.direction));
 	}
 
 	public void update() {
-		Quaternion rotation = new Quaternion();
-		this.target.getModelInstance().transform.getRotation(rotation);
-		this.set(rotation);
+		this.rotation = new Quaternion();
+		this.target.getModelInstance().transform.getRotation(this.rotation);
+		this.calculateEulerValuesFromQuat(this.rotation);
 		float wantedRotationAngle = (float) attitude;
 		float wantedHeight = this.target.getPosition().y + this.height;
 
-		Matrix4 camTransform = new Matrix4();
-		this.camera.transform(camTransform);
-		camTransform.getRotation(rotation);
-		this.set(rotation);
+		this.camTransform = new Matrix4();
+		this.camera.transform(this.camTransform);
+		this.camTransform.getRotation(rotation);
+		this.calculateEulerValuesFromQuat(rotation);
 		float currentRotationAngle = (float) attitude;
 		float currentHeight = camera.position.y;
 
 		// Damp the rotation around the y-axis
-		currentRotationAngle = SmoothChaseCameraController.lerpAngle(
-				currentRotationAngle, wantedRotationAngle,
+		currentRotationAngle = this.lerpAngle(currentRotationAngle, wantedRotationAngle,
 				rotationDamping * Gdx.graphics.getDeltaTime());
 
 		// Damp the height
@@ -61,15 +62,15 @@ public class SmoothChaseCameraController extends CameraController {
 				heightDamping * Gdx.graphics.getDeltaTime());
 
 		// Convert the angle into a rotation
-		Quaternion currentRotation = new Quaternion();
-		currentRotation.setEulerAngles(0, currentRotationAngle, 0);
+		this.currentRotation = new Quaternion();
+		this.currentRotation.setEulerAngles(0, currentRotationAngle, 0);
 
 		// Set the position of the camera on the x-z plane to:
 		// distance meters behind the target
 		this.camera.position.set(target.getPosition());
-		Vector3 forward = new Vector3(0, 1, 0);
-		this.camera.position.set(this.camera.position.sub(forward.mul(currentRotation)
-				.mul(distance)));
+		this.tmpForward = new Vector3(0, 1, 0);
+		this.camera.position.set(this.camera.position.sub(tmpForward.mul(
+				this.currentRotation).scl(distance)));
 
 		// Set the height of the camera
 		this.camera.position.y = currentHeight;
@@ -82,9 +83,13 @@ public class SmoothChaseCameraController extends CameraController {
 		this.camera.update(true);
 	}
 
-	/** q1 can be non-normalised quaternion */
-
-	public void set(Quaternion q1) {
+	/**
+	 * Berechnet die Euler-Winkel aus einem nicht-normalisiertem Quaternion
+	 * (heading, attitude, bank).
+	 * 
+	 * @param q1
+	 */
+	public void calculateEulerValuesFromQuat(Quaternion q1) {
 		double sqw = q1.w * q1.w;
 		double sqx = q1.x * q1.x;
 		double sqy = q1.y * q1.y;
@@ -94,25 +99,19 @@ public class SmoothChaseCameraController extends CameraController {
 		double test = q1.x * q1.y + q1.z * q1.w;
 
 		if (test > 0.499 * unit) { // singularity at north pole
-			heading = 2 * Math.atan2(q1.x, q1.w);
 			attitude = Math.PI / 2;
-			bank = 0;
 			return;
 		}
 
 		if (test < -0.499 * unit) { // singularity at south pole
-			heading = -2 * Math.atan2(q1.x, q1.w);
 			attitude = -Math.PI / 2;
-			bank = 0;
 			return;
 		}
 
-		heading = Math.atan2(2 * q1.y * q1.w - 2 * q1.x * q1.z, sqx - sqy - sqz + sqw);
 		attitude = Math.asin(2 * test / unit);
-		bank = Math.atan2(2 * q1.x * q1.w - 2 * q1.y * q1.z, -sqx + sqy - sqz + sqw);
 	}
 
-	private static float lerpAngle(float a, float b, float alpha) {
+	private float lerpAngle(float a, float b, float alpha) {
 		float delta;
 		a %= 360;
 		b %= 360;
