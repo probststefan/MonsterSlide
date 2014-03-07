@@ -44,13 +44,16 @@ public class Coin extends CollisionEntity implements Poolable {
 		btCollisionShape collisionShape = new btSphereShape(this.radius);
 		PhysixBodyDef rigidBodyDef = new PhysixBodyDef(world.getPhysixManager(), mass,
 				new MotionState(instance.transform), collisionShape);
-		rigidBodyDef.setStartWorldTransform(new btTransform(instance.transform));
+		btTransform btTransform = new btTransform(instance.transform);
+		rigidBodyDef.setStartWorldTransform(btTransform);
 
 		rigidBody = rigidBodyDef.create();
 		rigidBody.setContactCallbackFilter(Player.PLAYER_FLAG);
 
 		rigidBody.setUserValue(this.getID());
 
+		rigidBodyDef.dispose();
+		btTransform.dispose();
 	}
 
 	@Override

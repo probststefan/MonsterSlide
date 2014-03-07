@@ -148,7 +148,6 @@ public class Player extends CollisionEntity implements IPlayer {
 									// number
 		btCompoundShape compound = new btCompoundShape();
 		btCapsuleShape collisionShape = new btCapsuleShape(radius, height);
-		btCapsuleShape collisionShape2 = new btCapsuleShape(radius, height);
 
 		Matrix4 rotate = new Matrix4().idt().rotate(new Vector3(1f, 0f, 0f), -90f)
 				.rotate(new Vector3(0f, 0f, 1f), -90f).translate(-2f, 0f, 0f);
