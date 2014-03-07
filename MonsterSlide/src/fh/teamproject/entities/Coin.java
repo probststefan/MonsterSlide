@@ -55,7 +55,8 @@ public class Coin extends CollisionEntity implements Poolable {
 
 	@Override
 	public void initGraphix() {
-		Model m = this.world.gameScreen.getAssets().get("model/coin.g3db", Model.class);
+		Model m = this.world.getGameScreen().getAssets()
+				.get("model/coins/coin.g3db", Model.class);
 		instance = new ModelInstance(m);
 		instance.transform.rotate(new Vector3(1.0f, 0, 0), 90.0f);
 		instance.transform.scl(1f);

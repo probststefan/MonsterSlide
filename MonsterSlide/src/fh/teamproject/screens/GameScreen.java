@@ -78,8 +78,12 @@ public class GameScreen implements Screen {
 	}
 
 	private void loadAssets() {
-		getAssets().load("model/coin.g3db", Model.class);
+		getAssets().load("model/coins/coin.g3db", Model.class);
 		getAssets().load("data/g3d/skydome.g3db", Model.class);
+		getAssets().load("model/orc/micro_orc.g3db", Model.class);
+		getAssets().load("model/orc/micro_orc_mobile.g3db", Model.class);
+		getAssets().load("model/orc/micro_orc.obj", Model.class);
+
 		getAssets().finishLoading();
 	}
 

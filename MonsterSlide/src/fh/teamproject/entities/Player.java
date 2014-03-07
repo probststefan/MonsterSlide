@@ -2,16 +2,20 @@ package fh.teamproject.entities;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
+import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
+import com.badlogic.gdx.graphics.g3d.model.Node;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.btCapsuleShape;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionObject;
+import com.badlogic.gdx.physics.bullet.collision.btCompoundShape;
 import com.badlogic.gdx.physics.bullet.collision.btSphereShape;
 
 import fh.teamproject.controller.player.pc.InputHandling;
@@ -147,19 +151,31 @@ public class Player extends CollisionEntity implements IPlayer {
 	public void initPhysix() {
 		float height = radius * 2f; // FIXME: aus buildPlayer kopiert! magic
 									// number
+		btCompoundShape compound = new btCompoundShape();
 		btCapsuleShape collisionShape = new btCapsuleShape(radius, height);
+		btCapsuleShape collisionShape2 = new btCapsuleShape(radius, height);
+
+		Matrix4 rotate = new Matrix4().idt()
+				.rotate(new Vector3(1f, 0f, 0f), -90f)
+				.rotate(new Vector3(0f, 0f, 1f), -90f).translate(-2f, 0f, 0f);
+		Matrix4 rotate2 = new Matrix4().idt()
+				.rotate(new Vector3(1f, 0f, 0f), -90f)
+				.rotate(new Vector3(0f, 0f, 1f), -90f).translate(2f, 0f, 0f);
+		compound.addChildShape(rotate, collisionShape);
+		compound.addChildShape(rotate2, collisionShape);
 		// btSphereShape collisionShape = new btSphereShape(radius);
 		setMass(GameScreen.settings.PLAYER_MASS);
 		MotionState motionState = new PlayerMotionState(this);
 
 		PhysixBodyDef bodyDef = new PhysixBodyDef(world.getPhysixManager(), mass,
-				motionState, collisionShape);
+				motionState, compound);
 		// Damit rutscht die Sphere nur noch und rollt nicht mehr.
 		bodyDef.setFriction(0.1f);
 		bodyDef.setRestitution(1f);
 
 		PhysixBody body = bodyDef.create();
 		bodyDef.dispose();
+		body.setAngularFactor(new Vector3(1f, 0f, 1f));
 		body.setContactCallbackFlag(Player.PLAYER_FLAG);
 		body.setContactCallbackFilter(Slide.SLIDE_FLAG);
 		// Wird gebraucht um die Kollisionen mit den Coins zu filtern.
@@ -172,22 +188,26 @@ public class Player extends CollisionEntity implements IPlayer {
 		PlayerTickCallback playerCallback = new PlayerTickCallback(this);
 		playerCallback.attach(world.getPhysixManager().getWorld(), false);
 
-
 		rigidBody = body;
 	}
 
 	@Override
 	public void initGraphix() {
-		// Grafische Darstellung erstellen
-		ModelBuilder builder = new ModelBuilder();
-		Material material = new Material(ColorAttribute.createDiffuse(new Color(1f, 1f,
-				1f, 1f)));
+		Model model = world.getGameScreen().getAssets()
+				.get("model/orc/micro_orc.g3db", Model.class);
+		for (Node node : model.nodes) {
+			node.scale.set(0.05f, .05f, .05f);
+			node.translation.set(0f, -3f, 0f);
+			node.rotation.set(new Vector3(0f, 1f, 0f), 90f);
+			node.calculateTransforms(true);
+		}
+		instance = new ModelInstance(model);
 
-		// Durchmesser der Sphere berechnen.
-		float height = radius * 2f;
-		Model m = builder.createCapsule(radius, height * 2, 16, material, Usage.Position
-				| Usage.Normal);
-		instance = new ModelInstance(m);
+		for (Material m : instance.model.materials) {
+			TextureAttribute texAtt = (TextureAttribute) m.get(TextureAttribute.Diffuse);
+			texAtt.textureDescription.uWrap = TextureWrap.Repeat;
+			texAtt.textureDescription.vWrap = TextureWrap.Repeat;
+		}
 		instance.userData = "player";
 	}
 }

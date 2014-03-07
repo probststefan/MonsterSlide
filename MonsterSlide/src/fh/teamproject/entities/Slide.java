@@ -53,7 +53,7 @@ public class Slide implements ISlide {
 		controlPoints.shrink();
 		spline.set(controlPoints.items, false);
 		slideModelInstance = new ModelInstance(new Model());
-		if (!world.gameScreen.settings.DEBUG_HILL) {
+		if (!world.getGameScreen().settings.DEBUG_HILL) {
 			addSlidePart();
 			addSlidePart();
 		} else {

@@ -33,12 +33,12 @@ public class World implements IWorld {
 	// Rendering
 	public ModelBatch batch;
 	public Environment lights;
-	public PhysixManager physixManager;
+	private PhysixManager physixManager;
 	private ClosestRayResultCallback resultCallback;
 	final float checkPlayerOnSlideRayDepth = 100.0f;
 	Array<ICollisionEntity> entities = new Array<ICollisionEntity>(32);
 
-	GameScreen gameScreen;
+	private GameScreen gameScreen;
 
 	public World(GameScreen gameScreen) {
 		this.gameScreen = gameScreen;
@@ -171,4 +171,9 @@ public class World implements IWorld {
 	public PhysixManager getPhysixManager() {
 		return physixManager;
 	}
+
+	public GameScreen getGameScreen() {
+		return gameScreen;
+	}
+
 }
