@@ -118,6 +118,7 @@ public class Slide implements ISlide {
 		spline.set(controlPoints.items, false);
 		ISlidePart nextPart = pool.obtain().setSlide(this);
 		slideParts.add(nextPart);
+		coins.addCoin(spline.controlPoints[spline.controlPoints.length - 1]);
 	}
 
 

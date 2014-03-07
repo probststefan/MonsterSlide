@@ -83,6 +83,10 @@ public class GameScreen implements Screen {
 		getAssets().load("model/orc/micro_orc.g3db", Model.class);
 		getAssets().load("model/orc/micro_orc_mobile.g3db", Model.class);
 		getAssets().load("model/orc/micro_orc.obj", Model.class);
+		getAssets().load("model/pumpkin/pumpkin_01_01_a.g3db", Model.class);
+		getAssets().load("model/pumpkin/pumpkin_02_01_a.g3db", Model.class);
+		getAssets().load("model/pumpkin/pumpkin_03_01_a.g3db", Model.class);
+		getAssets().load("model/pumpkin/pumpkin_04_01_a.g3db", Model.class);
 
 		getAssets().finishLoading();
 	}

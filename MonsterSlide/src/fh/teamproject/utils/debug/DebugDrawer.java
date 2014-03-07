@@ -111,7 +111,7 @@ public class DebugDrawer {
 
 		Vector3 position = gameScreen.world.getPlayer().getPosition();
 		Vector3 direction = gameScreen.world.getPlayer().getDirection();
-		renderer.line(position, position.cpy().add(direction));
+		renderer.line(position, position.cpy().add(direction.cpy().scl(20f)));
 
 		renderer.line(new Vector3(), new Vector3(1000f, 0f, 0f));
 		renderer.end();
