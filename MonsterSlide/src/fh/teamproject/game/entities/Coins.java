@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.CatmullRomSpline;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.bullet.collision.Collision;
 import com.badlogic.gdx.utils.Array;
 
 import fh.teamproject.game.CoinPool;
@@ -30,7 +31,7 @@ public class Coins {
 		this.world = world;
 		this.coins = new Array<Coin>();
 		this.toDeleteIDs = new ArrayList<Integer>();
-		this.coinPool = new CoinPool(this.world);
+		this.coinPool = new CoinPool(this.world, 64, 64);
 	}
 
 	public void update() {
@@ -40,8 +41,9 @@ public class Coins {
 	public void addCoin(Vector3 position) {
 		Coin tmpCoin = coinPool.obtain();
 		tmpCoin.setPosition(position);
+		tmpCoin.getRigidBody().setActivationState(Collision.ACTIVE_TAG);
+		tmpCoin.getRigidBody().setContactCallbackFilter(Player.PLAYER_FLAG);
 		coins.add(tmpCoin);
-		// this.world.getPhysixManager().addRigidBody(tmpCoin.getRigidBody());
 	}
 
 	/**
@@ -55,9 +57,12 @@ public class Coins {
 		if (index >= 0) {
 			// Coins als geloescht markieren.
 			this.toDeleteIDs.add(index);
-			// Filter auf 0 setzen, damit keine Kollision mehr auftreten kann.
+			// FIXME: das hier könnte in reset Mehtode des Coins
+			// Filter auf 0 setzen, damit keine Kollision mehr auftreten
+			// kann.
 			this.coins.get(index).getRigidBody().setContactCallbackFilter(0);
-			this.coins.get(index).getRigidBody().setActivationState(0);
+			this.coins.get(index).getRigidBody()
+					.setActivationState(Collision.DISABLE_SIMULATION);
 		}
 	}
 
@@ -93,6 +98,8 @@ public class Coins {
 	private void removeCoins() {
 		if (this.toDeleteIDs.size() > 0) {
 			for (int i = 0; i < this.toDeleteIDs.size(); i++) {
+
+
 				coinPool.free(this.coins.get(this.toDeleteIDs.get(i)));
 				this.coins.removeIndex(this.toDeleteIDs.get(i));
 			}
@@ -104,7 +111,7 @@ public class Coins {
 	public void generateCoinsforSpan(int span) {
 		CatmullRomSpline<Vector3> spline = world.getSlide().getSpline();
 		float epsilon = 0.01f;
-		float splitting = 1f;
+		float splitting = 2f;
 		Vector3 interpolatedVertex = new Vector3();
 		float scale = MathUtils.random(0.1f, 0.9f);
 		for (float i = 0; i <= (1); i += splitting) {

@@ -21,7 +21,7 @@ import fh.teamproject.physics.callbacks.motion.MotionState;
 
 public class Coin extends CollisionEntity implements Poolable {
 
-	private float radius = 1f;
+	private float radius = 5f;
 
 	public Coin(World world) {
 		super(world);
@@ -32,7 +32,13 @@ public class Coin extends CollisionEntity implements Poolable {
 
 	@Override
 	public void reset() {
+
+	}
+
+	@Override
+	public void dispose() {
 		// TODO Auto-generated method stub
+		super.dispose();
 	}
 
 	@Override
@@ -58,7 +64,6 @@ public class Coin extends CollisionEntity implements Poolable {
 		rigidBody.setCollisionFlags(rigidBody.getContactCallbackFlag()
 				| btCollisionObject.CollisionFlags.CF_KINEMATIC_OBJECT
 				| btCollisionObject.CollisionFlags.CF_NO_CONTACT_RESPONSE);
-		rigidBody.setActivationState(Collision.DISABLE_DEACTIVATION);
 		rigidBody.setUserValue(this.getID());
 		rigidBodyDef.dispose();
 		btTransform.dispose();
@@ -71,7 +76,7 @@ public class Coin extends CollisionEntity implements Poolable {
 		Model m = this.world.getGameScreen().getAssets()
 				.get("model/pumpkin/pumpkin_04_01_a.g3db", Model.class);
 		for (Node node : m.nodes) {
-			node.scale.set(0.1f, .1f, .1f);
+			node.scale.set(0.3f, .3f, .3f);
 			// node.translation.set(0f, -3f, 0f);
 			node.rotation.set(new Vector3(0f, 1f, 0f), 200f);
 			node.calculateTransforms(true);
