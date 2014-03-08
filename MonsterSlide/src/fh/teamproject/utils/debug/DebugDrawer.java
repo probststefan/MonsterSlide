@@ -20,7 +20,7 @@ import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 
-import fh.teamproject.entities.SlidePart;
+import fh.teamproject.game.entities.SlidePart;
 import fh.teamproject.interfaces.ICameraController;
 import fh.teamproject.interfaces.ISlidePart;
 import fh.teamproject.screens.GameScreen;

@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Plane;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.Ray;
 
-import fh.teamproject.entities.Player;
+import fh.teamproject.game.entities.Player;
 import fh.teamproject.screens.GameScreen;
 import fh.teamproject.utils.CameraManager.Mode;
 

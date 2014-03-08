@@ -11,7 +11,7 @@ import com.badlogic.gdx.utils.ObjectMap.Values;
 
 import fh.teamproject.controller.camera.ChaseCameraController;
 import fh.teamproject.controller.camera.SmoothChaseCameraController;
-import fh.teamproject.entities.Player;
+import fh.teamproject.game.entities.Player;
 import fh.teamproject.interfaces.ICameraController;
 import fh.teamproject.screens.GameScreen;
 import fh.teamproject.utils.debug.DebugCameraController;

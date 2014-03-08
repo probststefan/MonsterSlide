@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 
-import fh.teamproject.entities.Player;
+import fh.teamproject.game.entities.Player;
 
 /**
  * Eine gedaempfte Verfolgerkamera aus den Unity3D-Beispielen uebernommen und

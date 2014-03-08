@@ -1,6 +1,6 @@
 package fh.teamproject.interfaces;
 
-import fh.teamproject.entities.Coins;
+import fh.teamproject.game.entities.Coins;
 
 public interface IWorld {
 
