@@ -1,5 +1,6 @@
 package fh.teamproject.game.entities;
 
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 
 import fh.teamproject.game.World;
@@ -59,6 +60,12 @@ public abstract class CollisionEntity extends Entity implements ICollisionEntity
 	@Override
 	public void setMass(float mass) {
 		this.mass = mass;
+	}
+
+	@Override
+	public void setPosition(Vector3 position) {
+		// collision entites können position nicht direkt setzen, außer
+		// kinematic
 	}
 
 }

@@ -39,7 +39,7 @@ public class Coins {
 
 	public void addCoin(Vector3 position) {
 		Coin tmpCoin = coinPool.obtain();
-		tmpCoin.setToPosition(position);
+		tmpCoin.setPosition(position);
 		coins.add(tmpCoin);
 		// this.world.getPhysixManager().addRigidBody(tmpCoin.getRigidBody());
 	}
@@ -104,10 +104,10 @@ public class Coins {
 	public void generateCoinsforSpan(int span) {
 		CatmullRomSpline<Vector3> spline = world.getSlide().getSpline();
 		float epsilon = 0.01f;
-		float splitting = 0.2f;
+		float splitting = 1f;
 		Vector3 interpolatedVertex = new Vector3();
 		float scale = MathUtils.random(0.1f, 0.9f);
-		for (float i = 0; i <= (1 + epsilon); i += splitting) {
+		for (float i = 0; i <= (1); i += splitting) {
 			/* Damit werden die Endstücke kleiner */
 			float t = Interpolation.sine.apply(i);
 			spline.valueAt(interpolatedVertex, span, t);

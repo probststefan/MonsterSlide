@@ -4,6 +4,8 @@ import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.model.Node;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.bullet.collision.Collision;
+import com.badlogic.gdx.physics.bullet.collision.btCollisionObject;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
 import com.badlogic.gdx.physics.bullet.collision.btSphereShape;
 import com.badlogic.gdx.physics.bullet.linearmath.btMotionState;
@@ -15,6 +17,8 @@ import fh.teamproject.physics.PhysixBody;
 import fh.teamproject.physics.PhysixBodyDef;
 import fh.teamproject.physics.callbacks.motion.MotionState;
 
+;
+
 public class Coin extends CollisionEntity implements Poolable {
 
 	private float radius = 1f;
@@ -23,7 +27,7 @@ public class Coin extends CollisionEntity implements Poolable {
 		super(world);
 		initGraphix();
 		initPhysix();
-		setPosition(new Vector3(0, 2.0f, 0));
+
 	}
 
 	@Override
@@ -31,10 +35,9 @@ public class Coin extends CollisionEntity implements Poolable {
 		// TODO Auto-generated method stub
 	}
 
-	public void setToPosition(Vector3 position) {
-		setPosition(position);
-		instance.transform.setToTranslation(position);
-		this.getRigidBody().translate(position);
+	@Override
+	public void setPosition(Vector3 position) {
+		getModelInstance().transform.setToTranslation(position);
 	}
 
 	/**
@@ -45,16 +48,18 @@ public class Coin extends CollisionEntity implements Poolable {
 	public void initPhysix() {
 		btCollisionShape collisionShape = new btSphereShape(this.radius);
 		PhysixBodyDef rigidBodyDef = new PhysixBodyDef(world.getPhysixManager(), mass,
-				new MotionState(instance.transform), collisionShape);
+				new MotionState(getModelInstance().transform), collisionShape);
 
-		btTransform btTransform = new btTransform(instance.transform);
+		btTransform btTransform = new btTransform(getModelInstance().transform);
 		rigidBodyDef.setStartWorldTransform(btTransform);
 
 		rigidBody = rigidBodyDef.create();
 		rigidBody.setContactCallbackFilter(Player.PLAYER_FLAG);
-
+		rigidBody.setCollisionFlags(rigidBody.getContactCallbackFlag()
+				| btCollisionObject.CollisionFlags.CF_KINEMATIC_OBJECT
+				| btCollisionObject.CollisionFlags.CF_NO_CONTACT_RESPONSE);
+		rigidBody.setActivationState(Collision.DISABLE_DEACTIVATION);
 		rigidBody.setUserValue(this.getID());
-
 		rigidBodyDef.dispose();
 		btTransform.dispose();
 	}
