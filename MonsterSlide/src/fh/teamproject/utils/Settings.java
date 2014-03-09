@@ -5,8 +5,6 @@ public class Settings {
 	public float SLIDE_WIDTH;
 	public float SLIDE_LENGTH;
 	public int SLIDE_SEGMENTS;
-	public float SLIDE_SLOPE;
-	public float SLIDE_DIFFICULTY;
 	public float SLIDE_DIMENSION;
 	public float PLAYER_MASS;
 	public float PLAYER_ACCEL;

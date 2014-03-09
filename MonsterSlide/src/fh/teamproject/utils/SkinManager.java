@@ -141,27 +141,27 @@ public class SkinManager {
 				Gdx.files.internal("font/Outage.ttf"));
 		switch (densityAsInt) {
 		case 4:
-			font = generator.generateFont((int) (12 + Gdx.graphics.getHeight() / 20));
+			font = generator.generateFont(12 + Gdx.graphics.getHeight() / 20);
 			// font size 12 pixels + 1 for every 20 Pixel in the
 			// Gdx.graphics.getHeight()
 			break;
 		case 3:
-			font = generator.generateFont((int) (12 + Gdx.graphics.getHeight() / 30));
+			font = generator.generateFont(12 + Gdx.graphics.getHeight() / 30);
 			// font size 12 pixels + 1 for every 30 Pixel in the
 			// Gdx.graphics.getHeight()
 			break;
 		case 2:
-			font = generator.generateFont((int) (12 + Gdx.graphics.getHeight() / 50));
+			font = generator.generateFont(12 + Gdx.graphics.getHeight() / 50);
 			// font size 12 pixels + 1 for every 50 Pixel in the
 			// Gdx.graphics.getHeight()
 			break;
 		case 1:
-			font = generator.generateFont((int) (12 + Gdx.graphics.getHeight() / 60));
+			font = generator.generateFont(12 + Gdx.graphics.getHeight() / 60);
 			// font size 12 pixels + 1 for every 60 Pixel in the
 			// Gdx.graphics.getHeight()
 			break;
 		default:
-			font = generator.generateFont((int) (12 + Gdx.graphics.getHeight() / 40));
+			font = generator.generateFont(12 + Gdx.graphics.getHeight() / 40);
 			// font size 12 pixels + 1 for every 40 Pixel in the
 			// Gdx.graphics.getHeight()
 		}
