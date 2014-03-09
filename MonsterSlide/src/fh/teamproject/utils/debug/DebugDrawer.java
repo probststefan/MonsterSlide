@@ -15,6 +15,7 @@ import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw;
 import com.badlogic.gdx.utils.Array;
@@ -41,7 +42,7 @@ public class DebugDrawer {
 		infoPanel = new DebugInfoPanel();
 		infoPanel.showInfo(this.gameScreen.getWorld().getPlayer());
 
-		setDebugMode(btIDebugDraw.DebugDrawModes.DBG_DrawContactPoints,
+		setDebugMode(btIDebugDraw.DebugDrawModes.DBG_NoDebug,
 				GameScreen.camManager.getActiveCamera().combined);
 		toggleDebug();
 	}
@@ -61,7 +62,7 @@ public class DebugDrawer {
 
 	private void renderBullet() {
 
-		if ((bulletdebugDrawer.getDebugMode() > 0)) {
+		if (bulletdebugDrawer != null && (bulletdebugDrawer.getDebugMode() > 0)) {
 			bulletdebugDrawer.begin();
 			gameScreen.getWorld().getPhysixManager().getWorld().debugDrawWorld();
 			bulletdebugDrawer.end();
@@ -120,6 +121,15 @@ public class DebugDrawer {
 		renderer.setColor(Color.MAGENTA);
 		renderer.line(position, position.cpy().add(totalForce));
 
+
+		Quaternion q = ((Player) gameScreen.world.getPlayer()).getRigidBody()
+				.getOrientation();
+		renderer.setColor(Color.GREEN);
+		renderer.line(position, position.cpy().add(Vector3.Y.cpy().mul(q).scl(5f)));
+		renderer.setColor(Color.RED);
+		renderer.line(position, position.cpy().add(Vector3.X.cpy().mul(q).scl(5f)));
+		renderer.setColor(Color.BLUE);
+		renderer.line(position, position.cpy().add(Vector3.Z.cpy().mul(q).scl(5f)));
 		renderer.end();
 	}
 
