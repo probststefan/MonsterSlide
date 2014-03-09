@@ -101,7 +101,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 				triangleInfoMap);
 		PhysixBodyDef bodyDef = new PhysixBodyDef(world.getPhysixManager(), mass,
 				new MotionState(getModelInstance().transform), collisionShape);
-		bodyDef.setFriction(0.1f);
+		bodyDef.setFriction(1f);
 		bodyDef.setRestitution(0f);
 
 		rigidBody = bodyDef.create();
