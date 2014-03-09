@@ -1,6 +1,9 @@
 package fh.teamproject.interfaces;
 
+import fh.teamproject.game.Score;
 import fh.teamproject.game.entities.Coins;
+import fh.teamproject.physics.PhysixManager;
+import fh.teamproject.screens.GameScreen;
 
 public interface IWorld {
 
@@ -11,5 +14,11 @@ public interface IWorld {
 	public IPlayer getPlayer();
 
 	public void render();
+
+	public PhysixManager getPhysixManager();
+
+	public GameScreen getGameScreen();
+
+	public Score getScore();
 
 }
