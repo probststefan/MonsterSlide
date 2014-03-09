@@ -64,7 +64,7 @@ public class Player extends CollisionEntity implements IPlayer {
 
 	public Vector3 totalForce = new Vector3();
 	public Vector3 projectedPointOnSlide = new Vector3();;
-	// wird benoetigt, um die update() methode von InputHandling aufzurufen
+
 	public InputHandling inputHandling;
 	private ClosestRayResultCallback rayCallback;
 
@@ -105,13 +105,6 @@ public class Player extends CollisionEntity implements IPlayer {
 			return position;
 		}
 		return null;
-	}
-	public void syncWithBullet() {
-		linearVelocity.set(rigidBody.getLinearVelocity());
-		speed = linearVelocity.len();
-		direction.set(linearVelocity.cpy().nor());
-		totalForce.set(getRigidBody().getTotalForce());
-		getModelInstance().transform.getTranslation(position);
 	}
 
 	@Override

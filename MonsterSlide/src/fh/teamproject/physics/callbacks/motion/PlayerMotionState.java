@@ -28,8 +28,11 @@ public class PlayerMotionState extends MotionState {
 	@Override
 	public void setWorldTransform(final Matrix4 worldTrans) {
 		super.setWorldTransform(worldTrans);
-		this.player.syncWithBullet();
-
+		player.linearVelocity.set(player.getRigidBody().getLinearVelocity());
+		player.speed = player.linearVelocity.len();
+		player.direction.set(player.linearVelocity.cpy().nor());
+		player.totalForce.set(player.getRigidBody().getTotalForce());
+		player.getModelInstance().transform.getTranslation(player.position);
 
 	}
 }
