@@ -74,6 +74,7 @@ public class PhysixManager {
 		performanceCounter.start();
 		dynamicsWorld.stepSimulation(Gdx.graphics.getDeltaTime(), getMaxSubSteps(),
 				getFixedTimeStep());
+		dynamicsWorld.clearForces();
 		performanceCounter.stop();
 	}
 
