@@ -57,20 +57,11 @@ public class CameraManager implements Disposable {
 	}
 
 	public void setMode(Mode mode) {
-		if (mode == Mode.FREE) {
-			// Camera original = this.activeCamera.getCamera();
-			// this.activeCamera = this.cameras.get(mode);
-			// Camera freeCam = this.activeCamera.getCamera();
-			// // freeCam.direction.set(original.direction);
-			// // freeCam.up.set(original.up);
-			// freeCam.position.set(original.position);
-			// // freeCam.lookAt(this.gameScreen.player.position);
-			// // freeCam.near = original.near;
-			// // freeCam.far = original.far;
-			// // freeCam.view.set(original.view);
-			// // freeCam.projection.set(original.projection);
-			// this.activeCamera.getCamera().update(true);
-		} else {
+		if (mode == Mode.FREE && activeCamera != null) {
+			Camera camera = cameras.get(mode).getCamera();
+			camera.position.set(activeCamera.getCamera().position);
+			camera.direction.set(1f, 0f, 0f);
+			camera.up.set(0f, 1f, 0f);
 		}
 		activeCamera = cameras.get(mode);
 	}
