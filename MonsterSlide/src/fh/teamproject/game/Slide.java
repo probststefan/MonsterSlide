@@ -1,5 +1,6 @@
 package fh.teamproject.game;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.model.Node;
@@ -133,6 +134,7 @@ public class Slide implements ISlide {
 	 * Setzt die ID des aktuell berutschten SlideParts.
 	 */
 	public synchronized void setActualSlidePartId(int id) {
+		Gdx.app.debug("Slide", "Actual Slide Part ID: " + id);
 		if (actualSlidePartId != id && actualSlidePartId < id) {
 			for (ISlidePart part : slideParts) {
 				if (part.getID() == actualSlidePartId) {

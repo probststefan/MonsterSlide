@@ -3,26 +3,30 @@ package fh.teamproject.physics.callbacks.motion;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.ClosestRayResultCallback;
+import com.badlogic.gdx.physics.bullet.collision.btCollisionObject;
 import com.badlogic.gdx.physics.bullet.dynamics.InternalTickCallback;
 import com.badlogic.gdx.physics.bullet.dynamics.btDynamicsWorld;
 import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
 
 import fh.teamproject.game.entities.Player;
+import fh.teamproject.interfaces.IWorld;
 
 public class PlayerTickCallback extends InternalTickCallback {
 
 	Player player;
 	ClosestRayResultCallback resultCallback;
 	private float checkPlayerOnSlideRayDepth = 100;
+	IWorld world;
 
-	public PlayerTickCallback(Player player) {
+	public PlayerTickCallback(IWorld world, Player player) {
 		this.player = player;
+		this.world = world;
 		resultCallback = new ClosestRayResultCallback(new Vector3(), new Vector3());
-		Gdx.app.setLogLevel(Gdx.app.LOG_DEBUG);
 	}
 
 	float threshold = 8f;
 	float force = 1500f;
+
 	@Override
 	public void onInternalTick(btDynamicsWorld dynamicsWorld, float timeStep) {
 		super.onInternalTick(dynamicsWorld, timeStep);
@@ -59,6 +63,7 @@ public class PlayerTickCallback extends InternalTickCallback {
 			// Gdx.app.debug("PlayerTickCallback",
 			// "Pushing player onto Slide. Distance to Slide: " + distance
 			// + " Force used: " + force);
+
 		}
 
 	}

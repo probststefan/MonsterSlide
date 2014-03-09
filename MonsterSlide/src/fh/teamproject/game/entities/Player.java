@@ -183,7 +183,7 @@ public class Player extends CollisionEntity implements IPlayer {
 		body.getCollisionShape().calculateLocalInertia(50f, inertia);
 		body.setMassProps(50f, inertia);
 
-		PlayerTickCallback playerCallback = new PlayerTickCallback(this);
+		PlayerTickCallback playerCallback = new PlayerTickCallback(world, this);
 		playerCallback.attach(world.getPhysixManager().getWorld(), false);
 
 		rigidBody = body;
