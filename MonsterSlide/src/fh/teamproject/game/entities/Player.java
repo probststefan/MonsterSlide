@@ -146,9 +146,9 @@ public class Player extends CollisionEntity implements IPlayer {
 	}
 
 	public void resetAt(Vector3 position) {
+		Gdx.app.debug("Player", "Resetting Player at: " + position);
 		Matrix4 transform = getModelInstance().transform;
 		transform.setToTranslation(position);
-		Gdx.app.debug("Player", "Resetting Player at: " + position);
 		getRigidBody().setWorldTransform(transform);
 		rigidBody.setLinearVelocity(Vector3.X);
 		rigidBody.setAngularVelocity(new Vector3());
@@ -167,7 +167,7 @@ public class Player extends CollisionEntity implements IPlayer {
 	@Override
 	public void initPhysix() {
 		float height = radius * 1.5f; // FIXME: aus buildPlayer kopiert! magic
-									// number
+										// number
 		btCompoundShape compound = new btCompoundShape();
 		btCapsuleShape collisionShape = new btCapsuleShape(radius, height);
 

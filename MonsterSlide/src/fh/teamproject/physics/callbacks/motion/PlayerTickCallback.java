@@ -45,16 +45,18 @@ public class PlayerTickCallback extends InternalTickCallback {
 		Vector3 down = new Vector3(0f, -1f, 0f).mul(player.getRigidBody()
 				.getOrientation());
 		down.scl(distanceToSlideThreshold);
-		Vector3 target = new Vector3();
-		target.set(player.castRayIntoWorld(down));
-		player.projectedPointOnSlide.set(target);
-		float distance = target.len();
-		if (distance > threshold) {
-			// player.getRigidBody().applyCentralForce(target.nor().scl(1500f));
-			// Gdx.app.debug("PlayerTickCallback",
-			// "Pushing player onto Slide. Distance to Slide: " + distance
-			// + " Force used: " + force);
+		Vector3 target = player.castRayIntoWorld(down);
+		if (target != null) {
+			player.projectedPointOnSlide.set(target);
 
+			float distance = target.len();
+			if (distance > threshold) {
+				// player.getRigidBody().applyCentralForce(target.nor().scl(1500f));
+				// Gdx.app.debug("PlayerTickCallback",
+				// "Pushing player onto Slide. Distance to Slide: " + distance
+				// + " Force used: " + force);
+
+			}
 		}
 
 	}
