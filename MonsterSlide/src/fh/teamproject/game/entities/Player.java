@@ -10,9 +10,11 @@ import com.badlogic.gdx.graphics.g3d.model.Node;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.bullet.collision.ClosestRayResultCallback;
 import com.badlogic.gdx.physics.bullet.collision.btCapsuleShape;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionObject;
 import com.badlogic.gdx.physics.bullet.collision.btCompoundShape;
+import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
 
 import fh.teamproject.controller.player.pc.InputHandling;
 import fh.teamproject.game.Slide;
@@ -64,6 +66,7 @@ public class Player extends CollisionEntity implements IPlayer {
 	public Vector3 projectedPointOnSlide = new Vector3();;
 	// wird benoetigt, um die update() methode von InputHandling aufzurufen
 	public InputHandling inputHandling;
+	private ClosestRayResultCallback rayCallback;
 
 	public Player(World world) {
 		super(world);
@@ -73,6 +76,8 @@ public class Player extends CollisionEntity implements IPlayer {
 		this.MAX_SPEED = GameScreen.settings.PLAYER_MAX_SPEED;
 		initGraphix();
 		initPhysix();
+		rayCallback = new ClosestRayResultCallback(new Vector3(), new Vector3());
+
 	}
 
 	@Override
@@ -83,6 +88,17 @@ public class Player extends CollisionEntity implements IPlayer {
 		inputHandling.update();
 	}
 
+	public Vector3 castRayIntoWorld(Vector3 target) {
+		rayCallback.getRayFromWorld().setValue(getPosition().x, getPosition().y,
+				getPosition().z);
+		rayCallback.getRayToWorld().setValue(target.x, target.y, target.z);
+		world.getPhysixManager().getWorld()
+				.rayTest(getPosition(), direction, rayCallback);
+		btVector3 hitPoint = rayCallback.getHitPointWorld();
+		Vector3 position = new Vector3(hitPoint.getX(), hitPoint.getY(), hitPoint.getZ());
+		hitPoint.dispose();
+		return position;
+	}
 	public void syncWithBullet() {
 		linearVelocity.set(rigidBody.getLinearVelocity());
 		speed = linearVelocity.len();
@@ -208,4 +224,5 @@ public class Player extends CollisionEntity implements IPlayer {
 		}
 		instance.userData = "player";
 	}
+
 }

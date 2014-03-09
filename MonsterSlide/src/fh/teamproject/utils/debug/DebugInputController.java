@@ -20,11 +20,9 @@ import fh.teamproject.utils.CameraManager.Mode;
 public class DebugInputController extends InputAdapter {
 
 	GameScreen gameScreen;
-	ClosestRayResultCallback rayCallback;
 
 	public DebugInputController(GameScreen gameScreen) {
 		this.gameScreen = gameScreen;
-		rayCallback = new ClosestRayResultCallback(new Vector3(), new Vector3());
 	}
 
 	@Override
@@ -61,16 +59,11 @@ public class DebugInputController extends InputAdapter {
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
 		if (button == Buttons.LEFT) {
-
-
-			Player player = (Player) gameScreen.getWorld().getPlayer();
 			PerspectiveCamera camera = (PerspectiveCamera) GameScreen.camManager
 					.getActiveCamera();
 			Vector3 direction = new Vector3(screenX, screenY, 0f);
 			camera.unproject(direction);
 			((Player) gameScreen.getWorld().getPlayer()).resetAt(direction);
-
-
 		}
 		return super.touchUp(screenX, screenY, pointer, button);
 	}

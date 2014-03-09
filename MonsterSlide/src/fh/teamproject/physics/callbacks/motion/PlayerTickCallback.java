@@ -42,19 +42,11 @@ public class PlayerTickCallback extends InternalTickCallback {
 		 * HitPoint auf der Slide berechnen und eventuell Spieler in die
 		 * Richtung bewegen
 		 */
-		resultCallback.setCollisionObject(null);
-		resultCallback.setClosestHitFraction(1f);
-		Vector3 playerPos = player.getPosition();
 		Vector3 down = new Vector3(0f, -1f, 0f).mul(player.getRigidBody()
 				.getOrientation());
 		down.scl(0f, checkPlayerOnSlideRayDepth, 0f);
-		resultCallback.getRayFromWorld().setValue(playerPos.x, playerPos.y, playerPos.z);
-		resultCallback.getRayToWorld().setValue(down.x, down.y, down.z);
 
-		dynamicsWorld.rayTest(playerPos, down, resultCallback);
-		btVector3 hitPointWorld = resultCallback.getHitPointWorld();
-		Vector3 target = new Vector3(hitPointWorld.x(), hitPointWorld.y(),
-				hitPointWorld.z());
+		Vector3 target = player.castRayIntoWorld(down);
 		player.projectedPointOnSlide.set(target);
 		target.sub(player.getPosition());
 		float distance = target.len();
