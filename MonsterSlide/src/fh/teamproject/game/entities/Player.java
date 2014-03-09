@@ -30,8 +30,8 @@ public class Player extends CollisionEntity implements IPlayer {
 
 	public static final int PLAYER_FLAG = 2;
 
-	// @Debug(name = "Position", isModifiable = false)
-	// public Vector3 position = new Vector3(-5.0f, 0.0f, -5.0f);
+	@Debug(name = "Position", isModifiable = false)
+	public Vector3 position = new Vector3(-5.0f, 0.0f, -5.0f);
 
 	@Debug(name = "Direction", isModifiable = false)
 	public Vector3 direction = new Vector3(0, 0, 1);
@@ -61,6 +61,7 @@ public class Player extends CollisionEntity implements IPlayer {
 	private float jumpAmount = 7.0f;
 
 	public Vector3 totalForce = new Vector3();
+	public Vector3 projectedPointOnSlide = new Vector3();;
 	// wird benoetigt, um die update() methode von InputHandling aufzurufen
 	public InputHandling inputHandling;
 
@@ -87,6 +88,7 @@ public class Player extends CollisionEntity implements IPlayer {
 		speed = linearVelocity.len();
 		direction.set(linearVelocity.cpy().nor());
 		totalForce.set(getRigidBody().getTotalForce());
+		getModelInstance().transform.getTranslation(position);
 	}
 
 	@Override
@@ -161,7 +163,7 @@ public class Player extends CollisionEntity implements IPlayer {
 		compound.addChildShape(rotate2, collisionShape);
 		// btSphereShape collisionShape = new btSphereShape(radius);
 		setMass(GameScreen.settings.PLAYER_MASS);
-		MotionState motionState = new PlayerMotionState(this);
+		MotionState motionState = new PlayerMotionState(world, this);
 
 		PhysixBodyDef bodyDef = new PhysixBodyDef(world.getPhysixManager(), mass,
 				motionState, compound);

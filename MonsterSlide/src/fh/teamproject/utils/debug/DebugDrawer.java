@@ -42,7 +42,7 @@ public class DebugDrawer {
 		infoPanel = new DebugInfoPanel();
 		infoPanel.showInfo(this.gameScreen.getWorld().getPlayer());
 
-		setDebugMode(btIDebugDraw.DebugDrawModes.DBG_NoDebug,
+		setDebugMode(btIDebugDraw.DebugDrawModes.DBG_DrawWireframe,
 				GameScreen.camManager.getActiveCamera().combined);
 		toggleDebug();
 	}
@@ -113,23 +113,26 @@ public class DebugDrawer {
 
 		Vector3 position = gameScreen.world.getPlayer().getPosition();
 		Vector3 direction = gameScreen.world.getPlayer().getDirection();
-		Vector3 totalForce = ((Player) gameScreen.world.getPlayer()).totalForce;
-		Vector3 linearVelocity = ((Player) gameScreen.world.getPlayer()).linearVelocity;
+		Player player = (Player) gameScreen.world.getPlayer();
+		Vector3 totalForce = player.totalForce;
+		Vector3 linearVelocity = player.linearVelocity;
 
 		renderer.setColor(Color.CYAN);
 		renderer.line(position, position.cpy().add(linearVelocity));
 		renderer.setColor(Color.MAGENTA);
 		renderer.line(position, position.cpy().add(totalForce));
 
-
-		Quaternion q = ((Player) gameScreen.world.getPlayer()).getRigidBody()
-				.getOrientation();
+		Quaternion q = player.getRigidBody().getOrientation();
 		renderer.setColor(Color.GREEN);
 		renderer.line(position, position.cpy().add(Vector3.Y.cpy().mul(q).scl(5f)));
 		renderer.setColor(Color.RED);
 		renderer.line(position, position.cpy().add(Vector3.X.cpy().mul(q).scl(5f)));
 		renderer.setColor(Color.BLUE);
 		renderer.line(position, position.cpy().add(Vector3.Z.cpy().mul(q).scl(5f)));
+
+		renderer.setColor(Color.WHITE);
+		renderer.line(position, player.projectedPointOnSlide);
+
 		renderer.end();
 	}
 
@@ -157,8 +160,7 @@ public class DebugDrawer {
 		}
 		if (bulletdebugDrawer == null) {
 			gameScreen.getWorld().getPhysixManager().getWorld()
-					.setDebugDrawer(
-					bulletdebugDrawer = new BulletDebugDrawer());
+					.setDebugDrawer(bulletdebugDrawer = new BulletDebugDrawer());
 		}
 		bulletdebugDrawer.lineRenderer.setProjectionMatrix(projMatrix);
 		bulletdebugDrawer.setDebugMode(mode);
