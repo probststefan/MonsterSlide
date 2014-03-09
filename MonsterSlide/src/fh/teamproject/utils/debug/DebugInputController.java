@@ -1,12 +1,17 @@
 package fh.teamproject.utils.debug;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Plane;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.Ray;
+import com.badlogic.gdx.physics.bullet.collision.ClosestRayResultCallback;
+import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld;
+import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
 
 import fh.teamproject.game.entities.Player;
 import fh.teamproject.screens.GameScreen;
@@ -15,9 +20,11 @@ import fh.teamproject.utils.CameraManager.Mode;
 public class DebugInputController extends InputAdapter {
 
 	GameScreen gameScreen;
+	ClosestRayResultCallback rayCallback;
 
 	public DebugInputController(GameScreen gameScreen) {
 		this.gameScreen = gameScreen;
+		rayCallback = new ClosestRayResultCallback(new Vector3(), new Vector3());
 	}
 
 	@Override
@@ -54,16 +61,16 @@ public class DebugInputController extends InputAdapter {
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
 		if (button == Buttons.LEFT) {
-			Ray ray = GameScreen.camManager.getActiveCamera()
-					.getPickRay(screenX, screenY);
-			Vector3 intersection = new Vector3();
-			new Vector3();
-			boolean isIntersecting = Intersector.intersectRayPlane(ray, new Plane(
-					Vector3.Y, 0f), intersection);
-			if (isIntersecting) {
-				intersection.add(0f, 2f, 0f);
-				((Player) gameScreen.getWorld().getPlayer()).resetAt(intersection);
-			}
+
+
+			Player player = (Player) gameScreen.getWorld().getPlayer();
+			PerspectiveCamera camera = (PerspectiveCamera) GameScreen.camManager
+					.getActiveCamera();
+			Vector3 direction = new Vector3(screenX, screenY, 0f);
+			camera.unproject(direction);
+			((Player) gameScreen.getWorld().getPlayer()).resetAt(direction);
+
+
 		}
 		return super.touchUp(screenX, screenY, pointer, button);
 	}

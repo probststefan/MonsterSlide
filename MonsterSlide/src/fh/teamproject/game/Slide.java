@@ -134,7 +134,7 @@ public class Slide implements ISlide {
 	 * Setzt die ID des aktuell berutschten SlideParts.
 	 */
 	public synchronized void setActualSlidePartId(int id) {
-		Gdx.app.debug("Slide", "Actual Slide Part ID: " + id);
+		// Gdx.app.debug("Slide", "Actual Slide Part ID: " + id);
 		if (actualSlidePartId != id && actualSlidePartId < id) {
 			for (ISlidePart part : slideParts) {
 				if (part.getID() == actualSlidePartId) {

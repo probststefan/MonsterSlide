@@ -132,7 +132,7 @@ public class Player extends CollisionEntity implements IPlayer {
 	public void resetAt(Vector3 position) {
 		Matrix4 transform = getModelInstance().transform;
 		transform.setToTranslation(position);
-
+		Gdx.app.debug("Player", "Resetting Player at: " + position);
 		getRigidBody().setWorldTransform(transform);
 		rigidBody.setLinearVelocity(Vector3.X);
 		rigidBody.setAngularVelocity(new Vector3());
