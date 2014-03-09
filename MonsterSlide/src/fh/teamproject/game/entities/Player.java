@@ -166,17 +166,20 @@ public class Player extends CollisionEntity implements IPlayer {
 
 	@Override
 	public void initPhysix() {
-		float height = radius * 2f; // FIXME: aus buildPlayer kopiert! magic
+		float height = radius * 1.5f; // FIXME: aus buildPlayer kopiert! magic
 									// number
 		btCompoundShape compound = new btCompoundShape();
 		btCapsuleShape collisionShape = new btCapsuleShape(radius, height);
 
 		Matrix4 rotate = new Matrix4().idt().rotate(new Vector3(1f, 0f, 0f), -90f)
-				.rotate(new Vector3(0f, 0f, 1f), -90f).translate(-2f, 0f, 0f);
+				.rotate(new Vector3(0f, 0f, 1f), -90f).translate(-radius, 0f, 0f);
 		Matrix4 rotate2 = new Matrix4().idt().rotate(new Vector3(1f, 0f, 0f), -90f)
-				.rotate(new Vector3(0f, 0f, 1f), -90f).translate(2f, 0f, 0f);
+				.rotate(new Vector3(0f, 0f, 1f), -90f).translate(radius, 0f, 0f);
+		Matrix4 rotate3 = new Matrix4().idt().translate(0f, radius, 0f);
 		compound.addChildShape(rotate, collisionShape);
 		compound.addChildShape(rotate2, collisionShape);
+		compound.addChildShape(rotate3, collisionShape);
+
 		// btSphereShape collisionShape = new btSphereShape(radius);
 		setMass(GameScreen.settings.PLAYER_MASS);
 		MotionState motionState = new PlayerMotionState(world, this);
@@ -186,10 +189,11 @@ public class Player extends CollisionEntity implements IPlayer {
 		// Damit rutscht die Sphere nur noch und rollt nicht mehr.
 		bodyDef.setFriction(0.1f);
 		bodyDef.setRestitution(1f);
-
+		bodyDef.setAngularDamping(0.75f);
 		PhysixBody body = bodyDef.create();
 		bodyDef.dispose();
-		body.setAngularFactor(new Vector3(1f, 0f, 1f));
+		body.setAngularFactor(new Vector3(0f, 0f, 1f));
+
 		body.setContactCallbackFlag(Player.PLAYER_FLAG);
 		body.setContactCallbackFilter(Slide.SLIDE_FLAG);
 		// Wird gebraucht um die Kollisionen mit den Coins zu filtern.

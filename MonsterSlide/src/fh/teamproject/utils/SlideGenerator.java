@@ -16,7 +16,7 @@ public class SlideGenerator {
 	float segment_Max_Length = 300f;
 	float curveDirection = 1f;// verschiebungsrichtung auf z achse
 	float maxSlope = -0.1f;
-	float minSlope = -0.6f;
+	float minSlope = -0.3f;
 	float maxCurvyness = 0.2f;
 	float minCurvyness = -0.2f;
 	float curvyness;
