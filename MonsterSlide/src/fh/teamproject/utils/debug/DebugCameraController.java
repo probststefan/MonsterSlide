@@ -121,9 +121,6 @@ public class DebugCameraController extends CameraController implements ICameraCo
 		camera.direction.rotate(camera.up, deltaX);
 		tmp.set(camera.direction).crs(camera.up).nor();
 		camera.direction.rotate(tmp, deltaY);
-		// camera.up.rotate(tmp, deltaY);
-		Gdx.app.debug("DebugcameraController", "Direction: " + camera.direction + " UP: "
-				+ camera.up);
 		return true;
 	}
 

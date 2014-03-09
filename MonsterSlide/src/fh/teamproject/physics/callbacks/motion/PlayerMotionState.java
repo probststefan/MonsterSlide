@@ -25,7 +25,6 @@ public class PlayerMotionState extends MotionState {
 		super.getWorldTransform(worldTrans);
 	}
 
-	private float checkPlayerOnSlideRayDepth = 100;
 	@Override
 	public void setWorldTransform(final Matrix4 worldTrans) {
 		super.setWorldTransform(worldTrans);

@@ -88,16 +88,23 @@ public class Player extends CollisionEntity implements IPlayer {
 		inputHandling.update();
 	}
 
+	// FIXME: Bei steigender Geschwindigkeit ist der raycast falsch
 	public Vector3 castRayIntoWorld(Vector3 target) {
+		rayCallback.setCollisionObject(null);
+		rayCallback.setClosestHitFraction(1f);
 		rayCallback.getRayFromWorld().setValue(getPosition().x, getPosition().y,
 				getPosition().z);
 		rayCallback.getRayToWorld().setValue(target.x, target.y, target.z);
 		world.getPhysixManager().getWorld()
 				.rayTest(getPosition(), direction, rayCallback);
-		btVector3 hitPoint = rayCallback.getHitPointWorld();
-		Vector3 position = new Vector3(hitPoint.getX(), hitPoint.getY(), hitPoint.getZ());
-		hitPoint.dispose();
-		return position;
+		if (rayCallback.hasHit()) {
+			btVector3 hitPoint = rayCallback.getHitPointWorld();
+			Vector3 position = new Vector3(hitPoint.getX(), hitPoint.getY(),
+					hitPoint.getZ());
+			hitPoint.dispose();
+			return position;
+		}
+		return null;
 	}
 	public void syncWithBullet() {
 		linearVelocity.set(rigidBody.getLinearVelocity());

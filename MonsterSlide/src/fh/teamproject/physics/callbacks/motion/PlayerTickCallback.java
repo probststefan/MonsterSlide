@@ -15,7 +15,7 @@ public class PlayerTickCallback extends InternalTickCallback {
 
 	Player player;
 	ClosestRayResultCallback resultCallback;
-	private float checkPlayerOnSlideRayDepth = 100;
+	private float distanceToSlideThreshold = 100;
 	IWorld world;
 
 	public PlayerTickCallback(IWorld world, Player player) {
@@ -44,11 +44,10 @@ public class PlayerTickCallback extends InternalTickCallback {
 		 */
 		Vector3 down = new Vector3(0f, -1f, 0f).mul(player.getRigidBody()
 				.getOrientation());
-		down.scl(0f, checkPlayerOnSlideRayDepth, 0f);
-
-		Vector3 target = player.castRayIntoWorld(down);
+		down.scl(distanceToSlideThreshold);
+		Vector3 target = new Vector3();
+		target.set(player.castRayIntoWorld(down));
 		player.projectedPointOnSlide.set(target);
-		target.sub(player.getPosition());
 		float distance = target.len();
 		if (distance > threshold) {
 			// player.getRigidBody().applyCentralForce(target.nor().scl(1500f));
