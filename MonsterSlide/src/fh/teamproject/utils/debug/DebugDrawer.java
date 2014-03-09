@@ -20,6 +20,7 @@ import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 
+import fh.teamproject.game.entities.Player;
 import fh.teamproject.game.entities.SlidePart;
 import fh.teamproject.interfaces.ICameraController;
 import fh.teamproject.interfaces.ISlidePart;
@@ -40,7 +41,7 @@ public class DebugDrawer {
 		infoPanel = new DebugInfoPanel();
 		infoPanel.showInfo(this.gameScreen.getWorld().getPlayer());
 
-		setDebugMode(btIDebugDraw.DebugDrawModes.DBG_DrawWireframe,
+		setDebugMode(btIDebugDraw.DebugDrawModes.DBG_DrawContactPoints,
 				GameScreen.camManager.getActiveCamera().combined);
 		toggleDebug();
 	}
@@ -111,9 +112,14 @@ public class DebugDrawer {
 
 		Vector3 position = gameScreen.world.getPlayer().getPosition();
 		Vector3 direction = gameScreen.world.getPlayer().getDirection();
-		renderer.line(position, position.cpy().add(direction.cpy().scl(20f)));
+		Vector3 totalForce = ((Player) gameScreen.world.getPlayer()).totalForce;
+		Vector3 linearVelocity = ((Player) gameScreen.world.getPlayer()).linearVelocity;
 
-		renderer.line(new Vector3(), new Vector3(1000f, 0f, 0f));
+		renderer.setColor(Color.CYAN);
+		renderer.line(position, position.cpy().add(linearVelocity));
+		renderer.setColor(Color.MAGENTA);
+		renderer.line(position, position.cpy().add(totalForce));
+
 		renderer.end();
 	}
 

@@ -59,6 +59,7 @@ public class Player extends CollisionEntity implements IPlayer {
 	@Debug(name = "Jump Amount", isModifiable = true)
 	private float jumpAmount = 7.0f;
 
+	public Vector3 totalForce = new Vector3();
 	// wird benoetigt, um die update() methode von InputHandling aufzurufen
 	public InputHandling inputHandling;
 
@@ -75,7 +76,6 @@ public class Player extends CollisionEntity implements IPlayer {
 	@Override
 	public void update() {
 		super.update();
-
 		// update() wird aufgerufen, um bei gedrueckt-halten der Keys sich immer
 		// weiter zu bewegen
 		inputHandling.update();
@@ -85,6 +85,7 @@ public class Player extends CollisionEntity implements IPlayer {
 		linearVelocity.set(rigidBody.getLinearVelocity());
 		speed = linearVelocity.len();
 		direction.set(linearVelocity.cpy().nor());
+		totalForce.set(getRigidBody().getTotalForce());
 	}
 
 	@Override
