@@ -17,8 +17,6 @@ public interface ISlide {
 
 	public void update();
 
-	public float getSlidedDistance();
-
 	public void setActualSlidePartId(int id);
 
 	public int getActualSlidePartId();
