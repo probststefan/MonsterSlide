@@ -1,11 +1,13 @@
 package fh.teamproject.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
+import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.ClosestRayResultCallback;
@@ -31,7 +33,7 @@ public class World implements IWorld {
 	private Player player;
 	private Coins coins;
 	private Score score;
-	ModelInstance skydome;
+	ModelInstance skydome, skydomeDown;
 
 	// Rendering
 	public ModelBatch batch;
@@ -69,6 +71,9 @@ public class World implements IWorld {
 		// Skydome laden.
 		skydome = new ModelInstance(gameScreen.getAssets().get("data/g3d/skydome.g3db",
 				Model.class));
+		skydomeDown = new ModelInstance(gameScreen.getAssets().get(
+				"data/g3d/skydome.g3db", Model.class));
+		skydomeDown.transform.rotate(1f, 0f, 0f, 180);
 	}
 
 	public void update() {
@@ -87,14 +92,18 @@ public class World implements IWorld {
 		slide.update();
 		coins.update();
 		// Der Skydome soll den Player verfolgen.
-		skydome.transform.setToTranslation(player.getPosition());
+		Vector3 playerPos = player.getPosition();
+		skydome.transform.setToTranslation(playerPos);
+		skydomeDown.transform.setToTranslation(playerPos);
+		skydomeDown.transform.rotate(1f, 0f, 0f, 180);
+
 	}
 
 	@Override
 	public void render() {
 		batch.begin(GameScreen.camManager.getActiveCamera());
-		if (skydome != null)
-			batch.render(skydome, lights);
+		batch.render(skydome, lights);
+		batch.render(skydomeDown, lights);
 
 		batch.render(player.getModelInstance(), lights);
 		batch.render(slide.getModelInstance(), lights);
