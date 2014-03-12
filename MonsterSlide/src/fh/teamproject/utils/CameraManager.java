@@ -5,17 +5,20 @@ import java.util.LinkedList;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.ObjectMap.Values;
 
 import fh.teamproject.controller.camera.ChaseCameraController;
+import fh.teamproject.controller.camera.SmoothChaseCameraController;
+import fh.teamproject.entities.Player;
 import fh.teamproject.interfaces.ICameraController;
 import fh.teamproject.screens.GameScreen;
 import fh.teamproject.utils.debug.DebugCameraController;
 
-public class CameraManager {
+public class CameraManager implements Disposable {
 	public enum Mode {
-		CHASE, FREE
+		CHASE, FREE, SMOOTH
 	};
 
 	GameScreen gameScreen;
@@ -31,9 +34,15 @@ public class CameraManager {
 		debugCamera.getCamera().far = 1000f;
 		ChaseCameraController chaseCamContr = new ChaseCameraController(
 				new PerspectiveCamera(67, Gdx.graphics.getWidth(),
-						Gdx.graphics.getHeight()), gameScreen.player);
+						Gdx.graphics.getHeight()), (Player) gameScreen.getWorld()
+						.getPlayer());
+		SmoothChaseCameraController smoothCamContr = new SmoothChaseCameraController(
+				new PerspectiveCamera(67, Gdx.graphics.getWidth(),
+						Gdx.graphics.getHeight()), (Player) gameScreen.getWorld()
+						.getPlayer());
 		addCamera(debugCamera, Mode.FREE);
 		addCamera(chaseCamContr, Mode.CHASE);
+		addCamera(smoothCamContr, Mode.SMOOTH);
 	}
 
 	public void update() {
@@ -93,5 +102,12 @@ public class CameraManager {
 			cameras.add(c.getCamera());
 		}
 		return cameras;
+	}
+
+	@Override
+	public void dispose() {
+		gameScreen = null;
+		cameras = null;
+		activeCamera = null;
 	}
 }

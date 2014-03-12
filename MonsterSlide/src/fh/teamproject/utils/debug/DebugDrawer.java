@@ -38,7 +38,7 @@ public class DebugDrawer {
 		this.gameScreen = gameScreen;
 		renderer = new ShapeRenderer();
 		infoPanel = new DebugInfoPanel();
-		infoPanel.showInfo(this.gameScreen.player);
+		infoPanel.showInfo(this.gameScreen.getWorld().getPlayer());
 
 		setDebugMode(btIDebugDraw.DebugDrawModes.DBG_DrawWireframe,
 				GameScreen.camManager.getActiveCamera().combined);
@@ -56,14 +56,13 @@ public class DebugDrawer {
 	public void toggleDebug() {
 		DebugDrawer.isDebug = !DebugDrawer.isDebug;
 		infoPanel.root.setVisible(!infoPanel.root.isVisible());
-		Gdx.app.log("Debugger", "" + infoPanel.root.isVisible());
 	}
 
 	private void renderBullet() {
 
 		if ((bulletdebugDrawer.getDebugMode() > 0)) {
 			bulletdebugDrawer.begin();
-			gameScreen.world.getWorld().debugDrawWorld();
+			gameScreen.getWorld().getPhysixManager().getWorld().debugDrawWorld();
 			bulletdebugDrawer.end();
 			Gdx.gl.glDisable(GL10.GL_DEPTH_TEST);
 			setDebugMode(getDebugMode(), GameScreen.camManager.getActiveCamera().combined);
@@ -94,7 +93,7 @@ public class DebugDrawer {
 	}
 
 	Pool<ModelInstance> spherePool = new Pool<ModelInstance>() {
-		float diameter = 0.3f;
+		float diameter = 2f;
 		Model sphereModel = new ModelBuilder().createSphere(diameter, diameter, diameter,
 				4, 4, new Material(ColorAttribute.createDiffuse(Color.WHITE)),
 				Usage.Position);
@@ -111,9 +110,10 @@ public class DebugDrawer {
 		renderer.setColor(Color.MAGENTA);
 
 		Vector3 position = gameScreen.world.getPlayer().getPosition();
-		Vector3 direction = gameScreen.world
-				.getPlayer().getDirection();
+		Vector3 direction = gameScreen.world.getPlayer().getDirection();
 		renderer.line(position, position.cpy().add(direction));
+
+		renderer.line(new Vector3(), new Vector3(1000f, 0f, 0f));
 		renderer.end();
 	}
 
@@ -121,67 +121,17 @@ public class DebugDrawer {
 		Array<ModelInstance> usedSpheres = new Array<ModelInstance>();
 		batch.begin(GameScreen.camManager.getActiveCamera());
 		ModelInstance tmp;
-		for (ISlidePart part : gameScreen.world.getSlide().getSlideParts()) {
-			SlidePart bPart = (SlidePart) part;
-			/* Graphic Punkte */
-			for (Vector3 v : bPart.getGraphicVertices()) {
-				tmp = spherePool.obtain();
-				ColorAttribute attr = (ColorAttribute) tmp.materials.first().get(
-						ColorAttribute.Diffuse);
-				attr.color.set(Color.YELLOW);
-				tmp.transform.setToTranslation(v);
-				// batch.render(tmp);
-				usedSpheres.add(tmp);
-			}
-
-			/* Spline Punkte */
-			for (Vector3 v : bPart.getInterpolatedVertices()) {
-				tmp = spherePool.obtain();
-				tmp.transform.setToTranslation(v.cpy());
-				ColorAttribute attr = (ColorAttribute) tmp.materials.first().get(
-						ColorAttribute.Diffuse);
-				attr.color.set(Color.BLUE);
-				batch.render(tmp);
-				usedSpheres.add(tmp);
-			}
-			for (Vector3 v : bPart.getControlPoints()) {
-				tmp = spherePool.obtain();
-				tmp.transform.setToTranslation(v.cpy());
-				ColorAttribute attr = (ColorAttribute) tmp.materials.first().get(
-						ColorAttribute.Diffuse);
-				attr.color.set(Color.MAGENTA);
-				batch.render(tmp);
-				usedSpheres.add(tmp);
-			}
-
+		for (Vector3 v : gameScreen.world.getSlide().getSpline().controlPoints) {
+			tmp = spherePool.obtain();
+			tmp.transform.setToTranslation(v.cpy());
+			ColorAttribute attr = (ColorAttribute) tmp.materials.first().get(
+					ColorAttribute.Diffuse);
+			attr.color.set(Color.MAGENTA);
+			batch.render(tmp);
+			usedSpheres.add(tmp);
 		}
 		batch.end();
 		spherePool.freeAll(usedSpheres);
-
-		renderer.begin(ShapeType.Line);
-		renderer.setColor(Color.BLUE);
-		renderer.setProjectionMatrix(GameScreen.camManager.getActiveCamera().combined);
-		for (ISlidePart part : gameScreen.world.getSlide().getSlideParts()) {
-			SlidePart bPart = (SlidePart) part;
-			Mesh mesh = bPart.mesh; // instance.nodes.first().parts.first().meshPart.mesh;
-			float[] verts = new float[mesh.getNumVertices() * 10];
-			short[] indices = new short[mesh.getNumIndices()];
-			mesh.getIndices(indices);
-			mesh.getVertices(verts);
-			Vector3 point = new Vector3();
-			Vector3 normal = new Vector3();
-			for (int i = 0; i < verts.length; i += 10) {
-				point.set(verts[i + 0], verts[i + 1], verts[i + 2]);
-				normal.set(point).add(verts[i + 7],
-						verts[i + 8], verts[i + 9]);
-				// Gdx.app.log("debugdrawer", "Point " + point + " Normal " +
-				// normal);
-
-				// Gdx.app.log("debugdrawer", );
-				renderer.line(point, normal);
-			}
-		}
-		renderer.end();
 	}
 
 	public void setDebugMode(final int mode, final Matrix4 projMatrix) {
@@ -190,7 +140,8 @@ public class DebugDrawer {
 			return;
 		}
 		if (bulletdebugDrawer == null) {
-			gameScreen.world.getWorld().setDebugDrawer(
+			gameScreen.getWorld().getPhysixManager().getWorld()
+					.setDebugDrawer(
 					bulletdebugDrawer = new BulletDebugDrawer());
 		}
 		bulletdebugDrawer.lineRenderer.setProjectionMatrix(projMatrix);

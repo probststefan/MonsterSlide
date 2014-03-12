@@ -1,20 +1,27 @@
 package fh.teamproject.entities;
 
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.VertexAttributes.Usage;
-import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
-import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
+import com.badlogic.gdx.physics.bullet.collision.btSphereShape;
+import com.badlogic.gdx.physics.bullet.linearmath.btMotionState;
+import com.badlogic.gdx.physics.bullet.linearmath.btTransform;
 import com.badlogic.gdx.utils.Pool.Poolable;
+
+import fh.teamproject.physics.PhysixBody;
+import fh.teamproject.physics.PhysixBodyDef;
+import fh.teamproject.physics.callbacks.MotionState;
 
 public class Coin extends CollisionEntity implements Poolable {
 
 	private float radius = 1f;
 
-	public Coin() {
-		this.createModel();
+	public Coin(World world) {
+		super(world);
+		initGraphix();
+		initPhysix();
+		setPosition(new Vector3(0, 2.0f, 0));
 	}
 
 	@Override
@@ -22,20 +29,35 @@ public class Coin extends CollisionEntity implements Poolable {
 		// TODO Auto-generated method stub
 	}
 
+	public void setToPosition(Vector3 position) {
+		setPosition(position);
+		instance.transform.setToTranslation(position);
+		this.getRigidBody().translate(position);
+	}
+
 	/**
-	 * Erstellen des visuellen Repraesentation.
+	 * Erstellt das physikalische Kollisionsmodell. Es wird eine Sphere als
+	 * Shape benutzt, weil dieses, fuer die Berechnung, am guenstigsten ist.
 	 */
-	private void createModel() {
-		ModelBuilder builder = new ModelBuilder();
+	@Override
+	public void initPhysix() {
+		btCollisionShape collisionShape = new btSphereShape(this.radius);
+		PhysixBodyDef rigidBodyDef = new PhysixBodyDef(world.getPhysixManager(), mass,
+				new MotionState(instance.transform), collisionShape);
+		rigidBodyDef.setStartWorldTransform(new btTransform(instance.transform));
 
-		Material material = new Material(ColorAttribute.createDiffuse(new Color(1f, 1f,
-				1f, 1f)));
-		// Durchmesser der Sphere berechnen.
-		float diameter = radius * 2;
-		float height = 0.5f;
-		Model m = builder.createCylinder(diameter, height, diameter, 16, material,
-				Usage.Position | Usage.Normal);
+		rigidBody = rigidBodyDef.create();
+		rigidBody.setContactCallbackFilter(Player.PLAYER_FLAG);
 
-		instance = new ModelInstance(m, position);
+		rigidBody.setUserValue(this.getID());
+
+	}
+
+	@Override
+	public void initGraphix() {
+		Model m = this.world.gameScreen.getAssets().get("model/coin.g3db", Model.class);
+		instance = new ModelInstance(m);
+		instance.transform.rotate(new Vector3(1.0f, 0, 0), 90.0f);
+		instance.transform.scl(1f);
 	}
 }

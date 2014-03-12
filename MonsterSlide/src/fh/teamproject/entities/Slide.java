@@ -1,15 +1,17 @@
 package fh.teamproject.entities;
 
-import com.badlogic.gdx.graphics.g3d.Environment;
-import com.badlogic.gdx.graphics.g3d.ModelBatch;
+import com.badlogic.gdx.graphics.g3d.Model;
+import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.graphics.g3d.model.Node;
+import com.badlogic.gdx.math.CatmullRomSpline;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld;
 import com.badlogic.gdx.utils.Array;
 
 import fh.teamproject.interfaces.ISlide;
 import fh.teamproject.interfaces.ISlidePart;
-import fh.teamproject.screens.GameScreen;
-import fh.teamproject.utils.CatmullSplineGenerator;
+import fh.teamproject.utils.SlideBuilder;
 import fh.teamproject.utils.SlideGenerator;
 
 /**
@@ -20,70 +22,74 @@ import fh.teamproject.utils.SlideGenerator;
  * 
  */
 public class Slide implements ISlide {
-	private static SlideGenerator slideGenerator = new SlideGenerator();
+	public static final int SLIDE_FLAG = 4;
+
+	private SlideGenerator slideGenerator = new SlideGenerator();
+	private SlideBuilder slideBuilder = new SlideBuilder();
+	private Coins coins;
+	private int actualSlidePartId = 0;
 
 	Array<ISlidePart> slideParts = new Array<ISlidePart>();
 	btDiscreteDynamicsWorld dynamicsWorld;
-	SlidePartPool pool = new SlidePartPool();
+	SlidePartPool pool;
 	Array<SlideBorder> borders = new Array<SlideBorder>();
-	private CatmullSplineGenerator generator;
-	private ISlidePart tmpSlidePart;
-	private Vector3 nearestControlPoint = null;
 	private float slidedDistance = 0.0f;
+	private float displayedPoints = 0.0f;
+	CatmullRomSpline<Vector3> spline = new CatmullRomSpline<Vector3>();
+	Model slideModel;
+	ModelInstance slideModelInstance;
+	World world;
 
-	public Slide(btDiscreteDynamicsWorld dynamicsWorld) {
-		this.dynamicsWorld = dynamicsWorld;
-		// addCatmullSlidePart();
-		addSlidePart();
+	public Slide(World world) {
+		this.world = world;
+
 	}
 
-	public void createSlidePartBorders(ISlidePart part) {
-		SlidePart bPart = (SlidePart) part;
-		Vector3 v = null;
-		for (int i = 0; i < bPart.graphicsVertices.size; i += 1) {
-			v = bPart.graphicsVertices.get(i);
-			SlideBorder border = new SlideBorder(v);
-			borders.add(border);
-			dynamicsWorld.addRigidBody(border.getRigidBody());
+	public void init() {
+		this.dynamicsWorld = world.getPhysixManager().getWorld();
+		this.coins = this.world.getCoins();
+		this.pool = new SlidePartPool(world);
+		Array<Vector3> controlPoints = slideGenerator.initControlPoints();
+		controlPoints.shrink();
+		spline.set(controlPoints.items, false);
+		slideModelInstance = new ModelInstance(new Model());
+		if (!world.gameScreen.settings.DEBUG_HILL) {
+			addSlidePart();
+			addSlidePart();
+		} else {
+			DebugSlidePart part = new DebugSlidePart(world);
+			part.setSlide(this);
+			part.initGraphix();
+			part.initPhysix();
+			slideParts.add(part);
 		}
+		actualSlidePartId = slideParts.first().getID();
 	}
 
 	@Override
-	public void update(Vector3 playerPosition) {
-		ISlidePart slidePart = slideParts.get(0);
-
-		// for (Vector3 controlPoint : slidePart.getControlPoints()) {
-		for (Vector3 controlPoint : slidePart.getGraphicVertices()) {
-			if (nearestControlPoint == null) {
-				nearestControlPoint = controlPoint;
-				slidedDistance += nearestControlPoint.dst(new Vector3());
-			}
-
-			if (playerPosition.dst(controlPoint) < playerPosition
-					.dst(nearestControlPoint)) {
-				slidedDistance += nearestControlPoint.dst(controlPoint);
-				nearestControlPoint = controlPoint;
-			}
+	public void update() {
+		if (addNextPart) {
+			addSlidePart();
+			addNextPart = false;
 		}
-
-		System.out.println("Gerutschte Distanz: " + slidedDistance);
+		for (ISlidePart p : disposables) {
+			p.releaseAll();
+			p.dispose();
+			slideParts.removeValue(p, false);
+		}
+		disposables.clear();
 	}
 
+	@Override
+	public CatmullRomSpline<Vector3> getSpline() {
+		return spline;
+	}
+
+	@Override
 	public float getSlidedDistance() {
-		return this.slidedDistance;
-	}
-
-	/**
-	 * Liefert den Startpunkt der Slide. Damit kann der Spieler oben in der
-	 * Mitte der Slide abgesetzt werden.
-	 * 
-	 * @return Vector3
-	 */
-	public Vector3 getStartPosition() {
-		Vector3[] startPoints = tmpSlidePart.getStartPoints();
-
-		Vector3 tmpVec = startPoints[0].add(startPoints[1]);
-		return tmpVec.crs(new Vector3(0.0f, 1.0f, 0.0f)).add(tmpVec).scl(0.5f);
+		this.displayedPoints = Interpolation.linear.apply(this.displayedPoints,
+				this.slidedDistance, 0.1f);
+		return this.displayedPoints;
 	}
 
 	@Override
@@ -91,47 +97,61 @@ public class Slide implements ISlide {
 		return slideParts;
 	}
 
+	public ISlide setModelInstance(ModelInstance instance) {
+		this.slideModelInstance = instance;
+		return this;
+	}
 	@Override
 	public void removeSlidePart(ISlidePart slidePart) {
-		slideParts.removeValue(slidePart, false);
+		this.disposables.add(slidePart);
 	}
 
-	@Override
-	public void render(ModelBatch batch, Environment lights) {
-		for (ISlidePart part : slideParts) {
-			batch.render(part.getModelInstance(), lights);
-		}
-		for (SlideBorder b : borders) {
-			batch.render(b.getModelInstance(), lights);
-		}
-
+	public ModelInstance getModelInstance() {
+		return slideModelInstance;
 	}
 
 	@Override
 	public void addSlidePart() {
-		tmpSlidePart = pool.obtain().setControlPoints(
-				Slide.slideGenerator.generateControlPoints());
-
-		slideParts.add(tmpSlidePart);
-		dynamicsWorld.addRigidBody(tmpSlidePart.getRigidBody());
+		Array<Vector3> controlPoints = new Array<Vector3>(spline.controlPoints);
+		slideGenerator.addSpan(controlPoints);
+		controlPoints.shrink();
+		spline.set(controlPoints.items, false);
+		ISlidePart nextPart = pool.obtain().setSlide(this);
+		slideParts.add(nextPart);
 	}
 
-	private void addCatmullSlidePart() {
-		generator = new CatmullSplineGenerator();
-		generator.generateSlide();
 
-		if (GameScreen.settings.DEBUG_HILL) {
-			tmpSlidePart = pool.obtain().setCatmullPoints(generator.getPlankPoints());
-		} else {
-			tmpSlidePart = pool.obtain().setCatmullPoints(generator.getPoints());
+	private Array<ISlidePart> disposables = new Array<ISlidePart>(4);
+	private boolean addNextPart = false;
+
+	/**
+	 * Setzt die ID des aktuell berutschten SlideParts.
+	 */
+	public synchronized void setActualSlidePartId(int id) {
+		if (actualSlidePartId != id && actualSlidePartId < id) {
+			for (ISlidePart part : slideParts) {
+				if (part.getID() == actualSlidePartId) {
+					removeSlidePart(part);
+				}
+			}
+			addNextPart = true;
+			this.actualSlidePartId = id;
 		}
-
-		// tmpSlidePart.getRigidBody().setCollisionFlags(
-		// tmpSlidePart.getRigidBody().getCollisionFlags()
-		// | btCollisionObject.CollisionFlags.CF_CUSTOM_MATERIAL_CALLBACK);
-
-		slideParts.add(tmpSlidePart);
-		dynamicsWorld.addRigidBody(tmpSlidePart.getRigidBody());
-		// createSlidePartBorders(tmpSlidePart);
 	}
+
+	/**
+	 * Liefert die ID der SlidePart die zur Zeit berutscht wird.
+	 */
+	public int getActualSlidePartId() {
+		return this.actualSlidePartId;
+	}
+
+	public SlideGenerator getSlideGenerator() {
+		return slideGenerator;
+	}
+
+	public SlideBuilder getSlideBuilder() {
+		return slideBuilder;
+	}
+
 }

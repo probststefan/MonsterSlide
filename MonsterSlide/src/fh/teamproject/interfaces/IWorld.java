@@ -1,14 +1,15 @@
 package fh.teamproject.interfaces;
 
-import com.badlogic.gdx.graphics.g3d.Environment;
-import com.badlogic.gdx.graphics.g3d.ModelBatch;
+import fh.teamproject.entities.Coins;
 
 public interface IWorld {
 
 	public ISlide getSlide();
 
+	public Coins getCoins();
+
 	public IPlayer getPlayer();
 
-	public void render(ModelBatch batch, Environment lights);
+	public void render();
 
 }

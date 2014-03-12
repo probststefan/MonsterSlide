@@ -5,17 +5,14 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g3d.Environment;
-import com.badlogic.gdx.graphics.g3d.ModelBatch;
-import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
-import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
+import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.utils.Json;
 
-import fh.teamproject.controller.player.android.SwipeController;
-import fh.teamproject.entities.Player;
+import fh.teamproject.MonsterSlide;
 import fh.teamproject.entities.World;
 import fh.teamproject.hud.Hud;
 import fh.teamproject.utils.CameraManager;
@@ -34,44 +31,26 @@ public class GameScreen implements Screen {
 	private final boolean showFps = true;
 	public boolean isPaused = true;
 	public DebugDrawer debugDrawer;
-	// Controller
-	public SwipeController swipeController;
-
-	// Rendering
-	public ModelBatch batch;
-	public Environment lights;
-
-	// Logic
 	public World world;
-	public Player player;
-
 	private SpriteBatch spriteBatch;
 	private BitmapFont font;
-
 	public Hud hud;
-	public Game game;
+	public MonsterSlide game;
 
 	public GameScreen(Game game) {
-		this.game = game;
+		this.game = (MonsterSlide) game;
+		loadAssets();
 		GameScreen.settings = new Json().fromJson(Settings.class,
 				Gdx.files.internal("settings.json"));
 		world = new World(this);
-		player = (Player) world.getPlayer();
 
-		// this.swipeController = new SwipeController(this.player);
 		GameScreen.camManager = new CameraManager(this);
 		GameScreen.camManager.setMode(Mode.FREE);
-
-		batch = new ModelBatch();
-
-		lights = new Environment();
-		lights.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f));
-		lights.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
 
 		// Debug
 		debugDrawer = new DebugDrawer(this);
 
-		hud = new Hud(this);
+		hud = new Hud(world);
 		hud.generateSlideOverview();
 
 		// Input
@@ -84,7 +63,6 @@ public class GameScreen implements Screen {
 		debugInputMul.addProcessor((InputProcessor) GameScreen.camManager
 				.getController(Mode.FREE));
 
-		// gameInputMul.addProcessor(new GestureDetector(this.swipeController));
 		// gameInputMul.addProcessor(this.player.inputHandling);
 		gameInputMul.addProcessor(hud.stage);
 		allInputs.addProcessor(gameInputMul);
@@ -96,11 +74,18 @@ public class GameScreen implements Screen {
 			spriteBatch = new SpriteBatch();
 			font = new BitmapFont();
 		}
+
+	}
+
+	private void loadAssets() {
+		getAssets().load("model/coin.g3db", Model.class);
+		getAssets().load("data/g3d/skydome.g3db", Model.class);
+		getAssets().finishLoading();
 	}
 
 	@Override
 	public void render(float delta) {
-		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1f);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
 		/* UPDATE */
@@ -109,18 +94,13 @@ public class GameScreen implements Screen {
 		}
 		GameScreen.camManager.update();
 		hud.update();
-		hud.setPoints((int) world.getSlide().getSlidedDistance());
 
 		/* RENDER */
-		batch.begin(GameScreen.camManager.getActiveCamera());
-		world.render(batch, lights);
-		batch.end();
+		world.render();
 		hud.render();
-
 		if (DebugDrawer.isDebug) {
 			debugDrawer.render();
 		}
-
 		showFPS();
 	}
 
@@ -145,7 +125,6 @@ public class GameScreen implements Screen {
 	@Override
 	public void pause() {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -156,7 +135,7 @@ public class GameScreen implements Screen {
 
 	@Override
 	public void dispose() {
-		System.out.println("Dispose");
+		camManager.dispose();
 		world.dispose();
 	}
 
@@ -164,10 +143,25 @@ public class GameScreen implements Screen {
 		if (showFps) {
 			// FPS anzeigen.
 			spriteBatch.begin();
-			font.draw(spriteBatch, Gdx.graphics.getFramesPerSecond() + " fps, Bullet: "
-					+ (int) (world.performanceCounter.load.value * 100f) + "%", 10,
-					Gdx.graphics.getHeight() - 10);
+			font.draw(
+					spriteBatch,
+					Gdx.graphics.getFramesPerSecond()
+							+ " fps, Bullet: "
+							+ (int) (world.getPhysixManager().getPerformanceCounter().load.value * 100f)
+							+ "%", 10, Gdx.graphics.getHeight() - 10);
 			spriteBatch.end();
 		}
+	}
+
+	public AssetManager getAssets() {
+		return game.getAssets();
+	}
+
+	public MonsterSlide getGame() {
+		return game;
+	}
+
+	public World getWorld() {
+		return world;
 	}
 }

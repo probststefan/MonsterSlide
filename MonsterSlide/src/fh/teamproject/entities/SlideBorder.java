@@ -26,14 +26,12 @@ public class SlideBorder extends CollisionEntity implements Poolable {
 		}
 	};
 
-	public SlideBorder(Vector3 position) {
+	public SlideBorder(World world, Vector3 position) {
+		super(world);
 		instance = SlideBorder.spherePool.obtain();
 		instance.transform.setToTranslation(position);
-		setCollisionShape(new btSphereShape(SlideBorder.diameter / 2f));
-		setEntityWorldTransform(instance.transform);
-		setLocalInertia(new Vector3(0, 0, 0));
-		createRigidBody();
-
+		initGraphix();
+		initPhysix();
 	}
 
 	@Override
@@ -44,6 +42,18 @@ public class SlideBorder extends CollisionEntity implements Poolable {
 
 	@Override
 	public void reset() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void initPhysix() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void initGraphix() {
 		// TODO Auto-generated method stub
 
 	}

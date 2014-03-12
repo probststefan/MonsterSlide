@@ -1,361 +1,118 @@
 package fh.teamproject.entities;
 
-import java.util.ArrayList;
-
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL10;
-import com.badlogic.gdx.graphics.Mesh;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.VertexAttribute;
-import com.badlogic.gdx.graphics.VertexAttributes;
-import com.badlogic.gdx.graphics.VertexAttributes.Usage;
-import com.badlogic.gdx.graphics.g3d.Material;
-import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import com.badlogic.gdx.graphics.g3d.model.MeshPart;
 import com.badlogic.gdx.graphics.g3d.model.Node;
-import com.badlogic.gdx.graphics.g3d.model.NodePart;
-import com.badlogic.gdx.graphics.g3d.utils.MeshBuilder;
-import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder.VertexInfo;
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.CatmullRomSpline;
-import com.badlogic.gdx.math.Matrix4;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.Collision;
 import com.badlogic.gdx.physics.bullet.collision.btBvhTriangleMeshShape;
-import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
-import com.badlogic.gdx.physics.bullet.collision.btCompoundShape;
-import com.badlogic.gdx.physics.bullet.collision.btConvexHullShape;
 import com.badlogic.gdx.physics.bullet.collision.btIndexedMesh;
 import com.badlogic.gdx.physics.bullet.collision.btTriangleIndexVertexArray;
 import com.badlogic.gdx.physics.bullet.collision.btTriangleInfoMap;
-import com.badlogic.gdx.physics.bullet.collision.btTriangleMesh;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.FloatArray;
 import com.badlogic.gdx.utils.Pool.Poolable;
 
 import fh.teamproject.interfaces.ISlidePart;
-import fh.teamproject.screens.GameScreen;
+import fh.teamproject.physics.PhysixBodyDef;
+import fh.teamproject.physics.callbacks.MotionState;
 
 public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
 	/* Die CatmullRomSpline von der alles abgeleitet wird */
-	private CatmullRomSpline<Vector3> catmullRom;
-	Array<Vector3> controlPoints;
-	/*
-	 * Die abgeleiteten Punkte der Spline für Rendering und Physik basierend auf
-	 * einem splitting
-	 */
-	private Array<Vector3> vertices = new Array<Vector3>();
-	/* Das Splitting mit dem die Spline diskretisiert wird */
-	private float splitting;
-	/* Die Punkte zur Erstellung der konvexen Hülle als Polygon angeordnet */
-	private FloatArray physicsPointCloud;
-	/*
-	 * Die Punkte zum Rendering in alternierender Reihenfolge (links, rechts,
-	 * links, rechts)
-	 */
-	public Array<Vector3> graphicsVertices = new Array<Vector3>();
-	/* */
-	public ArrayList<Vector3> baseCoordinates = new ArrayList<Vector3>();
-	public ArrayList<Vector3> baseNormalCoordinates = new ArrayList<Vector3>();
+	private CatmullRomSpline<Vector3> spline;
 
-	private Vector3[] startPoints;
-
-	public Texture texture;
-	public Mesh mesh;
+	// Bullet-Daten (Werden hier zum spaeteren disposen benoetigt)
+	btTriangleIndexVertexArray triangleVertexArray;
+	btIndexedMesh indexedMesh;
 
 	private btTriangleInfoMap triangleInfoMap;
 
-	public SlidePart() {
-		controlPoints = new Array<Vector3>();
-		catmullRom = new CatmullRomSpline<Vector3>();
-		texture = new Texture(Gdx.files.internal("data/floor.jpg"));
+	Slide slide;
+
+	public SlidePart(World world) {
+		super(world);
+		initGraphix();
+		initPhysix();
 	}
 
 	@Override
-	public ISlidePart setCatmullPoints(Vector3[] points) {
-		startPoints = new Vector3[2];
-		catmullRom.set(points, false);
-		setup();
+	public ISlidePart setSlide(Slide slide) {
+		this.slide = slide;
 		return this;
-	}
-
-	@Override
-	public ISlidePart setControlPoints(Array<Vector3> controlPoints) {
-		startPoints = new Vector3[2];
-		this.controlPoints = controlPoints;
-		catmullRom.set(controlPoints.items, false);
-		setup();
-		startPoints[0] = graphicsVertices.get(0).cpy();
-		startPoints[1] = graphicsVertices.get(1).cpy();
-
-		return this;
-	}
-
-	/**
-	 * Liefert den Startpunkt der Rutschbahn.
-	 * 
-	 * @return Vector3
-	 */
-	@Override
-	public Vector3[] getStartPoints() {
-		return startPoints;
-	}
-
-	public enum ShapeType {
-		triangles, convexhull, indexedmesh
-	};
-
-	private void setup() {
-		computePointCloud();
-		createModelInstance();
-		btCollisionShape collisionShape = null;
-
-		ShapeType type = ShapeType.indexedmesh;
-		switch (type) {
-		case triangles:
-			btTriangleMesh tetraMesh = new btTriangleMesh();
-			for (int i = 0; i <= (graphicsVertices.size - 4); i += 4) {
-				tetraMesh.addTriangle(graphicsVertices.get(i + 2),
-						graphicsVertices.get(i + 1), graphicsVertices.get(i));
-
-				tetraMesh.addTriangle(graphicsVertices.get(i + 3),
-						graphicsVertices.get(i + 2), graphicsVertices.get(i + 1));
-			}
-			collisionShape = new btBvhTriangleMeshShape(tetraMesh, true);
-			break;
-		case convexhull:
-			// btCompoundShape compoundShape = new btCompoundShape();
-			collisionShape = new btCompoundShape();
-			for (int i = 0; i <= (graphicsVertices.size - 4); i += 4) {
-				btConvexHullShape convexHullShape = new btConvexHullShape();
-
-				convexHullShape.addPoint(graphicsVertices.get(i));
-				convexHullShape.addPoint(graphicsVertices.get(i + 1));
-				convexHullShape.addPoint(graphicsVertices.get(i + 3));
-				convexHullShape.addPoint(graphicsVertices.get(i + 2));
-
-				((btCompoundShape) collisionShape).addChildShape(new Matrix4().idt(),
-						convexHullShape);
-
-			}
-			break;
-		case indexedmesh:
-			// Stefans Test
-
-			btIndexedMesh indexedMesh = new btIndexedMesh(mesh);
-			btTriangleIndexVertexArray triangleVertexArray = new btTriangleIndexVertexArray();
-			triangleVertexArray.addIndexedMesh(indexedMesh);
-
-			collisionShape = new btBvhTriangleMeshShape(triangleVertexArray, true);
-			collisionShape.setMargin(0.01f);
-
-			triangleInfoMap = new btTriangleInfoMap();
-			// now you can adjust some thresholds in triangleInfoMap if needed.
-			triangleInfoMap.setEdgeDistanceThreshold(25.0f);
-
-			// btGenerateInternalEdgeInfo fills in the btTriangleInfoMap and
-			// stores
-			// it as a user pointer of collisionShape
-			// (collisionShape->setUserPointer(triangleInfoMap))
-			Collision.btGenerateInternalEdgeInfo((btBvhTriangleMeshShape) collisionShape,
-					triangleInfoMap);
-			break;
-		default:
-			break;
-		}
-
-		setCollisionShape(collisionShape);
-		createRigidBody();
-		setMass(1000f);
-		getRigidBody().setFriction(0.1f);
-		getRigidBody().setRestitution(0f);
-	}
-
-	private void computePointCloud() {
-		Vector3 tmpBezierVec = new Vector3();
-		physicsPointCloud = new FloatArray();
-		/* Der SlidePart wird im Abstand von jeweils 1 Meter diskretisiert */
-		splitting = (1f / GameScreen.settings.SLIDE_LENGTH) * 15.0f;
-		float epsilon = 0.01f;
-
-		for (float i = 0; i <= (1 + epsilon); i += splitting) {
-			// Punkte der Bezier Kurve setzen.
-			catmullRom.valueAt(tmpBezierVec, i);
-
-			// Base Koordinaten zu diesem Punkt berechnen und ablegen.
-			calcBaseCoordinates(catmullRom, i);
-
-			physicsPointCloud.add(tmpBezierVec.x);
-			physicsPointCloud.add(tmpBezierVec.y);
-			physicsPointCloud.add(tmpBezierVec.z);
-			vertices.add(new Vector3(tmpBezierVec));
-
-		}
-
-		for (int i = vertices.size - 1; i >= 0; --i) {
-			Vector3 v = vertices.get(i);
-			Vector3 binormal = baseCoordinates.get(i);
-
-			binormal.scl(GameScreen.settings.SLIDE_WIDTH);
-			physicsPointCloud
-					.addAll(v.x + binormal.x, v.y + binormal.y, v.z + binormal.z);
-
-			if (i == 0) {
-				startPoints[1] = new Vector3(v.x + binormal.x, v.y + binormal.y, v.z
-						+ binormal.z);
-			}
-		}
-
-		tmpBezierVec = null;
-	}
-
-	/**
-	 * Die Basis-Koordinaten zu den Punkten in der Spline berechnen.
-	 * 
-	 * @param bezier
-	 * @param t
-	 */
-	private void calcBaseCoordinates(CatmullRomSpline<Vector3> catmullRom, float t) {
-		Vector3 derivation = new Vector3();
-
-		// 1. und 2. Ableitung bilden.
-		derivation = catmullRom.derivativeAt(derivation, t);
-
-		Vector3 tangent = derivation.cpy().nor();
-
-		/*
-		 * Mit dem upVector wird das Problem der springenden Normalen behoben.
-		 * 
-		 * @link http://www.it.hiof.no/~borres/j3d/explain/frames/p-frames.html
-		 */
-		Vector3 upVector = new Vector3(0.0f, -1.0f, 0.0f);
-		Vector3 binormal = derivation.cpy().crs(upVector).nor();
-		Vector3 normal = tangent.crs(binormal);
-
-		baseNormalCoordinates.add(normal);
-		baseCoordinates.add(binormal);
-	}
-
-	private void createModelInstance() {
-		Array<VertexInfo> vertInfo = new Array<VertexInfo>();
-		MeshBuilder builder = new MeshBuilder();
-		builder.begin(new VertexAttributes(new VertexAttribute(Usage.Position, 3,
-				ShaderProgram.POSITION_ATTRIBUTE), new VertexAttribute(Usage.Color, 4,
-				ShaderProgram.COLOR_ATTRIBUTE), new VertexAttribute(Usage.Normal, 3,
-				ShaderProgram.NORMAL_ATTRIBUTE)));
-		// , new VertexAttribute(
-		// Usage.TextureCoordinates, 2, ShaderProgram.TEXCOORD_ATTRIBUTE)
-
-		for (int i = 0; i < vertices.size; ++i) {
-			Vector3 v = vertices.get(i);
-			Vector3 binormal = baseCoordinates.get(i);
-
-			graphicsVertices.add(new Vector3(v.x, v.y, v.z));
-			graphicsVertices.add(new Vector3(v.x + binormal.x, v.y + binormal.y, v.z
-					+ binormal.z));
-			if ((i == 0) || (i == (vertices.size - 1))) {
-				continue;
-			}
-			graphicsVertices.add(new Vector3(v.x, v.y, v.z));
-			graphicsVertices.add(new Vector3(v.x + binormal.x, v.y + binormal.y, v.z
-					+ binormal.z));
-		}
-
-		for (int i = 0; i <= (graphicsVertices.size - 4); i += 4) {
-
-			Vector3 normal = baseNormalCoordinates.get(i / 4);
-
-			Color col = Color.DARK_GRAY;
-			Vector3 v1 = graphicsVertices.get(i).cpy();
-			v1.sub(graphicsVertices.get(i + 1));
-			Vector3 v2 = graphicsVertices.get(i).cpy();
-			v2.sub(graphicsVertices.get(i + 2));
-			Vector3 nor = v1.crs(v2).nor();
-			// Gdx.app.log("slidepart",
-			// "soll " + nor + " ist " + normal + " " + nor.equals(normal));
-			// normal.set(Vector3.Y);
-
-			VertexInfo info = new VertexInfo();
-			info.set(graphicsVertices.get(i), normal, col, new Vector2(1, 0));
-			vertInfo.add(info);
-
-			info = new VertexInfo();
-			// col = Color.RED;
-			info.set(graphicsVertices.get(i + 1), normal, col, new Vector2(1, 1));
-			vertInfo.add(info);
-
-			info = new VertexInfo();
-			// col = Color.GREEN;
-			info.set(graphicsVertices.get(i + 2), normal, col, new Vector2(0, 0));
-			vertInfo.add(info);
-
-			info = new VertexInfo();
-			// col = Color.YELLOW;
-			info.set(graphicsVertices.get(i + 3), normal, col, new Vector2(0, 1));
-			vertInfo.add(info);
-
-		}
-
-		builder.part("part1", GL10.GL_TRIANGLES);
-
-		for (int i = 0; i <= (vertInfo.size - 4); i += 4) {
-			builder.triangle(vertInfo.get(i + 2), vertInfo.get(i + 1), vertInfo.get(i));
-			builder.triangle(vertInfo.get(i + 2), vertInfo.get(i + 3),
-					vertInfo.get(i + 1));
-		}
-
-		mesh = builder.end();
-
-		MeshPart meshPart = new MeshPart();
-		meshPart.id = "SlidePart" + id;
-		meshPart.primitiveType = GL10.GL_TRIANGLES;
-		meshPart.mesh = mesh;
-		meshPart.indexOffset = 0;
-		meshPart.numVertices = mesh.getNumVertices();
-
-		Model m = new Model();
-		m.nodes.add(new Node());
-
-		Material material = new Material();
-		// material.set(ColorAttribute.createDiffuse(Color.BLUE));
-		// material.set(TextureAttribute.createDiffuse(new Texture(Gdx.files
-		// .internal("data/floor.jpg"))));
-		NodePart nodePart = new NodePart(meshPart, material);
-		m.nodes.get(0).parts.add(nodePart);
-		instance = new ModelInstance(m);
-
 	}
 
 	@Override
 	public void reset() {
-		// TODO Auto-generated method stub
+
 	}
 
 	@Override
-	public void render() {
+	public ModelInstance getModelInstance() {
+		return slide.getModelInstance();
+	}
+
+	public void dispose() {
+		indexedMesh.dispose();
+		Node node = slide.getModelInstance().getNode(String.valueOf(getID()));
+		slide.getModelInstance().nodes.removeValue(node, true);
+		super.dispose();
 	}
 
 	@Override
-	public float[] getPhysicsVertices() {
-		return physicsPointCloud.toArray();
+	public void releaseAll() {
+		indexedMesh.release();
+		super.releaseAll();
 	}
 
 	@Override
-	public Array<Vector3> getInterpolatedVertices() {
-		return vertices;
+	public ISlidePart setSpline(CatmullRomSpline<Vector3> spline) {
+		this.spline = spline;
+		return this;
 	}
 
 	@Override
-	public Array<Vector3> getControlPoints() {
-		return controlPoints;
+	public void initPhysix() {
+
+		// FIXME: Node könnte in zukunft auch mehrere parts haben oder sogar
+		// mehrere child-nodes!
+
+		Node node = slide.getModelInstance().getNode(String.valueOf(getID()));
+		indexedMesh = new btIndexedMesh(node.parts.first().meshPart.mesh);
+		triangleVertexArray = new btTriangleIndexVertexArray();
+		triangleVertexArray.addIndexedMesh(indexedMesh);
+
+		btBvhTriangleMeshShape collisionShape = new btBvhTriangleMeshShape(
+				triangleVertexArray, true);
+		collisionShape.setMargin(1.1f);
+
+		triangleInfoMap = new btTriangleInfoMap();
+		// now you can adjust some thresholds in triangleInfoMap if needed.
+		triangleInfoMap.setEdgeDistanceThreshold(25.0f);
+
+		// btGenerateInternalEdgeInfo fills in the btTriangleInfoMap and
+		// stores
+		// it as a user pointer of collisionShape
+		// (collisionShape->setUserPointer(triangleInfoMap))
+		Collision.btGenerateInternalEdgeInfo((btBvhTriangleMeshShape) collisionShape,
+				triangleInfoMap);
+
+		PhysixBodyDef bodyDef = new PhysixBodyDef(world.getPhysixManager(), mass,
+				new MotionState(getModelInstance().transform), collisionShape);
+		bodyDef.setFriction(0.1f);
+		bodyDef.setRestitution(0f);
+
+		rigidBody = bodyDef.create();
+		rigidBody.userData = this;
+		rigidBody.setUserValue(this.getID());
+		rigidBody.setContactCallbackFlag(Slide.SLIDE_FLAG);
 	}
 
 	@Override
-	public Array<Vector3> getGraphicVertices() {
-		return graphicsVertices;
+	public void initGraphix() {
+		slide = (Slide) world.getSlide();
+		Node slidePartNode = slide.getSlideBuilder()
+				.createSlidePart(slide.getSpline(), 1);
+		slidePartNode.id = String.valueOf(getID());
+		getModelInstance().nodes.add(slidePartNode);
+
 	}
 }
