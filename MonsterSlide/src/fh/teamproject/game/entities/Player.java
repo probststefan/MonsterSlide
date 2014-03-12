@@ -65,7 +65,6 @@ public class Player extends CollisionEntity implements IPlayer {
 	public Vector3 projectedPointOnSlide = new Vector3();;
 
 	public InputHandling inputHandling;
-	private ClosestRayResultCallback rayCallback;
 
 	public Player(World world) {
 		super(world);
@@ -75,8 +74,6 @@ public class Player extends CollisionEntity implements IPlayer {
 		this.MAX_SPEED = GameScreen.settings.PLAYER_MAX_SPEED;
 		initGraphix();
 		initPhysix();
-		rayCallback = new ClosestRayResultCallback(new Vector3(), new Vector3());
-
 	}
 
 	@Override
@@ -93,11 +90,13 @@ public class Player extends CollisionEntity implements IPlayer {
 
 		world.getPhysixManager().getWorld().rayTest(getPosition(), target, cb);
 		if (cb.hasHit()) {
-			btVector3 hitPoint = cb.getHitNormalWorld();
-			Vector3 position = new Vector3(hitPoint.getX(), hitPoint.getY(),
-					hitPoint.getZ());
-			hitPoint.dispose();
-			return position;
+			if (cb.getCollisionObject() != null) {
+				btVector3 hitPoint = cb.getHitNormalWorld();
+				Vector3 position = new Vector3(hitPoint.getX(), hitPoint.getY(),
+						hitPoint.getZ());
+				hitPoint.dispose();
+				return position;
+			}
 		}
 		return null;
 	}

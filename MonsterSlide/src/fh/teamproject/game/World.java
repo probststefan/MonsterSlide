@@ -83,7 +83,7 @@ public class World implements IWorld {
 		}
 
 		if (!checkIsPlayerOnSlide() && !gameScreen.isPaused
-				&& this.gameOverCountdown >= 1.0f) {
+				&& this.gameOverCountdown >= GameScreen.settings.GAME_OVER_COUNTDOWN) {
 			gameScreen.getGame().setScreen(new MenuScreen(gameScreen.getGame()));
 		} else {
 			player.update();
