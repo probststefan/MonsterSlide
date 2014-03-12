@@ -143,10 +143,10 @@ public class Slide implements ISlide {
 		if (actualSlidePartId != id && actualSlidePartId < id) {
 			for (ISlidePart part : slideParts) {
 				if (part.getID() == actualSlidePartId) {
-					// removeSlidePart(part);
+					removeSlidePart(part);
 				}
 			}
-			// addNextPart = true;
+			addNextPart = true;
 			this.actualSlidePartId = id;
 		}
 	}
