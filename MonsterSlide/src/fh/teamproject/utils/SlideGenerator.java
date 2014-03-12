@@ -13,20 +13,20 @@ public class SlideGenerator {
 
 	float segments = GameScreen.settings.SLIDE_SEGMENTS;
 	float segment_Min_Length = 100f;
-	float segment_Max_Length = 300f;
+	float segment_Max_Length = 100f;
 	float curveDirection = 1f;// verschiebungsrichtung auf z achse
-	float maxSlope = -0.1f;
-	float minSlope = -0.3f;
-	float maxCurvyness = 0.2f;
-	float minCurvyness = -0.2f;
+	float maxSlope = -0f; // 0.1
+	float minSlope = -0f; // 0.3
+	float maxCurvyness = 0f; // 0.2
+	float minCurvyness = -0f; // 0.2
 	float curvyness;
 
 	public Array<Vector3> initControlPoints() {
 		Array<Vector3> controlPoints = new Array<Vector3>(false, 4, Vector3.class);
 		Vector3 start = new Vector3();
 		controlPoints.add(start.cpy()); // Anfangskontrollpunkt
-		controlPoints.add(start.cpy()); // Erster Punkt
-
+		// controlPoints.add(start.cpy()); // Erster Punkt
+		addSpan(controlPoints);
 		addSpan(controlPoints);
 
 		/* das dahinterliegende Array auf tatsächliche größe schrumpfen */
