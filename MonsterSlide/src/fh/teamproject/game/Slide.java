@@ -70,7 +70,7 @@ public class Slide implements ISlide {
 	}
 
 	Vector3 lastMeasurement = new Vector3();
-
+	int currentSpan = 1;
 	@Override
 	public void update() {
 		if (addNextPart) {
@@ -90,7 +90,8 @@ public class Slide implements ISlide {
 		spline.valueAt(closest, span - 1, t);
 		float dist = closest.cpy().sub(lastMeasurement).len();
 		world.getScore().incrementSlidedDistance(dist);
-		Gdx.app.debug("Slide", "Span: " + span + " - T-Faktor: " + t + "\n - Punkt:"
+
+		Gdx.app.debug("Slide", "Span: " + span + " - T-Faktor: " + t + "\n Punkt:"
 				+ closest
 				+ " - Distance: " + dist);
 		lastMeasurement.set(closest);

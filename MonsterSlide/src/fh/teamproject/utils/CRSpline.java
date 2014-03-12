@@ -23,14 +23,11 @@ public class CRSpline extends CatmullRomSpline<Vector3> {
 				result = idx;
 			}
 		}
-		System.out.println("nearest");
 		return result;
 
 	}
 
 	public float approximate(final Vector3 in, final int near) {
-		System.out.println("approx");
-
 		int n = near;
 		final Vector3 nearest = controlPoints[n];
 		final Vector3 previous = controlPoints[n > 0 ? n - 1 : spanCount - 1];
