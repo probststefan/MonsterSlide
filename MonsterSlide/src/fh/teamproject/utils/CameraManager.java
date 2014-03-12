@@ -10,6 +10,7 @@ import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.ObjectMap.Values;
 
 import fh.teamproject.controller.camera.ChaseCameraController;
+import fh.teamproject.controller.camera.CountdownCameraController;
 import fh.teamproject.controller.camera.SmoothChaseCameraController;
 import fh.teamproject.game.entities.Player;
 import fh.teamproject.interfaces.ICameraController;
@@ -18,7 +19,7 @@ import fh.teamproject.utils.debug.DebugCameraController;
 
 public class CameraManager implements Disposable {
 	public enum Mode {
-		CHASE, FREE, SMOOTH
+		CHASE, FREE, SMOOTH, COUNTDOWN
 	};
 
 	GameScreen gameScreen;
@@ -40,9 +41,14 @@ public class CameraManager implements Disposable {
 				new PerspectiveCamera(67, Gdx.graphics.getWidth(),
 						Gdx.graphics.getHeight()), (Player) gameScreen.getWorld()
 						.getPlayer());
+		CountdownCameraController countdownCamContr = new CountdownCameraController(
+				new PerspectiveCamera(67, Gdx.graphics.getWidth(),
+						Gdx.graphics.getHeight()), (Player) gameScreen.getWorld()
+						.getPlayer());
 		addCamera(debugCamera, Mode.FREE);
 		addCamera(chaseCamContr, Mode.CHASE);
 		addCamera(smoothCamContr, Mode.SMOOTH);
+		addCamera(countdownCamContr, Mode.COUNTDOWN);
 	}
 
 	public void update() {
