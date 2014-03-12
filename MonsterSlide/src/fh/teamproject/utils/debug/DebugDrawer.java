@@ -3,7 +3,7 @@ package fh.teamproject.utils.debug;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
@@ -62,9 +62,9 @@ public class DebugDrawer {
 			bulletdebugDrawer.begin();
 			gameScreen.getWorld().getPhysixManager().getWorld().debugDrawWorld();
 			bulletdebugDrawer.end();
-			Gdx.gl.glDisable(GL10.GL_DEPTH_TEST);
+			Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
 			setDebugMode(getDebugMode(), GameScreen.camManager.getActiveCamera().combined);
-			Gdx.gl.glEnable(GL10.GL_DEPTH_TEST);
+			Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
 		}
 	}
 
