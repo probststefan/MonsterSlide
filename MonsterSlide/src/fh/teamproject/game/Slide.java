@@ -42,6 +42,13 @@ public class Slide implements ISlide {
 	ModelInstance slideModelInstance;
 	World world;
 
+	private Array<ISlidePart> disposables = new Array<ISlidePart>(4);
+	private boolean addNextPart = false;
+	/* Benötigt zur Berechnung der gerutschten Strecke */
+	Vector3 lastMeasurement = new Vector3();
+	private int currentSpan = 1;
+	private float pathOnCurrentSpan = 0f;
+
 	public Slide(World world) {
 		this.world = world;
 
@@ -66,9 +73,7 @@ public class Slide implements ISlide {
 		}
 	}
 
-	Vector3 lastMeasurement = new Vector3();
-	int currentSpan = 1;
-	float pathOnCurrentSpan = 0f;
+
 	@Override
 	public void update() {
 		if (addNextPart) {
@@ -82,18 +87,17 @@ public class Slide implements ISlide {
 		}
 		disposables.clear();
 
-		int span = spline.nearest(world.getPlayer().getPosition(), 1, spline.spanCount);
-		float t = spline.approximate(world.getPlayer().getPosition(), span);
+		/* Berechnung der gerutschten Strecke */
+		int span = spline.getSpan(world.getPlayer().getPosition(), 1, spline.spanCount);
+		float t = spline.locate(world.getPlayer().getPosition());
 		Vector3 closest = new Vector3();
-
 		float dist = 0f;
 		if (span > currentSpan) {
 			addSlidePart();
 			removeCompletedParts();
+			pathOnCurrentSpan = 0f;
 		}
 		currentSpan = span;
-		System.out.println(spline.getSpan(world.getPlayer().getPosition(), 1,
-				spline.spanCount));
 		if (t > pathOnCurrentSpan) {
 			spline.valueAt(closest, span - 1, t);
 			dist = closest.cpy().sub(lastMeasurement).len();
@@ -137,13 +141,10 @@ public class Slide implements ISlide {
 		spline.set(controlPoints.items, false);
 		ISlidePart nextPart = pool.obtain();
 		slideParts.add(nextPart);
-		// coins.addCoin(spline.controlPoints[spline.controlPoints.length - 1]);
 		coins.generateCoinsforSpan(spline.spanCount - 1);
 	}
 
 
-	private Array<ISlidePart> disposables = new Array<ISlidePart>(4);
-	private boolean addNextPart = false;
 
 	public SlideGenerator getSlideGenerator() {
 		return slideGenerator;
@@ -159,7 +160,5 @@ public class Slide implements ISlide {
 			disposables.add(slideParts.get(i));
 		}
 	}
-
-
 
 }

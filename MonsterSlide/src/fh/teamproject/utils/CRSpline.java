@@ -71,4 +71,10 @@ public class CRSpline extends CatmullRomSpline<Vector3> {
 		}
 	}
 
+	@Override
+	public float locate(Vector3 v) {
+		return approximate(v, nearest(v, 1, spanCount));
+	}
+
+
 }
