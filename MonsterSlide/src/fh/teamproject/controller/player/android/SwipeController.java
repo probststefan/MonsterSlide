@@ -3,7 +3,7 @@ package fh.teamproject.controller.player.android;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.input.GestureDetector.GestureAdapter;
 
-import fh.teamproject.entities.Player;
+import fh.teamproject.game.entities.Player;
 
 public class SwipeController extends GestureAdapter {
 	Player player;

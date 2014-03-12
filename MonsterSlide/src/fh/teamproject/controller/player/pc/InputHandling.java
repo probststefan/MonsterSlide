@@ -4,7 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 
-import fh.teamproject.entities.Player;
+import fh.teamproject.game.entities.Player;
 
 public class InputHandling implements InputProcessor {
 	

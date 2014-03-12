@@ -11,17 +11,13 @@ public interface ISlide {
 	 */
 	public void addSlidePart();
 
+	public void removeCompletedParts();
+
 	public Array<ISlidePart> getSlideParts();
 
 	public void removeSlidePart(ISlidePart slidePart);
 
 	public void update();
-
-	public float getSlidedDistance();
-
-	public void setActualSlidePartId(int id);
-
-	public int getActualSlidePartId();
 
 	public abstract CatmullRomSpline<Vector3> getSpline();
 }

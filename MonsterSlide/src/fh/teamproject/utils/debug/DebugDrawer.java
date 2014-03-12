@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
-import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
@@ -15,14 +14,14 @@ import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 
-import fh.teamproject.entities.SlidePart;
+import fh.teamproject.game.entities.Player;
 import fh.teamproject.interfaces.ICameraController;
-import fh.teamproject.interfaces.ISlidePart;
 import fh.teamproject.screens.GameScreen;
 
 public class DebugDrawer {
@@ -42,7 +41,6 @@ public class DebugDrawer {
 
 		setDebugMode(btIDebugDraw.DebugDrawModes.DBG_DrawWireframe,
 				GameScreen.camManager.getActiveCamera().combined);
-		toggleDebug();
 	}
 
 	public void render() {
@@ -60,7 +58,7 @@ public class DebugDrawer {
 
 	private void renderBullet() {
 
-		if ((bulletdebugDrawer.getDebugMode() > 0)) {
+		if (bulletdebugDrawer != null && (bulletdebugDrawer.getDebugMode() > 0)) {
 			bulletdebugDrawer.begin();
 			gameScreen.getWorld().getPhysixManager().getWorld().debugDrawWorld();
 			bulletdebugDrawer.end();
@@ -111,9 +109,26 @@ public class DebugDrawer {
 
 		Vector3 position = gameScreen.world.getPlayer().getPosition();
 		Vector3 direction = gameScreen.world.getPlayer().getDirection();
-		renderer.line(position, position.cpy().add(direction));
+		Player player = (Player) gameScreen.world.getPlayer();
+		Vector3 totalForce = player.totalForce;
+		Vector3 linearVelocity = player.linearVelocity;
 
-		renderer.line(new Vector3(), new Vector3(1000f, 0f, 0f));
+		renderer.setColor(Color.CYAN);
+		renderer.line(position, position.cpy().add(linearVelocity));
+		renderer.setColor(Color.MAGENTA);
+		renderer.line(position, position.cpy().add(totalForce));
+
+		Quaternion q = player.getRigidBody().getOrientation();
+		renderer.setColor(Color.GREEN);
+		renderer.line(position, position.cpy().add(Vector3.Y.cpy().mul(q).scl(5f)));
+		renderer.setColor(Color.RED);
+		renderer.line(position, position.cpy().add(Vector3.X.cpy().mul(q).scl(5f)));
+		renderer.setColor(Color.BLUE);
+		renderer.line(position, position.cpy().add(Vector3.Z.cpy().mul(q).scl(5f)));
+
+		renderer.setColor(Color.WHITE);
+		renderer.line(position, player.projectedPointOnSlide);
+
 		renderer.end();
 	}
 
@@ -141,8 +156,7 @@ public class DebugDrawer {
 		}
 		if (bulletdebugDrawer == null) {
 			gameScreen.getWorld().getPhysixManager().getWorld()
-					.setDebugDrawer(
-					bulletdebugDrawer = new BulletDebugDrawer());
+					.setDebugDrawer(bulletdebugDrawer = new BulletDebugDrawer());
 		}
 		bulletdebugDrawer.lineRenderer.setProjectionMatrix(projMatrix);
 		bulletdebugDrawer.setDebugMode(mode);

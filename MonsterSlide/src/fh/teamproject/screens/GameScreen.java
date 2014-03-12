@@ -13,8 +13,8 @@ import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.utils.Json;
 
 import fh.teamproject.MonsterSlide;
-import fh.teamproject.entities.World;
-import fh.teamproject.hud.Hud;
+import fh.teamproject.game.World;
+import fh.teamproject.game.hud.Hud;
 import fh.teamproject.utils.CameraManager;
 import fh.teamproject.utils.CameraManager.Mode;
 import fh.teamproject.utils.Settings;
@@ -45,7 +45,7 @@ public class GameScreen implements Screen {
 		world = new World(this);
 
 		GameScreen.camManager = new CameraManager(this);
-		GameScreen.camManager.setMode(Mode.FREE);
+		GameScreen.camManager.setMode(Mode.SMOOTH);
 
 		// Debug
 		debugDrawer = new DebugDrawer(this);
@@ -78,8 +78,16 @@ public class GameScreen implements Screen {
 	}
 
 	private void loadAssets() {
-		getAssets().load("model/coin.g3db", Model.class);
+		getAssets().load("model/coins/coin.g3db", Model.class);
 		getAssets().load("data/g3d/skydome.g3db", Model.class);
+		getAssets().load("model/orc/micro_orc.g3db", Model.class);
+		getAssets().load("model/orc/micro_orc_mobile.g3db", Model.class);
+		getAssets().load("model/orc/micro_orc.obj", Model.class);
+		getAssets().load("model/pumpkin/pumpkin_01_01_a.g3db", Model.class);
+		getAssets().load("model/pumpkin/pumpkin_02_01_a.g3db", Model.class);
+		getAssets().load("model/pumpkin/pumpkin_03_01_a.g3db", Model.class);
+		getAssets().load("model/pumpkin/pumpkin_04_01_a.g3db", Model.class);
+
 		getAssets().finishLoading();
 	}
 

@@ -1,7 +1,7 @@
 package fh.teamproject.interfaces;
 
-import fh.teamproject.entities.Entity;
-import fh.teamproject.entities.World;
+import fh.teamproject.game.World;
+import fh.teamproject.game.entities.Entity;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;

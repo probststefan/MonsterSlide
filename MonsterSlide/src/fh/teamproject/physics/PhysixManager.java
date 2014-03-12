@@ -12,10 +12,10 @@ import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.physics.bullet.dynamics.btSequentialImpulseConstraintSolver;
 import com.badlogic.gdx.utils.PerformanceCounter;
 
-import fh.teamproject.entities.World;
-import fh.teamproject.physics.callbacks.MonsterContactListener;
-import fh.teamproject.physics.callbacks.PlayerContactCallback;
-import fh.teamproject.physics.callbacks.TriangleMeshCollisionFixer;
+import fh.teamproject.game.World;
+import fh.teamproject.physics.callbacks.contacts.MonsterContactListener;
+import fh.teamproject.physics.callbacks.contacts.PlayerContactCallback;
+import fh.teamproject.physics.callbacks.contacts.TriangleMeshCollisionFixer;
 
 public class PhysixManager {
 
@@ -74,6 +74,7 @@ public class PhysixManager {
 		performanceCounter.start();
 		dynamicsWorld.stepSimulation(Gdx.graphics.getDeltaTime(), getMaxSubSteps(),
 				getFixedTimeStep());
+		dynamicsWorld.clearForces();
 		performanceCounter.stop();
 	}
 

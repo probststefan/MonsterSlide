@@ -10,15 +10,16 @@ import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.ObjectMap.Values;
 
 import fh.teamproject.controller.camera.ChaseCameraController;
+import fh.teamproject.controller.camera.CountdownCameraController;
 import fh.teamproject.controller.camera.SmoothChaseCameraController;
-import fh.teamproject.entities.Player;
+import fh.teamproject.game.entities.Player;
 import fh.teamproject.interfaces.ICameraController;
 import fh.teamproject.screens.GameScreen;
 import fh.teamproject.utils.debug.DebugCameraController;
 
 public class CameraManager implements Disposable {
 	public enum Mode {
-		CHASE, FREE, SMOOTH
+		CHASE, FREE, SMOOTH, COUNTDOWN
 	};
 
 	GameScreen gameScreen;
@@ -40,9 +41,14 @@ public class CameraManager implements Disposable {
 				new PerspectiveCamera(67, Gdx.graphics.getWidth(),
 						Gdx.graphics.getHeight()), (Player) gameScreen.getWorld()
 						.getPlayer());
+		CountdownCameraController countdownCamContr = new CountdownCameraController(
+				new PerspectiveCamera(67, Gdx.graphics.getWidth(),
+						Gdx.graphics.getHeight()), (Player) gameScreen.getWorld()
+						.getPlayer());
 		addCamera(debugCamera, Mode.FREE);
 		addCamera(chaseCamContr, Mode.CHASE);
 		addCamera(smoothCamContr, Mode.SMOOTH);
+		addCamera(countdownCamContr, Mode.COUNTDOWN);
 	}
 
 	public void update() {
@@ -57,20 +63,11 @@ public class CameraManager implements Disposable {
 	}
 
 	public void setMode(Mode mode) {
-		if (mode == Mode.FREE) {
-			// Camera original = this.activeCamera.getCamera();
-			// this.activeCamera = this.cameras.get(mode);
-			// Camera freeCam = this.activeCamera.getCamera();
-			// // freeCam.direction.set(original.direction);
-			// // freeCam.up.set(original.up);
-			// freeCam.position.set(original.position);
-			// // freeCam.lookAt(this.gameScreen.player.position);
-			// // freeCam.near = original.near;
-			// // freeCam.far = original.far;
-			// // freeCam.view.set(original.view);
-			// // freeCam.projection.set(original.projection);
-			// this.activeCamera.getCamera().update(true);
-		} else {
+		if (mode == Mode.FREE && activeCamera != null) {
+			Camera camera = cameras.get(mode).getCamera();
+			camera.position.set(activeCamera.getCamera().position);
+			camera.direction.set(1f, 0f, 0f);
+			camera.up.set(0f, 1f, 0f);
 		}
 		activeCamera = cameras.get(mode);
 	}

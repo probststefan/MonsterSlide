@@ -3,7 +3,7 @@ package fh.teamproject.controller.camera;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Vector3;
 
-import fh.teamproject.entities.Player;
+import fh.teamproject.game.entities.Player;
 
 public class ChaseCameraController extends CameraController {
 
