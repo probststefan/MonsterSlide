@@ -1,17 +1,10 @@
 package fh.teamproject.utils.debug;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
-import com.badlogic.gdx.math.Intersector;
-import com.badlogic.gdx.math.Plane;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.math.collision.Ray;
-import com.badlogic.gdx.physics.bullet.collision.ClosestRayResultCallback;
-import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld;
-import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
 
 import fh.teamproject.game.entities.Player;
 import fh.teamproject.screens.GameScreen;
@@ -36,6 +29,9 @@ public class DebugInputController extends InputAdapter {
 			return true;
 		case Keys.NUM_3:
 			GameScreen.camManager.setMode(Mode.SMOOTH);
+			return true;
+		case Keys.NUM_4:
+			GameScreen.camManager.setMode(Mode.COUNTDOWN);
 			return true;
 		case Keys.P:
 			gameScreen.debugDrawer.toggleDebug();

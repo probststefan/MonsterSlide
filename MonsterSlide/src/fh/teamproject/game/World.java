@@ -60,7 +60,6 @@ public class World implements IWorld {
 		btDiscreteDynamicsWorld dynamicsWorld = physixManager.getWorld();
 		// Rutsche, Spieler und Coins erzeugen.
 		coins = new Coins(this);
-		coins.addCoin(new Vector3());
 		score = new Score();
 		slide = new Slide(this);
 		slide.init();
