@@ -68,6 +68,7 @@ public class Slide implements ISlide {
 
 	Vector3 lastMeasurement = new Vector3();
 	int currentSpan = 1;
+	float pathOnCurrentSpan = 0f;
 	@Override
 	public void update() {
 		if (addNextPart) {
@@ -84,18 +85,24 @@ public class Slide implements ISlide {
 		int span = spline.nearest(world.getPlayer().getPosition(), 1, spline.spanCount);
 		float t = spline.approximate(world.getPlayer().getPosition(), span);
 		Vector3 closest = new Vector3();
-		spline.valueAt(closest, span - 1, t);
-		float dist = closest.cpy().sub(lastMeasurement).len();
-		world.getScore().incrementSlidedDistance(dist);
+
+		float dist = 0f;
 		if (span > currentSpan) {
-			currentSpan = span;
 			addSlidePart();
 			removeCompletedParts();
 		}
+		currentSpan = span;
+		System.out.println(spline.getSpan(world.getPlayer().getPosition(), 1,
+				spline.spanCount));
+		if (t > pathOnCurrentSpan) {
+			spline.valueAt(closest, span - 1, t);
+			dist = closest.cpy().sub(lastMeasurement).len();
+			world.getScore().incrementSlidedDistance(dist);
+			pathOnCurrentSpan = t;
+			lastMeasurement.set(closest);
+		}
 		Gdx.app.debug("Slide", "Span: " + span + " - T-Faktor: " + t + "\n Punkt:"
-				+ closest
-				+ " - Distance: " + dist);
-		lastMeasurement.set(closest);
+				+ closest + " - Distance: " + dist);
 	}
 
 	@Override
