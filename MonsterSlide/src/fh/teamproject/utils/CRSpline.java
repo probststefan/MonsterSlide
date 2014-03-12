@@ -54,4 +54,21 @@ public class CRSpline extends CatmullRomSpline<Vector3> {
 		return u;
 	}
 
+	public int getSpan(Vector3 in, int start, int count) {
+
+		int n = nearest(in, start, count);
+
+		final Vector3 nearest = controlPoints[n];
+		final Vector3 previous = controlPoints[n > 0 ? n - 1 : spanCount - 1];
+		final Vector3 next = controlPoints[(n + 1)];
+		final float dstPrev2 = in.dst2(previous);
+		final float dstNext2 = in.dst2(next);
+		Vector3 P1, P2, P3;
+		if (dstNext2 < dstPrev2) {
+			return n;
+		} else {
+			return n - 1;
+		}
+	}
+
 }
