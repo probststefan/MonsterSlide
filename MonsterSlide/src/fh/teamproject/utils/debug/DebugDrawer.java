@@ -45,7 +45,6 @@ public class DebugDrawer {
 		setDebugMode(btIDebugDraw.DebugDrawModes.DBG_DrawWireframe,
 				GameScreen.camManager.getActiveCamera().combined);
 		toggleDebug();
-		Gdx.app.setLogLevel(Gdx.app.LOG_DEBUG);
 
 	}
 

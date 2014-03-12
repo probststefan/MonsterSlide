@@ -201,7 +201,7 @@ public class Player extends CollisionEntity implements IPlayer {
 				| btCollisionObject.CollisionFlags.CF_CUSTOM_MATERIAL_CALLBACK);
 		Vector3 inertia = new Vector3();
 		body.getCollisionShape().calculateLocalInertia(50f, inertia);
-		body.setMassProps(50f, inertia);
+		body.setMassProps(mass, inertia);
 
 		PlayerTickCallback playerCallback = new PlayerTickCallback(world, this);
 		playerCallback.attach(world.getPhysixManager().getWorld(), false);

@@ -1,6 +1,7 @@
 package fh.teamproject;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.physics.bullet.Bullet;
@@ -18,6 +19,7 @@ public class MonsterSlide extends Game {
 		assets = new AssetManager();
 		Bullet.init();
 		MonsterSlide.skinManager = new SkinManager();
+		Gdx.app.setLogLevel(Gdx.app.LOG_DEBUG);
 		setScreen(new GameScreen(this));
 	}
 
