@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.model.Node;
 import com.badlogic.gdx.math.Matrix4;
-import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.ClosestRayResultCallback;
 import com.badlogic.gdx.physics.bullet.collision.btCapsuleShape;
@@ -66,7 +65,6 @@ public class Player extends CollisionEntity implements IPlayer {
 	public Vector3 projectedPointOnSlide = new Vector3();;
 
 	public InputHandling inputHandling;
-	private ClosestRayResultCallback rayCallback;
 
 	public Player(World world) {
 		super(world);
@@ -76,8 +74,6 @@ public class Player extends CollisionEntity implements IPlayer {
 		this.MAX_SPEED = GameScreen.settings.PLAYER_MAX_SPEED;
 		initGraphix();
 		initPhysix();
-		rayCallback = new ClosestRayResultCallback(new Vector3(), new Vector3());
-
 	}
 
 	@Override
@@ -90,19 +86,17 @@ public class Player extends CollisionEntity implements IPlayer {
 
 	// FIXME: Bei steigender Geschwindigkeit ist der raycast falsch
 	public Vector3 castRayIntoWorld(Vector3 target) {
-		rayCallback.setCollisionObject(null);
-		rayCallback.setClosestHitFraction(1f);
-		rayCallback.getRayFromWorld().setValue(getPosition().x, getPosition().y,
-				getPosition().z);
-		rayCallback.getRayToWorld().setValue(target.x, target.y, target.z);
-		world.getPhysixManager().getWorld()
-				.rayTest(getPosition(), direction, rayCallback);
-		if (rayCallback.hasHit()) {
-			btVector3 hitPoint = rayCallback.getHitPointWorld();
-			Vector3 position = new Vector3(hitPoint.getX(), hitPoint.getY(),
-					hitPoint.getZ());
-			hitPoint.dispose();
-			return position;
+		ClosestRayResultCallback cb = new ClosestRayResultCallback(getPosition(), target);
+
+		world.getPhysixManager().getWorld().rayTest(getPosition(), target, cb);
+		if (cb.hasHit()) {
+			if (cb.getCollisionObject() != null) {
+				btVector3 hitPoint = cb.getHitNormalWorld();
+				Vector3 position = new Vector3(hitPoint.getX(), hitPoint.getY(),
+						hitPoint.getZ());
+				hitPoint.dispose();
+				return position;
+			}
 		}
 		return null;
 	}

@@ -12,4 +12,5 @@ public class Settings {
 	public float PLAYER_MAX_SPEED;
 	public boolean DEBUG_HILL;
 	public float DEBUG_HILL_SLOPE;
+	public float GAME_OVER_COUNTDOWN;
 }

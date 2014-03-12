@@ -1,12 +1,9 @@
 package fh.teamproject.physics.callbacks.motion;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.ClosestRayResultCallback;
-import com.badlogic.gdx.physics.bullet.collision.btCollisionObject;
 import com.badlogic.gdx.physics.bullet.dynamics.InternalTickCallback;
 import com.badlogic.gdx.physics.bullet.dynamics.btDynamicsWorld;
-import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
 
 import fh.teamproject.game.entities.Player;
 import fh.teamproject.interfaces.IWorld;

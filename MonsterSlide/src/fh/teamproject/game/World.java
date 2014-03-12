@@ -1,13 +1,11 @@
 package fh.teamproject.game;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
-import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.ClosestRayResultCallback;
@@ -33,7 +31,7 @@ public class World implements IWorld {
 	private Player player;
 	private Coins coins;
 	private Score score;
-	ModelInstance skydome, skydomeDown;
+	ModelInstance skydome;
 
 	// Rendering
 	public ModelBatch batch;
@@ -42,6 +40,8 @@ public class World implements IWorld {
 	private ClosestRayResultCallback resultCallback;
 	final float checkPlayerOnSlideRayDepth = 100.0f;
 	Array<ICollisionEntity> entities = new Array<ICollisionEntity>(32);
+
+	private float gameOverCountdown = 0.0f;
 
 	private GameScreen gameScreen;
 
@@ -65,15 +65,12 @@ public class World implements IWorld {
 		slide = new Slide(this);
 		slide.init();
 
-		resultCallback = new ClosestRayResultCallback(getPlayer().getPosition(),
-				new Vector3(getPlayer().getPosition().x, getPlayer().getPosition().y
-						- this.checkPlayerOnSlideRayDepth, getPlayer().getPosition().z));
+		player.castRayIntoWorld(new Vector3(player.getPosition().x,
+				player.getPosition().y - 10.0f, player.getPosition().z));
+
 		// Skydome laden.
 		skydome = new ModelInstance(gameScreen.getAssets().get("data/g3d/skydome.g3db",
 				Model.class));
-		skydomeDown = new ModelInstance(gameScreen.getAssets().get(
-				"data/g3d/skydome.g3db", Model.class));
-		skydomeDown.transform.rotate(1f, 0f, 0f, 180);
 	}
 
 	public void update() {
@@ -82,28 +79,26 @@ public class World implements IWorld {
 		}
 
 		if (!checkIsPlayerOnSlide() && !gameScreen.isPaused) {
-			// gameScreen.getGame().setScreen(new
-			// MenuScreen(gameScreen.getGame()));
-		} else {
-
+			this.gameOverCountdown += Gdx.graphics.getDeltaTime();
 		}
 
-		player.update();
-		slide.update();
-		coins.update();
-		// Der Skydome soll den Player verfolgen.
-		Vector3 playerPos = player.getPosition();
-		skydome.transform.setToTranslation(playerPos);
-		skydomeDown.transform.setToTranslation(playerPos);
-		skydomeDown.transform.rotate(1f, 0f, 0f, 180);
-
+		if (!checkIsPlayerOnSlide() && !gameScreen.isPaused
+				&& this.gameOverCountdown >= GameScreen.settings.GAME_OVER_COUNTDOWN) {
+			gameScreen.getGame().setScreen(new MenuScreen(gameScreen.getGame()));
+		} else {
+			player.update();
+			slide.update();
+			coins.update();
+			// Der Skydome soll den Player verfolgen.
+			skydome.transform.setToTranslation(player.getPosition());
+		}
 	}
 
 	@Override
 	public void render() {
 		batch.begin(GameScreen.camManager.getActiveCamera());
-		batch.render(skydome, lights);
-		batch.render(skydomeDown, lights);
+		if (skydome != null)
+			batch.render(skydome, lights);
 
 		batch.render(player.getModelInstance(), lights);
 		batch.render(slide.getModelInstance(), lights);
@@ -166,21 +161,12 @@ public class World implements IWorld {
 	 * @return boolean
 	 */
 	public boolean checkIsPlayerOnSlide() {
-		btDiscreteDynamicsWorld dynamicsWorld = physixManager.getWorld();
-
-		resultCallback.setCollisionObject(null);
-		resultCallback.setClosestHitFraction(1f);
-		resultCallback.getRayFromWorld().setValue(player.getPosition().x,
-				player.getPosition().y, player.getPosition().z);
-		resultCallback.getRayToWorld().setValue(player.getPosition().x,
-				player.getPosition().y - checkPlayerOnSlideRayDepth,
-				player.getPosition().z);
-
-		dynamicsWorld.rayTest(player.getPosition(), new Vector3(player.getPosition().x,
-				player.getPosition().y - checkPlayerOnSlideRayDepth,
-				player.getPosition().z), resultCallback);
-
-		return resultCallback.hasHit();
+		if (player.castRayIntoWorld(new Vector3(player.getPosition().x, player
+				.getPosition().y - 10.0f, player.getPosition().z)) == null) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 
 	public PhysixManager getPhysixManager() {
