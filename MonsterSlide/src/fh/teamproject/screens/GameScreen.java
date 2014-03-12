@@ -45,7 +45,7 @@ public class GameScreen implements Screen {
 		world = new World(this);
 
 		GameScreen.camManager = new CameraManager(this);
-		GameScreen.camManager.setMode(Mode.FREE);
+		GameScreen.camManager.setMode(Mode.SMOOTH);
 
 		// Debug
 		debugDrawer = new DebugDrawer(this);

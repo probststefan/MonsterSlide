@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
-import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
@@ -22,9 +21,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 
 import fh.teamproject.game.entities.Player;
-import fh.teamproject.game.entities.SlidePart;
 import fh.teamproject.interfaces.ICameraController;
-import fh.teamproject.interfaces.ISlidePart;
 import fh.teamproject.screens.GameScreen;
 
 public class DebugDrawer {
@@ -44,8 +41,6 @@ public class DebugDrawer {
 
 		setDebugMode(btIDebugDraw.DebugDrawModes.DBG_DrawWireframe,
 				GameScreen.camManager.getActiveCamera().combined);
-		toggleDebug();
-
 	}
 
 	public void render() {

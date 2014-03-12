@@ -18,4 +18,6 @@ public interface IPlayer extends ICollisionEntity {
 
 	public Vector3 getDirection();
 
+	public void resetAt(Vector3 position);
+
 }

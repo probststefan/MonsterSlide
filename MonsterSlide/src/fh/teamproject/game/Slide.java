@@ -3,9 +3,6 @@ package fh.teamproject.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import com.badlogic.gdx.graphics.g3d.model.Node;
-import com.badlogic.gdx.math.Interpolation;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld;
 import com.badlogic.gdx.utils.Array;
@@ -15,6 +12,7 @@ import fh.teamproject.game.entities.DebugSlidePart;
 import fh.teamproject.game.entities.SlideBorder;
 import fh.teamproject.interfaces.ISlide;
 import fh.teamproject.interfaces.ISlidePart;
+import fh.teamproject.screens.GameScreen;
 import fh.teamproject.utils.CRSpline;
 import fh.teamproject.utils.SlideBuilder;
 import fh.teamproject.utils.SlideGenerator;
@@ -71,8 +69,22 @@ public class Slide implements ISlide {
 			part.initPhysix();
 			slideParts.add(part);
 		}
-	}
 
+		// Spieler auf Startposition setzen.
+		Vector3 startPoint = this.spline.controlPoints[1];
+		Vector3 derivation = new Vector3();
+		derivation = spline.derivativeAt(derivation, 1, 0.0f);
+
+		Vector3 upVector = new Vector3(0.0f, -1.0f, 0.0f);
+		Vector3 binormal = derivation.cpy().crs(upVector).nor();
+		binormal.scl(0.5f * GameScreen.settings.SLIDE_WIDTH);
+
+		// FIXME: Magic Number - Die Weite vom Startpunkt ist hard coded!
+		startPoint.add(binormal).add(derivation.nor().scl(10.0f));
+		startPoint.y += 5.0f;
+
+		world.getPlayer().resetAt(startPoint);
+	}
 
 	@Override
 	public void update() {
@@ -143,8 +155,6 @@ public class Slide implements ISlide {
 		slideParts.add(nextPart);
 		coins.generateCoinsforSpan(spline.spanCount - 1);
 	}
-
-
 
 	public SlideGenerator getSlideGenerator() {
 		return slideGenerator;
