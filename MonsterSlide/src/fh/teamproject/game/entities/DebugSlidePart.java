@@ -33,6 +33,7 @@ public class DebugSlidePart extends CollisionEntity implements ISlidePart {
 	}
 
 	Slide slide;
+
 	@Override
 	public void initPhysix() {
 		Vector3 rotate = Vector3.Y.rotate(-15f, 0f, 0f, 1f);
@@ -44,28 +45,14 @@ public class DebugSlidePart extends CollisionEntity implements ISlidePart {
 	}
 
 	@Override
-	public ISlidePart setSpline(CatmullRomSpline<Vector3> spline) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ISlidePart setSlide(Slide slide) {
-		this.slide = slide;
-		return this;
-	}
-
-	@Override
 	public void initGraphix() {
 		ModelBuilder builder = new ModelBuilder();
 		Material material = new Material();
 		material.set(TextureAttribute.createDiffuse(new Texture(Gdx.files
 				.internal("data/floor.jpg"))));
-		Model m = builder
-.createRect(-100f, 0f, -100f, -100f, 0f, 100f, 100f, 0f, 100f,
-				100f, 0f, -100f,
-						0f,
-				1f, 0f, material, Usage.Position | Usage.TextureCoordinates);
+		Model m = builder.createRect(-100f, 0f, -100f, -100f, 0f, 100f, 100f, 0f, 100f,
+				100f, 0f, -100f, 0f, 1f, 0f, material, Usage.Position
+						| Usage.TextureCoordinates);
 		ModelInstance ins = new ModelInstance(m);
 		ins.transform.translate(0f, 2f, 0f);
 		// ins.transform.scl(10f, 0f, 10f);

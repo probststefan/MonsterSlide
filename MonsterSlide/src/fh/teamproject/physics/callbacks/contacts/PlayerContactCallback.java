@@ -24,8 +24,6 @@ public class PlayerContactCallback implements IContactCallback {
 		}
 
 		if (match0) {
-			// Setzen des aktuellen berutschten SlideParts.
-			this.world.getSlide().setActualSlidePartId(userValue1);
 			// Player sitzt auf der Slide.
 			this.world.getPlayer().setGrounded(true);
 		}

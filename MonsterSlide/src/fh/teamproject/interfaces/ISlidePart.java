@@ -8,7 +8,5 @@ import fh.teamproject.game.Slide;
 
 public interface ISlidePart extends ICollisionEntity {
 
-	public ISlidePart setSpline(CatmullRomSpline<Vector3> spline);
 
-	public abstract ISlidePart setSlide(Slide slide);
 }

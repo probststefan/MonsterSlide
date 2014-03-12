@@ -38,12 +38,6 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 	}
 
 	@Override
-	public ISlidePart setSlide(Slide slide) {
-		this.slide = slide;
-		return this;
-	}
-
-	@Override
 	public void reset() {
 
 	}
@@ -66,12 +60,6 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 	public void releaseAll() {
 		indexedMesh.release();
 		super.releaseAll();
-	}
-
-	@Override
-	public ISlidePart setSpline(CatmullRomSpline<Vector3> spline) {
-		this.spline = spline;
-		return this;
 	}
 
 	@Override

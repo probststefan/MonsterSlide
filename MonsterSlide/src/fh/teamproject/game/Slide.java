@@ -32,7 +32,6 @@ public class Slide implements ISlide {
 	private SlideGenerator slideGenerator = new SlideGenerator();
 	private SlideBuilder slideBuilder = new SlideBuilder();
 	private Coins coins;
-	private int actualSlidePartId = 0;
 
 	Array<ISlidePart> slideParts = new Array<ISlidePart>();
 	btDiscreteDynamicsWorld dynamicsWorld;
@@ -61,12 +60,10 @@ public class Slide implements ISlide {
 			addSlidePart();
 		} else {
 			DebugSlidePart part = new DebugSlidePart(world);
-			part.setSlide(this);
 			part.initGraphix();
 			part.initPhysix();
 			slideParts.add(part);
 		}
-		actualSlidePartId = slideParts.first().getID();
 	}
 
 	Vector3 lastMeasurement = new Vector3();
@@ -90,7 +87,11 @@ public class Slide implements ISlide {
 		spline.valueAt(closest, span - 1, t);
 		float dist = closest.cpy().sub(lastMeasurement).len();
 		world.getScore().incrementSlidedDistance(dist);
-
+		if (span > currentSpan) {
+			currentSpan = span;
+			addSlidePart();
+			removeCompletedParts();
+		}
 		Gdx.app.debug("Slide", "Span: " + span + " - T-Faktor: " + t + "\n Punkt:"
 				+ closest
 				+ " - Distance: " + dist);
@@ -127,37 +128,15 @@ public class Slide implements ISlide {
 		slideGenerator.addSpan(controlPoints);
 		controlPoints.shrink();
 		spline.set(controlPoints.items, false);
-		ISlidePart nextPart = pool.obtain().setSlide(this);
+		ISlidePart nextPart = pool.obtain();
 		slideParts.add(nextPart);
 		// coins.addCoin(spline.controlPoints[spline.controlPoints.length - 1]);
 		coins.generateCoinsforSpan(spline.spanCount - 1);
 	}
 
+
 	private Array<ISlidePart> disposables = new Array<ISlidePart>(4);
 	private boolean addNextPart = false;
-
-	/**
-	 * Setzt die ID des aktuell berutschten SlideParts.
-	 */
-	public synchronized void setActualSlidePartId(int id) {
-		// Gdx.app.debug("Slide", "Actual Slide Part ID: " + id);
-		if (actualSlidePartId != id && actualSlidePartId < id) {
-			for (ISlidePart part : slideParts) {
-				if (part.getID() == actualSlidePartId) {
-					removeSlidePart(part);
-				}
-			}
-			addNextPart = true;
-			this.actualSlidePartId = id;
-		}
-	}
-
-	/**
-	 * Liefert die ID der SlidePart die zur Zeit berutscht wird.
-	 */
-	public int getActualSlidePartId() {
-		return this.actualSlidePartId;
-	}
 
 	public SlideGenerator getSlideGenerator() {
 		return slideGenerator;
@@ -166,5 +145,14 @@ public class Slide implements ISlide {
 	public SlideBuilder getSlideBuilder() {
 		return slideBuilder;
 	}
+
+	@Override
+	public void removeCompletedParts() {
+		for (int i = 0; i < slideParts.size - 3; i++) {
+			disposables.add(slideParts.get(i));
+		}
+	}
+
+
 
 }
