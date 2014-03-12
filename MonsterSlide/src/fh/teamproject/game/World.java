@@ -66,7 +66,8 @@ public class World implements IWorld {
 		slide.init();
 
 		player.castRayIntoWorld(new Vector3(player.getPosition().x,
-				player.getPosition().y - 10.0f, player.getPosition().z));
+				player.getPosition().y - this.checkPlayerOnSlideRayDepth, player
+						.getPosition().z));
 
 		// Skydome laden.
 		skydome = new ModelInstance(gameScreen.getAssets().get("data/g3d/skydome.g3db",
@@ -162,7 +163,8 @@ public class World implements IWorld {
 	 */
 	public boolean checkIsPlayerOnSlide() {
 		if (player.castRayIntoWorld(new Vector3(player.getPosition().x, player
-				.getPosition().y - 10.0f, player.getPosition().z)) == null) {
+				.getPosition().y - this.checkPlayerOnSlideRayDepth,
+				player.getPosition().z)) == null) {
 			return false;
 		} else {
 			return true;

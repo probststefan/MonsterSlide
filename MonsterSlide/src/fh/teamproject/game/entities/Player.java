@@ -13,6 +13,7 @@ import com.badlogic.gdx.physics.bullet.collision.ClosestRayResultCallback;
 import com.badlogic.gdx.physics.bullet.collision.btCapsuleShape;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionObject;
 import com.badlogic.gdx.physics.bullet.collision.btCompoundShape;
+import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
 
 import fh.teamproject.controller.player.pc.InputHandling;
@@ -90,7 +91,7 @@ public class Player extends CollisionEntity implements IPlayer {
 
 		world.getPhysixManager().getWorld().rayTest(getPosition(), target, cb);
 		if (cb.hasHit()) {
-			if (cb.getCollisionObject() != null) {
+			if ((btRigidBody) cb.getCollisionObject() != null) {
 				btVector3 hitPoint = cb.getHitNormalWorld();
 				Vector3 position = new Vector3(hitPoint.getX(), hitPoint.getY(),
 						hitPoint.getZ());
