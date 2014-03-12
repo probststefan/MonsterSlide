@@ -26,7 +26,7 @@ import fh.teamproject.utils.SlideGenerator;
  */
 public class Slide implements ISlide {
 	public static final int SLIDE_FLAG = 4;
-
+	public final int MAX_ACTIVE_SLIDEPARTS = 5;
 	private SlideGenerator slideGenerator = new SlideGenerator();
 	private SlideBuilder slideBuilder = new SlideBuilder();
 	private Coins coins;
@@ -41,7 +41,6 @@ public class Slide implements ISlide {
 	World world;
 
 	private Array<ISlidePart> disposables = new Array<ISlidePart>(4);
-	private boolean addNextPart = false;
 	/* Benötigt zur Berechnung der gerutschten Strecke */
 	Vector3 lastMeasurement = new Vector3();
 	private int currentSpan = 1;
@@ -63,6 +62,7 @@ public class Slide implements ISlide {
 		if (!world.getGameScreen().settings.DEBUG_HILL) {
 			addSlidePart();
 			addSlidePart();
+			addSlidePart();
 		} else {
 			DebugSlidePart part = new DebugSlidePart(world);
 			part.initGraphix();
@@ -71,7 +71,7 @@ public class Slide implements ISlide {
 		}
 
 		// Spieler auf Startposition setzen.
-		Vector3 startPoint = this.spline.controlPoints[1];
+		Vector3 startPoint = this.spline.controlPoints[1].cpy();
 		Vector3 derivation = new Vector3();
 		derivation = spline.derivativeAt(derivation, 1, 0.0f);
 
@@ -88,16 +88,6 @@ public class Slide implements ISlide {
 
 	@Override
 	public void update() {
-		if (addNextPart) {
-			addSlidePart();
-			addNextPart = false;
-		}
-		for (ISlidePart p : disposables) {
-			p.releaseAll();
-			p.dispose();
-			slideParts.removeValue(p, false);
-		}
-		disposables.clear();
 
 		/* Berechnung der gerutschten Strecke */
 		int span = spline.getSpan(world.getPlayer().getPosition(), 1, spline.spanCount);
@@ -110,7 +100,7 @@ public class Slide implements ISlide {
 			pathOnCurrentSpan = 0f;
 		}
 		currentSpan = span;
-		if (t > pathOnCurrentSpan) {
+		if (t >= pathOnCurrentSpan) {
 			spline.valueAt(closest, span - 1, t);
 			dist = closest.cpy().sub(lastMeasurement).len();
 			world.getScore().incrementSlidedDistance(dist);
@@ -166,8 +156,12 @@ public class Slide implements ISlide {
 
 	@Override
 	public void removeCompletedParts() {
-		for (int i = 0; i < slideParts.size - 3; i++) {
-			disposables.add(slideParts.get(i));
+		int size = slideParts.size;
+		if (size > MAX_ACTIVE_SLIDEPARTS) {
+			ISlidePart p = slideParts.first();
+			p.releaseAll();
+			p.dispose();
+			slideParts.removeValue(p, false);
 		}
 	}
 
