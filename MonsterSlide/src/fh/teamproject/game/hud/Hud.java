@@ -96,7 +96,7 @@ public class Hud {
 	public void update() {
 		stage.act();
 		setCoinCount(world.getScore().getCoinsScore());
-		setPoints(world.getSlide().getSlidedDistance());
+		setPoints(world.getScore().getSlidedDistance());
 	}
 
 	public void render() {

@@ -38,8 +38,6 @@ public class Slide implements ISlide {
 	btDiscreteDynamicsWorld dynamicsWorld;
 	SlidePartPool pool;
 	Array<SlideBorder> borders = new Array<SlideBorder>();
-	private float slidedDistance = 0.0f;
-	private float displayedPoints = 0.0f;
 	CatmullRomSpline<Vector3> spline = new CatmullRomSpline<Vector3>();
 	Model slideModel;
 	ModelInstance slideModelInstance;

@@ -8,18 +8,19 @@ package fh.teamproject.game;
  * 
  */
 public class Score {
-	private int coins, distance;
+	private int coins;
+	private float distance;
 
 	public Score() {
 		this.coins = 0;
-		this.distance = 0;
+		this.distance = 0f;
 	}
 
 	public void incrementCoinScore() {
 		this.coins++;
 	}
 
-	public void incrementSlidedDistance(int distance) {
+	public void incrementSlidedDistance(float distance) {
 		this.distance += distance;
 	}
 
@@ -27,7 +28,7 @@ public class Score {
 		return this.coins;
 	}
 
-	public int getSlidedDistance() {
+	public float getSlidedDistance() {
 		return this.distance;
 	}
 }
