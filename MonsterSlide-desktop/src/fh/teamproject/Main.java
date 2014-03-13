@@ -7,7 +7,6 @@ public class Main {
 	public static void main(String[] args) {
 		LwjglApplicationConfiguration configuration = new LwjglApplicationConfiguration();
 		configuration.title = "MonsterSlide";
-		configuration.useGL20 = true;
 		configuration.width = 1280;
 		configuration.height = 720;
 
