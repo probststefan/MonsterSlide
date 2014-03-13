@@ -32,6 +32,5 @@ public class CountdownCameraController extends CameraController {
 		this.camera.rotateAround(target.getPosition(), Vector3.Y,
 				angle * Gdx.graphics.getDeltaTime());
 		this.camera.update(true);
-		System.out.println(camera.position);
 	}
 }

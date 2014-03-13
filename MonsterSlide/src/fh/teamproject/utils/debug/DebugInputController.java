@@ -54,7 +54,7 @@ public class DebugInputController extends InputAdapter {
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		if (button == Buttons.LEFT) {
+		if (button == Buttons.RIGHT) {
 			PerspectiveCamera camera = (PerspectiveCamera) GameScreen.camManager
 					.getActiveCamera();
 			Vector3 direction = new Vector3(screenX, screenY, 0f);

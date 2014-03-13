@@ -4,13 +4,14 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.input.GestureDetector.GestureAdapter;
 
 import fh.teamproject.game.entities.Player;
+import fh.teamproject.interfaces.IPlayer;
 
 public class SwipeController extends GestureAdapter {
-	Player player;
+	IPlayer player;
 	private final float PIXEL_PER_IMPULSE = 0;
 
-	public SwipeController(Player p) {
-		this.player = p;
+	public SwipeController(IPlayer iPlayer) {
+		this.player = iPlayer;
 	}
 
 	@Override
@@ -45,5 +46,13 @@ public class SwipeController extends GestureAdapter {
 	public boolean panStop(float x, float y, int pointer, int button) {
 		return false;
 
-	};
+	}
+
+	@Override
+	public boolean longPress(float x, float y) {
+		// TODO Auto-generated method stub
+		Gdx.input.setOnscreenKeyboardVisible(true);
+
+		return super.longPress(x, y);
+	}
 }
