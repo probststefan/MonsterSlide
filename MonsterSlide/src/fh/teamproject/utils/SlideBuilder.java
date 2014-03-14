@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.g3d.model.MeshPart;
 import com.badlogic.gdx.graphics.g3d.model.Node;
 import com.badlogic.gdx.graphics.g3d.model.NodePart;
 import com.badlogic.gdx.graphics.g3d.utils.MeshBuilder;
+import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder.VertexInfo;
 import com.badlogic.gdx.math.CatmullRomSpline;
 import com.badlogic.gdx.math.Interpolation;
@@ -29,7 +30,9 @@ public class SlideBuilder {
 	private Array<VertexInfo> vertInfo = new Array<VertexInfo>();
 	private Array<Vector3> vertices = new Array<Vector3>();
 	private MeshBuilder builder = new MeshBuilder();
-	private Mesh mesh;
+	private Mesh slideMesh, borderMesh;
+	private float uMin = 0f, uMax = 1f, vMin = 0f, vMax = 1f;
+
 	Node node;
 	/* Das Splitting mit dem die Spline diskretisiert wird */
 	private float splitting;
@@ -43,7 +46,7 @@ public class SlideBuilder {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Node createSlidePart(CatmullRomSpline<Vector3> spline, int spanCount) {
+	public Node createSlidePart(CRSpline spline, int spanCount) {
 		begin();
 		/**
 		 * 1. Punkte auf letzem span interpolieren 2. Tangent, Normale und
@@ -54,7 +57,9 @@ public class SlideBuilder {
 			createInterpolatedVertices(spline, spline.spanCount - 1);
 		}
 		createVertexInfos();
-		createNode();
+		node = new Node();
+		// createSlideMesh();
+		createBorderMesh(spline);
 		return node;
 	}
 
@@ -65,17 +70,17 @@ public class SlideBuilder {
 		vertices.clear();
 		vertInfo.clear();
 		graphicsVertices.clear();
-		vertices.clear();
-		mesh = null;
+		borderVertices.clear();
+		slideMesh = null;
 		node = null;
 	}
 
 	private void createInterpolatedVertices(CatmullRomSpline<Vector3> spline, int span) {
 		/* Anzahl diskreter Intervalle */
-		splitting = 1f / 12f;
+		splitting = 1f / 2f;
 
 		Vector3 interpolatedVertex = new Vector3();
-		float epsilon = 0.01f;
+		float epsilon = 0.0f;
 		for (float i = 0; i <= (1 + epsilon); i += splitting) {
 			/* Damit werden die Endstücke kleiner */
 			float t = Interpolation.sine.apply(i);
@@ -104,7 +109,7 @@ public class SlideBuilder {
 		}
 	}
 
-	private void createNode() {
+	private void createSlideMesh() {
 		// NOTE: Attribute vom MeshBuilder erzeugen lassen (sonst komische
 		// Probleme)
 		builder.begin(MeshBuilder.createAttributes(Usage.Position | Usage.Normal
@@ -114,19 +119,78 @@ public class SlideBuilder {
 					vertInfo.get(i + 1));
 			builder.triangle(vertInfo.get(i + 1), vertInfo.get(i), vertInfo.get(i + 2));
 		}
-		mesh = builder.end();
+		slideMesh = builder.end();
 
 		Material material = new Material();
 		TextureAttribute texAttr = TextureAttribute.createDiffuse(new Texture(Gdx.files
 				.internal("data/slide/stone.png")));
 		material.set(texAttr);
 
-		MeshPart meshPart = new MeshPart("meshPart1", mesh, 0, mesh.getNumVertices(),
-				GL20.GL_TRIANGLES);
+		MeshPart meshPart = new MeshPart("meshPart1", slideMesh, 0,
+				slideMesh.getNumVertices(), GL20.GL_TRIANGLES);
 		NodePart nodePart = new NodePart(meshPart, material);
-		node = new Node();
 		node.parts.add(nodePart);
 
+	}
+
+	private Array<VertexInfo> borderVertices = new Array<MeshPartBuilder.VertexInfo>();
+
+	private void createBorderMesh(CRSpline spline) {
+		float borderHeight = 10f;
+		/* create Vertex Infos */
+		VertexInfo vertex;
+		Vector3 binormal;
+		Vector3 normal;
+		Vector3 originVector = new Vector3();
+		for (int i = 0; i < vertices.size - 1; ++i) {
+			binormal = binormals.get(i).nor();
+			normal = normals.get(i);
+
+			/* Get first point */
+			originVector.set(vertices.get(i));
+			vertex = new VertexInfo();
+			vertex.setPos(originVector).setNor(binormal).setUV(new Vector2(uMin, vMin));
+			borderVertices.add(vertex);
+			// der obere punkt wird entlang der normalen verschoben
+			vertex = new VertexInfo();
+			vertex.setPos(originVector.cpy().add(normal.cpy().scl(borderHeight)))
+					.setNor(binormal).setUV(new Vector2(uMax, vMin));
+			borderVertices.add(vertex);
+			// if ((i == 0) || (i == (vertices.size - 1))) {
+			// continue;
+			// }
+			/* Get the next point */
+			originVector.set(vertices.get(i + 1));
+			vertex = new VertexInfo();
+			vertex.setPos(originVector).setNor(binormal).setUV(new Vector2(uMin, vMax));
+			borderVertices.add(vertex);
+
+			vertex = new VertexInfo();
+			vertex.setPos(originVector.cpy().add(normal.cpy().scl(borderHeight)))
+					.setNor(binormal).setUV(new Vector2(uMax, vMax));
+			borderVertices.add(vertex);
+		}
+
+		borderVertices.shrink();
+		/* create Mesh */
+		builder.begin(MeshBuilder.createAttributes(Usage.Position | Usage.Normal
+				| Usage.TextureCoordinates));
+		for (int i = 0; i <= (borderVertices.size - 4); i += 4) {
+			builder.triangle(borderVertices.get(i + 1), borderVertices.get(i + 2),
+					borderVertices.get(i));
+			builder.triangle(borderVertices.get(i + 1), borderVertices.get(i + 3),
+					borderVertices.get(i + 2));
+		}
+
+		Material material = new Material();
+		TextureAttribute texAttr = TextureAttribute.createDiffuse(new Texture(Gdx.files
+				.internal("data/slide/snow.jpg")));
+		material.set(texAttr);
+		borderMesh = builder.end();
+		MeshPart meshPart = new MeshPart("borderMeshPart", borderMesh, 0,
+				borderMesh.getNumVertices(), GL20.GL_TRIANGLES);
+		NodePart nodePart = new NodePart(meshPart, material);
+		node.parts.add(nodePart);
 	}
 
 	private void createVertexInfos() {
@@ -150,8 +214,6 @@ public class SlideBuilder {
 		for (int i = 0; i <= (graphicsVertices.size - 4); i += 4) {
 
 			Vector3 normal = normals.get(i / 4);
-
-			float uMin = 0f, uMax = 1f, vMin = 0f, vMax = 1f;
 
 			VertexInfo info = new VertexInfo();
 			info.setPos(graphicsVertices.get(i)).setNor(normal)
