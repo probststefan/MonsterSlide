@@ -76,5 +76,21 @@ public class CRSpline extends CatmullRomSpline<Vector3> {
 		return approximate(v, nearest(v, 1, spanCount));
 	}
 
+	public Vector3 getNormal(float t) {
+		Vector3 tangent = new Vector3();
+		derivativeAt(tangent, t);
+		tangent.nor();
+		Vector3 binormal = tangent.cpy().crs(new Vector3(0f, -1f, 0f)).nor();
+		Vector3 normal = binormal.cpy().crs(tangent).nor();
+		return normal;
+	}
+
+	public Vector3 getBinormal(float t) {
+		Vector3 tangent = new Vector3();
+		derivativeAt(tangent, t);
+		tangent.nor();
+		Vector3 binormal = tangent.cpy().crs(new Vector3(0f, -1f, 0f)).nor();
+		return binormal;
+	}
 
 }
