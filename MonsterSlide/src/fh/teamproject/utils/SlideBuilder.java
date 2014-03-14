@@ -58,7 +58,7 @@ public class SlideBuilder {
 		}
 		createVertexInfos();
 		node = new Node();
-		// createSlideMesh();
+		createSlideMesh();
 		createBorderMesh(spline);
 		return node;
 	}
@@ -77,7 +77,7 @@ public class SlideBuilder {
 
 	private void createInterpolatedVertices(CatmullRomSpline<Vector3> spline, int span) {
 		/* Anzahl diskreter Intervalle */
-		splitting = 1f / 2f;
+		splitting = 1f / 12f;
 
 		Vector3 interpolatedVertex = new Vector3();
 		float epsilon = 0.0f;
