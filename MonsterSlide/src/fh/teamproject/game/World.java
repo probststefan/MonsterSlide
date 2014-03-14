@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.ClosestRayResultCallback;
-import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld;
 import com.badlogic.gdx.utils.Array;
 
 import fh.teamproject.game.entities.Coin;
@@ -23,6 +22,7 @@ import fh.teamproject.interfaces.IWorld;
 import fh.teamproject.physics.PhysixManager;
 import fh.teamproject.screens.GameScreen;
 import fh.teamproject.screens.MenuScreen;
+import fh.teamproject.screens.MenuScreen.SITES;
 
 public class World implements IWorld {
 
@@ -57,7 +57,6 @@ public class World implements IWorld {
 		physixManager = new PhysixManager(this);
 		player = new Player(this);
 
-		btDiscreteDynamicsWorld dynamicsWorld = physixManager.getWorld();
 		// Rutsche, Spieler und Coins erzeugen.
 		coins = new Coins(this);
 		score = new Score();
@@ -84,7 +83,9 @@ public class World implements IWorld {
 
 		if (!checkIsPlayerOnSlide() && !gameScreen.isPaused
 				&& this.gameOverCountdown >= GameScreen.settings.GAME_OVER_COUNTDOWN) {
-			gameScreen.getGame().setScreen(new MenuScreen(gameScreen.getGame()));
+			MenuScreen menuScreen = new MenuScreen(gameScreen.getGame());
+			menuScreen.setActualSite(SITES.SCORE);
+			gameScreen.getGame().setScreen(menuScreen);
 		} else {
 			player.update();
 			slide.update();
