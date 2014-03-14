@@ -76,6 +76,16 @@ public class CRSpline extends CatmullRomSpline<Vector3> {
 		return approximate(v, nearest(v, 1, spanCount));
 	}
 
+	public Vector3 getNormal(Vector3 point) {
+		float t = nearest(point);
+		return getNormal(t);
+	}
+
+	public Vector3 getBinormal(Vector3 point) {
+		float t = nearest(point);
+		return getBinormal(t);
+	}
+
 	public Vector3 getNormal(float t) {
 		Vector3 tangent = new Vector3();
 		derivativeAt(tangent, t);
