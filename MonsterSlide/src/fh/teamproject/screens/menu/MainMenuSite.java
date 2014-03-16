@@ -28,7 +28,7 @@ public class MainMenuSite extends AbstractMenuSite {
 		this.listener[3] = new ButtonListener("Exit", menu);
 		this.buttons = new TextButton[4];
 		this.buttons[0] = new TextButton("New Game", skin, "menuButton");
-		this.buttons[0].setName("Game");
+		this.buttons[0].setUserObject(SITES.LOADING);
 		this.buttons[1] = new TextButton("Credits", skin, "menuButton");
 		this.buttons[1].setUserObject(SITES.CREDITS);
 		this.buttons[2] = new TextButton("Demo", skin, "menuButton");
@@ -47,5 +47,11 @@ public class MainMenuSite extends AbstractMenuSite {
 	@Override
 	public void resize(float width, float height) {
 		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void render(float delta) {
+		// TODO Auto-generated method stub
+
 	}
 }

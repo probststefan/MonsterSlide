@@ -40,8 +40,6 @@ public class ScoreSite extends AbstractMenuSite {
 		buttonTable = new Table();
 		buttonTable.setSize(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
 		buttonTable.right().bottom();
-		// The Skin
-		skin = SkinManager.skin;
 
 		// Score + Buttons
 		Label scoreLabel = new Label("123098123", this.skin);
@@ -51,7 +49,7 @@ public class ScoreSite extends AbstractMenuSite {
 		// Listener + TextButtons
 		listener = new ButtonListener("MainMenu", menu);
 		playButton = new TextButton("Play again", skin, "menuButton");
-		playButton.setName("Game");
+		playButton.setUserObject(SITES.LOADING);
 		playButton.addListener(listener);
 
 		backButton = new TextButton("Back", skin, "menuButton");
@@ -69,6 +67,12 @@ public class ScoreSite extends AbstractMenuSite {
 
 	@Override
 	public void resize(float width, float height) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void render(float delta) {
 		// TODO Auto-generated method stub
 
 	}

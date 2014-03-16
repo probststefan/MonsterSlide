@@ -44,8 +44,8 @@ public class CreditsSite extends AbstractMenuSite {
 		names[3] = new TextButton("Stefan Probst", skin, "creditsText");
 		names[4] = new TextButton("Torsten Scholer", skin, "creditsText");
 		names[5] = new TextButton("Art", skin, "creditsHeadline");
-		names[6] = new TextButton("Artistin 1", skin, "creditsText");
-		names[7] = new TextButton("Artistin 2", skin, "creditsText");
+		names[6] = new TextButton("Artist 1", skin, "creditsText");
+		names[7] = new TextButton("Artist 2", skin, "creditsText");
 		// Adden Backwards from Created
 		for (int i = 0; i < names.length; i++) {
 			names[i].center();
@@ -61,6 +61,12 @@ public class CreditsSite extends AbstractMenuSite {
 
 	@Override
 	public void resize(float width, float height) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void render(float delta) {
 		// TODO Auto-generated method stub
 
 	}

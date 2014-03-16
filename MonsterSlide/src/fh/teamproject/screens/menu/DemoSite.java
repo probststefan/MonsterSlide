@@ -9,28 +9,34 @@ import fh.teamproject.utils.SkinManager;
 
 public class DemoSite extends AbstractMenuSite {
 
-    private TextButton start;
-    Skin skin = SkinManager.skin;
-    private ButtonListener listener;
-    
-    public DemoSite(MenuScreen menu) {
-        super();
-        //set the Table
-        this.setWidth(Gdx.graphics.getWidth());
-        this.setHeight(Gdx.graphics.getHeight());
-        this.center();
-        //Listener + TextButton
-        listener = new ButtonListener("Game",menu);
-        start = new TextButton("New Game", skin, "menuButton");
-        start.setWidth(Gdx.graphics.getWidth());
-        start.setHeight(Gdx.graphics.getHeight());
-        start.addListener(listener);
-        start.center();
-        //Adden of the Button
-        this.add(start).expandX().expandY();
-    }
+	private TextButton start;
+	Skin skin = SkinManager.skin;
+	private ButtonListener listener;
 
-    @Override
-    public void resize(float width, float height) {
-    }
+	public DemoSite(MenuScreen menu) {
+		super();
+		// set the Table
+		this.setWidth(Gdx.graphics.getWidth());
+		this.setHeight(Gdx.graphics.getHeight());
+		this.center();
+		// Listener + TextButton
+		listener = new ButtonListener("Game", menu);
+		start = new TextButton("New Game", skin, "menuButton");
+		start.setWidth(Gdx.graphics.getWidth());
+		start.setHeight(Gdx.graphics.getHeight());
+		start.addListener(listener);
+		start.center();
+		// Adden of the Button
+		this.add(start).expandX().expandY();
+	}
+
+	@Override
+	public void resize(float width, float height) {
+	}
+
+	@Override
+	public void render(float delta) {
+		// TODO Auto-generated method stub
+
+	}
 }
