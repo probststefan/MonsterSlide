@@ -10,9 +10,11 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.Model;
+import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.utils.Json;
 
 import fh.teamproject.MonsterSlide;
+import fh.teamproject.controller.player.android.SwipeController;
 import fh.teamproject.game.World;
 import fh.teamproject.game.hud.Hud;
 import fh.teamproject.utils.CameraManager;
@@ -29,7 +31,7 @@ public class GameScreen implements Screen {
 
 	// DEBUG
 	private final boolean showFps = true;
-	public boolean isPaused = true;
+	public boolean isPaused = false;
 	public DebugDrawer debugDrawer;
 	public World world;
 	private SpriteBatch spriteBatch;
@@ -63,10 +65,11 @@ public class GameScreen implements Screen {
 		debugInputMul.addProcessor((InputProcessor) GameScreen.camManager
 				.getController(Mode.FREE));
 
-		// gameInputMul.addProcessor(this.player.inputHandling);
+		gameInputMul.addProcessor(new GestureDetector(new SwipeController(world
+				.getPlayer())));
 		gameInputMul.addProcessor(hud.stage);
-		allInputs.addProcessor(gameInputMul);
 		allInputs.addProcessor(debugInputMul);
+		allInputs.addProcessor(gameInputMul);
 		Gdx.input.setInputProcessor(allInputs);
 
 		if (showFps) {
