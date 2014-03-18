@@ -10,7 +10,7 @@ import com.badlogic.gdx.utils.ObjectMap;
 
 import fh.teamproject.screens.menu.AbstractMenuSite;
 import fh.teamproject.screens.menu.CreditsSite;
-import fh.teamproject.screens.menu.DemoSite;
+import fh.teamproject.screens.menu.HighscoresSite;
 import fh.teamproject.screens.menu.LoadingSite;
 import fh.teamproject.screens.menu.MainMenuSite;
 import fh.teamproject.screens.menu.ScoreSite;
@@ -26,7 +26,7 @@ public class MenuScreen implements Screen {
 	private Table invisible;
 
 	public enum SITES {
-		MAIN_MENU, SCORE, LOADING, CREDITS, DEMO
+		MAIN_MENU, SCORE, LOADING, CREDITS, HIGHSCORES
 	}
 
 	ObjectMap<SITES, AbstractMenuSite> sites = new ObjectMap<MenuScreen.SITES, AbstractMenuSite>();
@@ -113,6 +113,6 @@ public class MenuScreen implements Screen {
 		sites.put(SITES.SCORE, new ScoreSite(game, this));
 		sites.put(SITES.LOADING, new LoadingSite(game));
 		sites.put(SITES.CREDITS, new CreditsSite(this));
-		sites.put(SITES.DEMO, new DemoSite(this));
+		sites.put(SITES.HIGHSCORES, new HighscoresSite(this));
 	}
 }

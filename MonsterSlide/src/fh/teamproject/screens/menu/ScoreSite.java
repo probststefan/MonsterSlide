@@ -6,7 +6,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.sql.DatabaseCursor;
 
+import fh.teamproject.MonsterSlide;
 import fh.teamproject.screens.MenuScreen;
 import fh.teamproject.screens.MenuScreen.SITES;
 import fh.teamproject.utils.SkinManager;
@@ -42,7 +44,12 @@ public class ScoreSite extends AbstractMenuSite {
 		buttonTable.right().bottom();
 
 		// Score + Buttons
-		Label scoreLabel = new Label("123098123", this.skin);
+		Label yourScoreLabel = new Label("Your Score", this.skin);
+		scoreTable.add(yourScoreLabel);
+		scoreTable.row();
+
+		DatabaseCursor cursor = MonsterSlide.scoreTable.getLatestScore();
+		Label scoreLabel = new Label("" + cursor.getString(1), this.skin, "largeLabel");
 		scoreTable.add(scoreLabel);
 		scoreTable.row();
 

@@ -24,15 +24,15 @@ public class MainMenuSite extends AbstractMenuSite {
 		this.listener = new ButtonListener[4];
 		this.listener[0] = new ButtonListener("Game", menu);
 		this.listener[1] = new ButtonListener("Credits", menu);
-		this.listener[2] = new ButtonListener("Demo", menu);
+		this.listener[2] = new ButtonListener("Highscores", menu);
 		this.listener[3] = new ButtonListener("Exit", menu);
 		this.buttons = new TextButton[4];
 		this.buttons[0] = new TextButton("New Game", skin, "menuButton");
 		this.buttons[0].setUserObject(SITES.LOADING);
 		this.buttons[1] = new TextButton("Credits", skin, "menuButton");
 		this.buttons[1].setUserObject(SITES.CREDITS);
-		this.buttons[2] = new TextButton("Demo", skin, "menuButton");
-		this.buttons[2].setUserObject(SITES.DEMO);
+		this.buttons[2] = new TextButton("Highscores", skin, "menuButton");
+		this.buttons[2].setUserObject(SITES.HIGHSCORES);
 		this.buttons[3] = new TextButton("Exit", skin, "menuButton");
 		this.buttons[3].setName("Exit");
 		// Adden Backwards from Created

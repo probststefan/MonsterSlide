@@ -9,7 +9,6 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.utils.Json;
 
@@ -41,7 +40,6 @@ public class GameScreen implements Screen {
 
 	public GameScreen(Game game) {
 		this.game = (MonsterSlide) game;
-		loadAssets();
 		GameScreen.settings = new Json().fromJson(Settings.class,
 				Gdx.files.internal("settings.json"));
 		world = new World(this);
@@ -78,20 +76,6 @@ public class GameScreen implements Screen {
 			font = new BitmapFont();
 		}
 
-	}
-
-	private void loadAssets() {
-		getAssets().load("model/coins/coin.g3db", Model.class);
-		getAssets().load("data/g3d/skydome.g3db", Model.class);
-		getAssets().load("model/orc/micro_orc.g3db", Model.class);
-		getAssets().load("model/orc/micro_orc_mobile.g3db", Model.class);
-		getAssets().load("model/orc/micro_orc.obj", Model.class);
-		getAssets().load("model/pumpkin/pumpkin_01_01_a.g3db", Model.class);
-		getAssets().load("model/pumpkin/pumpkin_02_01_a.g3db", Model.class);
-		getAssets().load("model/pumpkin/pumpkin_03_01_a.g3db", Model.class);
-		getAssets().load("model/pumpkin/pumpkin_04_01_a.g3db", Model.class);
-
-		getAssets().finishLoading();
 	}
 
 	@Override

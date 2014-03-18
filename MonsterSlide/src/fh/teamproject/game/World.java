@@ -83,6 +83,9 @@ public class World implements IWorld {
 
 		if (!checkIsPlayerOnSlide() && !gameScreen.isPaused
 				&& this.gameOverCountdown >= GameScreen.settings.GAME_OVER_COUNTDOWN) {
+			// Aktuellen Punktestand wegspeichern.
+			this.score.saveScore();
+			// In den ScoreScreen wechseln.
 			MenuScreen menuScreen = new MenuScreen(gameScreen.getGame());
 			menuScreen.setActualSite(SITES.SCORE);
 			gameScreen.getGame().setScreen(menuScreen);

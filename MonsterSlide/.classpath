@@ -5,5 +5,6 @@
 	<classpathentry kind="lib" path="libs/gdx-bullet.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/gdx-freetype.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="libs/gdx-sqlite.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

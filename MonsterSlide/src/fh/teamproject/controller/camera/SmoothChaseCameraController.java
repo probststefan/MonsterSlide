@@ -37,7 +37,7 @@ public class SmoothChaseCameraController extends CameraController {
 	public SmoothChaseCameraController(Camera camera, Player player) {
 		super(camera);
 		this.target = player;
-		getCamera().far = 500f;
+		getCamera().far = 200f;
 
 	}
 

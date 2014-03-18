@@ -1,5 +1,7 @@
 package fh.teamproject.game;
 
+import fh.teamproject.MonsterSlide;
+
 /**
  * Die Score-Klasse verwaltet den aktuellen Punktestand eines Spiels. Dazu
  * zaehlen zur Zeit die Anzahl der gesammelten Coins und die gerutschte Strecke.
@@ -30,5 +32,12 @@ public class Score {
 
 	public float getSlidedDistance() {
 		return this.distance;
+	}
+
+	/**
+	 * Speichert den aktuellen Punktestand in die Datenbank.
+	 */
+	public void saveScore() {
+		MonsterSlide.scoreTable.insertScore((int) this.distance);
 	}
 }
