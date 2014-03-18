@@ -49,9 +49,12 @@ public class ScoreSite extends AbstractMenuSite {
 		scoreTable.row();
 
 		DatabaseCursor cursor = MonsterSlide.scoreTable.getLatestScore();
-		Label scoreLabel = new Label("" + cursor.getString(1), this.skin, "largeLabel");
-		scoreTable.add(scoreLabel);
-		scoreTable.row();
+		if (cursor.next()) {
+			Label scoreLabel = new Label("" + cursor.getString(1), this.skin,
+					"largeLabel");
+			scoreTable.add(scoreLabel);
+			scoreTable.row();
+		}
 
 		// Listener + TextButtons
 		listener = new ButtonListener("MainMenu", menu);

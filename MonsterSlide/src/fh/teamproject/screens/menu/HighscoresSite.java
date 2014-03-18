@@ -32,7 +32,6 @@ public class HighscoresSite extends AbstractMenuSite {
 		DatabaseCursor cursor = MonsterSlide.scoreTable.getScores(10);
 
 		while (cursor.next()) {
-
 			scoreLabel = new Label(String.valueOf(cursor.getString(1)) + "",
 					SkinManager.skin);
 			table.add(scoreLabel);
