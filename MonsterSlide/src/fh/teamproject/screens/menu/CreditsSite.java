@@ -38,14 +38,14 @@ public class CreditsSite extends AbstractMenuSite {
 		back.addListener(listener);
 		back.center();
 		names = new TextButton[8];
-		names[0] = new TextButton("Programming & Design", skin, "creditsHeadline");
+		names[0] = new TextButton("Programming", skin, "creditsHeadline");
 		names[1] = new TextButton("Attila Djerdj", skin, "creditsText");
 		names[2] = new TextButton("Kevin Korte", skin, "creditsText");
 		names[3] = new TextButton("Stefan Probst", skin, "creditsText");
 		names[4] = new TextButton("Torsten Scholer", skin, "creditsText");
 		names[5] = new TextButton("Art", skin, "creditsHeadline");
-		names[6] = new TextButton("Artist 1", skin, "creditsText");
-		names[7] = new TextButton("Artist 2", skin, "creditsText");
+		names[6] = new TextButton("Laura Isabell", skin, "creditsText");
+		names[7] = new TextButton("Sandy Panaszek", skin, "creditsText");
 		// Adden Backwards from Created
 		for (int i = 0; i < names.length; i++) {
 			names[i].center();
