@@ -6,6 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
@@ -122,15 +123,17 @@ public class SlideBuilder {
 		slideMesh = builder.end();
 
 		Material material = new Material();
-		TextureAttribute texAttr = TextureAttribute.createDiffuse(new Texture(Gdx.files
-				.internal("data/slide/stone.png")));
+
+		Texture texture = new Texture(Gdx.files.internal("data/slide/stone.png"), true);
+		texture.setFilter(TextureFilter.MipMapNearestLinear, TextureFilter.Linear);
+		TextureAttribute texAttr = TextureAttribute.createDiffuse(texture);
+
 		material.set(texAttr);
 
 		MeshPart meshPart = new MeshPart("meshPart1", slideMesh, 0,
 				slideMesh.getNumVertices(), GL20.GL_TRIANGLES);
 		NodePart nodePart = new NodePart(meshPart, material);
 		node.parts.add(nodePart);
-
 	}
 
 	private Array<VertexInfo> borderVertices = new Array<MeshPartBuilder.VertexInfo>();
