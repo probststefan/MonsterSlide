@@ -140,7 +140,7 @@ public class SlideBuilder {
 	private Array<VertexInfo> borderVertices = new Array<MeshPartBuilder.VertexInfo>();
 
 	private void createBorderMesh(CRSpline spline) {
-		float borderHeight = 10f;
+		float borderHeight = 5f;
 		/* create Vertex Infos */
 		VertexInfo vertex;
 		Vector3 binormal;
@@ -182,10 +182,28 @@ public class SlideBuilder {
 			// bullet fehler, verbessert durch erzwingen des ersten borderparts
 			if (MathUtils.randomBoolean(0.3f) || i == 0 || i == borderVertices.size - 4) {
 
-				builder.triangle(borderVertices.get(i + 1), borderVertices.get(i + 2),
-						borderVertices.get(i));
-				builder.triangle(borderVertices.get(i + 1), borderVertices.get(i + 3),
-						borderVertices.get(i + 2));
+				VertexInfo p1 = borderVertices.get(i + 1);
+				VertexInfo p2 = borderVertices.get(i + 2);
+				VertexInfo p3 = borderVertices.get(i);
+				VertexInfo p4 = borderVertices.get(i + 3);
+				binormal = binormals.get(i / 4).nor()
+						.scl(GameScreen.settings.SLIDE_WIDTH);
+
+				builder.triangle(p1, p2, p3);
+				builder.triangle(p1, p4, p2);
+
+				p1.position.add(binormal);
+				p1.normal.scl(-1f);
+				p2.position.add(binormal);
+				p2.normal.scl(-1f);
+				p3.position.add(binormal);
+				p3.normal.scl(-1f);
+				p4.position.add(binormal);
+				p4.normal.scl(-1f);
+
+				builder.triangle(p3, p2, p1);
+				builder.triangle(p2, p4, p1);
+
 			} else {
 				Gdx.app.log("SlideBuilder", "Omitting border part " + i);
 			}
