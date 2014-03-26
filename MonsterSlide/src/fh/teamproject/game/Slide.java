@@ -107,8 +107,9 @@ public class Slide implements ISlide {
 			pathOnCurrentSpan = t;
 			lastMeasurement.set(closest);
 		}
-		Gdx.app.debug("Slide", "Span: " + span + " - T-Faktor: " + t + "\n Punkt:"
-				+ closest + " - Distance: " + dist);
+		// Gdx.app.debug("Slide", "Span: " + span + " - T-Faktor: " + t +
+		// "\n Punkt:"
+		// + closest + " - Distance: " + dist);
 	}
 
 	@Override

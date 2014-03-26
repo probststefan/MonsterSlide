@@ -18,6 +18,7 @@ import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder.VertexInfo;
 import com.badlogic.gdx.math.CatmullRomSpline;
 import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
@@ -159,9 +160,7 @@ public class SlideBuilder {
 			vertex.setPos(originVector.cpy().add(normal.cpy().scl(borderHeight)))
 					.setNor(binormal).setUV(new Vector2(uMax, vMin));
 			borderVertices.add(vertex);
-			// if ((i == 0) || (i == (vertices.size - 1))) {
-			// continue;
-			// }
+
 			/* Get the next point */
 			originVector.set(vertices.get(i + 1));
 			vertex = new VertexInfo();
@@ -179,10 +178,17 @@ public class SlideBuilder {
 		builder.begin(MeshBuilder.createAttributes(Usage.Position | Usage.Normal
 				| Usage.TextureCoordinates));
 		for (int i = 0; i <= (borderVertices.size - 4); i += 4) {
-			builder.triangle(borderVertices.get(i + 1), borderVertices.get(i + 2),
-					borderVertices.get(i));
-			builder.triangle(borderVertices.get(i + 1), borderVertices.get(i + 3),
-					borderVertices.get(i + 2));
+			// FIXME: könnte non indexed, non triangulated mesh erzeugen -> dann
+			// bullet fehler, verbessert durch erzwingen des ersten borderparts
+			if (MathUtils.randomBoolean(0.3f) || i == 0 || i == borderVertices.size - 4) {
+
+				builder.triangle(borderVertices.get(i + 1), borderVertices.get(i + 2),
+						borderVertices.get(i));
+				builder.triangle(borderVertices.get(i + 1), borderVertices.get(i + 3),
+						borderVertices.get(i + 2));
+			} else {
+				Gdx.app.log("SlideBuilder", "Omitting border part " + i);
+			}
 		}
 
 		Material material = new Material();
