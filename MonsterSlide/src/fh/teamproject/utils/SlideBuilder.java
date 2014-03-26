@@ -61,7 +61,9 @@ public class SlideBuilder {
 		createVertexInfos();
 		node = new Node();
 		createSlideMesh();
-		createBorderMesh(spline);
+		createBorderMesh(spline, false);
+		createBorderMesh(spline, true);
+
 		return node;
 	}
 
@@ -139,7 +141,7 @@ public class SlideBuilder {
 
 	private Array<VertexInfo> borderVertices = new Array<MeshPartBuilder.VertexInfo>();
 
-	private void createBorderMesh(CRSpline spline) {
+	private void createBorderMesh(CRSpline spline, boolean isLeft) {
 		float borderHeight = 5f;
 		/* create Vertex Infos */
 		VertexInfo vertex;
@@ -152,6 +154,9 @@ public class SlideBuilder {
 
 			/* Get first point */
 			originVector.set(vertices.get(i));
+			if (isLeft) {
+				originVector.add(binormal.cpy().scl(GameScreen.settings.SLIDE_WIDTH));
+			}
 			vertex = new VertexInfo();
 			vertex.setPos(originVector).setNor(binormal).setUV(new Vector2(uMin, vMin));
 			borderVertices.add(vertex);
@@ -163,6 +168,9 @@ public class SlideBuilder {
 
 			/* Get the next point */
 			originVector.set(vertices.get(i + 1));
+			if (isLeft) {
+				originVector.add(binormal.cpy().scl(GameScreen.settings.SLIDE_WIDTH));
+			}
 			vertex = new VertexInfo();
 			vertex.setPos(originVector).setNor(binormal).setUV(new Vector2(uMin, vMax));
 			borderVertices.add(vertex);
@@ -180,7 +188,8 @@ public class SlideBuilder {
 		for (int i = 0; i <= (borderVertices.size - 4); i += 4) {
 			// FIXME: könnte non indexed, non triangulated mesh erzeugen -> dann
 			// bullet fehler, verbessert durch erzwingen des ersten borderparts
-			if (MathUtils.randomBoolean(0.3f) || i == 0 || i == borderVertices.size - 4) {
+			// if (MathUtils.randomBoolean(0.3f) || i == 0 || i ==
+			// borderVertices.size - 4) {
 
 				VertexInfo p1 = borderVertices.get(i + 1);
 				VertexInfo p2 = borderVertices.get(i + 2);
@@ -189,24 +198,25 @@ public class SlideBuilder {
 				binormal = binormals.get(i / 4).nor()
 						.scl(GameScreen.settings.SLIDE_WIDTH);
 
-				builder.triangle(p1, p2, p3);
-				builder.triangle(p1, p4, p2);
+			if (!isLeft) {
 
-				p1.position.add(binormal);
-				p1.normal.scl(-1f);
-				p2.position.add(binormal);
-				p2.normal.scl(-1f);
-				p3.position.add(binormal);
-				p3.normal.scl(-1f);
-				p4.position.add(binormal);
-				p4.normal.scl(-1f);
+					builder.triangle(p1, p2, p3);
+					builder.triangle(p1, p4, p2);
 
-				builder.triangle(p3, p2, p1);
-				builder.triangle(p2, p4, p1);
+				} else {
+					p1.normal.scl(-1f);
+					p2.normal.scl(-1f);
+					p3.normal.scl(-1f);
+					p4.normal.scl(-1f);
 
-			} else {
-				Gdx.app.log("SlideBuilder", "Omitting border part " + i);
-			}
+					builder.triangle(p3, p2, p1);
+					builder.triangle(p2, p4, p1);
+
+				}
+
+			// } else {
+			// Gdx.app.log("SlideBuilder", "Omitting border part " + i);
+			// }
 		}
 
 		Material material = new Material();
@@ -218,6 +228,7 @@ public class SlideBuilder {
 				borderMesh.getNumVertices(), GL20.GL_TRIANGLES);
 		NodePart nodePart = new NodePart(meshPart, material);
 		node.parts.add(nodePart);
+		borderVertices.clear();
 	}
 
 	private void createVertexInfos() {
