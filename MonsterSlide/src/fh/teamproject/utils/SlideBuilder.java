@@ -167,6 +167,7 @@ public class SlideBuilder {
 			borderVertices.add(vertex);
 
 			/* Get the next point */
+			binormal = binormals.get(i + 1).nor();
 			originVector.set(vertices.get(i + 1));
 			if (isLeft) {
 				originVector.add(binormal.cpy().scl(GameScreen.settings.SLIDE_WIDTH));
@@ -188,8 +189,8 @@ public class SlideBuilder {
 		for (int i = 0; i <= (borderVertices.size - 4); i += 4) {
 			// FIXME: könnte non indexed, non triangulated mesh erzeugen -> dann
 			// bullet fehler, verbessert durch erzwingen des ersten borderparts
-			// if (MathUtils.randomBoolean(0.3f) || i == 0 || i ==
-			// borderVertices.size - 4) {
+			/* Erzeuge Randstücke zufällig */
+			if (MathUtils.randomBoolean(0.3f) || i == 0 || i == borderVertices.size - 4) {
 
 				VertexInfo p1 = borderVertices.get(i + 1);
 				VertexInfo p2 = borderVertices.get(i + 2);
@@ -198,11 +199,9 @@ public class SlideBuilder {
 				binormal = binormals.get(i / 4).nor()
 						.scl(GameScreen.settings.SLIDE_WIDTH);
 
-			if (!isLeft) {
-
+				if (!isLeft) {
 					builder.triangle(p1, p2, p3);
 					builder.triangle(p1, p4, p2);
-
 				} else {
 					p1.normal.scl(-1f);
 					p2.normal.scl(-1f);
@@ -211,17 +210,16 @@ public class SlideBuilder {
 
 					builder.triangle(p3, p2, p1);
 					builder.triangle(p2, p4, p1);
-
 				}
-
-			// } else {
-			// Gdx.app.log("SlideBuilder", "Omitting border part " + i);
-			// }
+			} else {
+				// Gdx.app.log("SlideBuilder", "Omitting border part " + i);
+			}
 		}
 
 		Material material = new Material();
-		TextureAttribute texAttr = TextureAttribute.createDiffuse(new Texture(Gdx.files
-				.internal("data/slide/snow.jpg")));
+		Texture texture = new Texture(Gdx.files.internal("data/slide/snow.jpg"), true);
+		texture.setFilter(TextureFilter.MipMapNearestLinear, TextureFilter.Nearest);
+		TextureAttribute texAttr = TextureAttribute.createDiffuse(texture);
 		material.set(texAttr);
 		borderMesh = builder.end();
 		MeshPart meshPart = new MeshPart("borderMeshPart", borderMesh, 0,

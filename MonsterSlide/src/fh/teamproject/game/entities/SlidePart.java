@@ -27,11 +27,13 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
 	// Bullet-Daten (Werden hier zum spaeteren disposen benoetigt)
 	btTriangleIndexVertexArray partTriangleVertexArray;
-	btIndexedMesh partMesh, borderMesh;
+	btIndexedMesh partMesh, borderMeshRight;
 
 	private btTriangleInfoMap triangleInfoMap;
 
 	Slide slide;
+
+	private btIndexedMesh borderMeshLeft;
 
 	public SlidePart(World world) {
 		super(world);
@@ -55,7 +57,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 		partMesh.dispose();
 		triangleInfoMap.dispose();
 		partTriangleVertexArray.dispose();
-		borderMesh.dispose();
+		borderMeshRight.dispose();
 		super.dispose();
 
 	}
@@ -63,7 +65,7 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 	@Override
 	public void releaseAll() {
 		partMesh.release();
-		borderMesh.release();
+		borderMeshRight.release();
 		super.releaseAll();
 	}
 
@@ -75,11 +77,13 @@ public class SlidePart extends CollisionEntity implements ISlidePart, Poolable {
 
 		Node node = slide.getModelInstance().getNode(String.valueOf(getID()));
 		partMesh = new btIndexedMesh(node.parts.first().meshPart.mesh);
-		borderMesh = new btIndexedMesh(node.parts.get(1).meshPart.mesh);
+		borderMeshRight = new btIndexedMesh(node.parts.get(1).meshPart.mesh);
+		borderMeshLeft = new btIndexedMesh(node.parts.get(2).meshPart.mesh);
 
 		partTriangleVertexArray = new btTriangleIndexVertexArray();
 		partTriangleVertexArray.addIndexedMesh(partMesh);
-		partTriangleVertexArray.addIndexedMesh(borderMesh);
+		partTriangleVertexArray.addIndexedMesh(borderMeshRight);
+		partTriangleVertexArray.addIndexedMesh(borderMeshLeft);
 
 		triangleInfoMap = new btTriangleInfoMap();
 		// now you can adjust some thresholds in triangleInfoMap if needed.
