@@ -2,6 +2,7 @@ package fh.teamproject.game.entities;
 
 import java.util.ArrayList;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.CatmullRomSpline;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
@@ -99,7 +100,6 @@ public class Coins {
 		if (this.toDeleteIDs.size() > 0) {
 			for (int i = 0; i < this.toDeleteIDs.size(); i++) {
 
-
 				coinPool.free(this.coins.get(this.toDeleteIDs.get(i)));
 				this.coins.removeIndex(this.toDeleteIDs.get(i));
 			}
@@ -111,10 +111,17 @@ public class Coins {
 	public void generateCoinsforSpan(int span) {
 		CatmullRomSpline<Vector3> spline = world.getSlide().getSpline();
 		float epsilon = 0.01f;
-		float splitting = 2f;
+		// FIXME: Magic number for max collectables on span
+		int maxCollectables = MathUtils.random(1, 5);
+		float splitting = 1f / (float) maxCollectables;
+		Gdx.app.log("Coins", maxCollectables + "collectables on span " + span);
 		Vector3 interpolatedVertex = new Vector3();
+		/*
+		 * Used to translate a collectable along the binormal, distributing it
+		 * randomly over the spline
+		 */
 		float scale = MathUtils.random(0.1f, 0.9f);
-		for (float i = 0; i <= (1); i += splitting) {
+		for (float i = 0; i < 1; i += splitting) {
 			/* Damit werden die Endstücke kleiner */
 			float t = Interpolation.sine.apply(i);
 			spline.valueAt(interpolatedVertex, span, t);
