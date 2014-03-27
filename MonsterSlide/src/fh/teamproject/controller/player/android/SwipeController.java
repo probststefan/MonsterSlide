@@ -17,7 +17,7 @@ public class SwipeController extends GestureAdapter {
 	@Override
 	public boolean tap(float x, float y, int count, int button) {
 		Gdx.app.log("SwipeController", "TAP " + x + " " + y + " " + count + " " + button);
-		this.player.brake(0f);
+		this.player.brake();
 		return super.tap(x, y, count, button);
 	}
 

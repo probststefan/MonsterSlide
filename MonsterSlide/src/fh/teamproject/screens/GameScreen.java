@@ -27,7 +27,7 @@ public class GameScreen implements Screen {
 
 	public static CameraManager camManager;
 	public static Settings settings;
-
+	public static InputMultiplexer allInputs;
 	// DEBUG
 	private final boolean showFps = true;
 	public boolean isPaused = false;
@@ -39,6 +39,7 @@ public class GameScreen implements Screen {
 	public MonsterSlide game;
 
 	public GameScreen(Game game) {
+		allInputs = new InputMultiplexer();
 		this.game = (MonsterSlide) game;
 		GameScreen.settings = new Json().fromJson(Settings.class,
 				Gdx.files.internal("settings.json"));
@@ -57,7 +58,6 @@ public class GameScreen implements Screen {
 		DebugInputController debugInput = new DebugInputController(this);
 		InputMultiplexer gameInputMul = new InputMultiplexer();
 		InputMultiplexer debugInputMul = new InputMultiplexer();
-		InputMultiplexer allInputs = new InputMultiplexer();
 		debugInputMul.addProcessor(debugInput);
 		debugInputMul.addProcessor(DebugInfoPanel.stage);
 		debugInputMul.addProcessor((InputProcessor) GameScreen.camManager

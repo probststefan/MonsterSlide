@@ -22,7 +22,7 @@ public class InputHandling implements InputProcessor {
 	@Override
 	public boolean keyDown(int keycode) {
 		if(keycode == Input.Keys.UP){
-			player.accelerate(10.0f);
+			player.accelerate();
 		}
 		
 		if(keycode == Input.Keys.LEFT){
@@ -34,7 +34,7 @@ public class InputHandling implements InputProcessor {
 		}
 		
 		if(keycode == Input.Keys.DOWN) {
-			player.brake(5.0f);
+			player.brake();
 		}
 		
 		if((keycode == Input.Keys.SPACE) && canJump) {
@@ -98,11 +98,11 @@ public class InputHandling implements InputProcessor {
 		}
 		
 		if((screenX > (Gdx.graphics.getWidth() / 4)) && (screenX < (3*(Gdx.graphics.getWidth() / 4))) && (screenY > (2*(Gdx.graphics.getHeight() / 3)))) {
-			player.brake(1.0f);
+			player.brake();
 		}
 		
 		if((screenX > (Gdx.graphics.getWidth() / 4)) && (screenX < (3*(Gdx.graphics.getWidth() / 4))) && (screenY < (Gdx.graphics.getHeight() / 3))) {
-			player.accelerate(1.0f);
+			player.accelerate();
 		}
 		
 		if((screenX > (Gdx.graphics.getWidth() / 4)) && (screenX < (3*(Gdx.graphics.getWidth() / 4))) && (screenY > (Gdx.graphics.getHeight() / 3)) && (screenY < (2*(Gdx.graphics.getHeight() / 3))) && canJump) {

@@ -4,9 +4,9 @@ import com.badlogic.gdx.math.Vector3;
 
 public interface IPlayer extends ICollisionEntity {
 
-	public void accelerate(float amount);
+	public void accelerate();
 
-	public void brake(float amount);
+	public void brake();
 
 	public void slideLeft();
 
