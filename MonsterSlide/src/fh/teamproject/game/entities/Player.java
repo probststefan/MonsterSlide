@@ -109,7 +109,7 @@ public class Player extends CollisionEntity implements IPlayer {
 	public void accelerate(float amount) {
 		Vector3 dir = direction.cpy();
 		dir.scl(ACCELERATION * Gdx.graphics.getDeltaTime());
-		dir.scl(1, 2, 1);
+		dir.scl(1, 5, 1);
 		getRigidBody().applyCentralForce(dir);
 	}
 	
@@ -129,7 +129,8 @@ public class Player extends CollisionEntity implements IPlayer {
 	
 	@Override
 	public void slideLeft() {
-		Vector3 dir = new Vector3(0.5f, -0.5f, -1);
+		Vector3 dir = direction.cpy().crs(Vector3.Y).scl(-1f);
+		dir.scl(3f, 0f, 1f);
 		if(speed > 50){
 			getRigidBody().applyCentralForce(
 					dir.scl((TURN_INTENSITIY * (speed * speed)) * Gdx.graphics.getDeltaTime()));
@@ -149,7 +150,9 @@ public class Player extends CollisionEntity implements IPlayer {
 
 	@Override
 	public void slideRight() {
-		Vector3 dir = new Vector3(0.5f, -0.5f, 1);
+		//Vector3 dir = new Vector3(0.5f, -0.5f, 1f);
+		Vector3 dir = direction.cpy().crs(Vector3.Y);
+		dir.scl(3f, 0f, 1f);
 		if(speed > 50){
 			getRigidBody().applyCentralForce(
 					dir.scl((TURN_INTENSITIY * (speed * speed)) * Gdx.graphics.getDeltaTime()));
