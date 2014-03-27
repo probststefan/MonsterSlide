@@ -6,6 +6,7 @@ public class Settings {
 	public float SLIDE_LENGTH;
 	public int SLIDE_SEGMENTS;
 	public float SLIDE_DIMENSION;
+	public float COIN_ROTATION_SPEED;
 	public float PLAYER_MASS;
 	public float PLAYER_ACCEL;
 	public float PLAYER_TURN_INTENSITY;

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.CatmullRomSpline;
-import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.Collision;
@@ -27,21 +26,32 @@ public class Coins {
 	private CoinPool coinPool;
 	private World world;
 
+	private float COIN_ROTATION_SPEED;
+
 	// public Coins(GameScreen gameScreen, btDynamicsWorld dynamicsWorld) {
 	public Coins(World world) {
 		this.world = world;
 		this.coins = new Array<Coin>();
 		this.toDeleteIDs = new ArrayList<Integer>();
 		this.coinPool = new CoinPool(this.world, 64, 64);
+
+		this.COIN_ROTATION_SPEED = GameScreen.settings.COIN_ROTATION_SPEED;
 	}
 
 	public void update() {
 		this.removeCoins();
+
+		// Coins rotieren.
+		for (Coin coin : this.coins) {
+			coin.instance.transform.rotate(Vector3.Y, this.COIN_ROTATION_SPEED
+					* Gdx.graphics.getDeltaTime());
+		}
 	}
 
 	public void addCoin(Vector3 position) {
 		Coin tmpCoin = coinPool.obtain();
 		tmpCoin.setPosition(position);
+		tmpCoin.instance.transform.rotate(Vector3.Y, MathUtils.random(0.0f, 360.0f));
 		tmpCoin.getRigidBody().setActivationState(Collision.ACTIVE_TAG);
 		tmpCoin.getRigidBody().setContactCallbackFilter(Player.PLAYER_FLAG);
 		coins.add(tmpCoin);
@@ -99,7 +109,6 @@ public class Coins {
 	private void removeCoins() {
 		if (this.toDeleteIDs.size() > 0) {
 			for (int i = 0; i < this.toDeleteIDs.size(); i++) {
-
 				coinPool.free(this.coins.get(this.toDeleteIDs.get(i)));
 				this.coins.removeIndex(this.toDeleteIDs.get(i));
 			}

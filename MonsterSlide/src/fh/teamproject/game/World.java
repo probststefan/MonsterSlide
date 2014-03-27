@@ -51,7 +51,8 @@ public class World implements IWorld {
 		// Rendering
 		batch = new ModelBatch();
 		lights = new Environment();
-		lights.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f));
+		lights.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1.f));
+		lights.set(new ColorAttribute(ColorAttribute.Fog, 1.0f, 1.0f, 1.0f, .2f));
 		lights.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
 
 		physixManager = new PhysixManager(this);
