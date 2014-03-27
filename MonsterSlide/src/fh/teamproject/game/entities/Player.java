@@ -17,6 +17,7 @@ import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
 
 import fh.teamproject.controller.player.pc.InputHandling;
+import fh.teamproject.controller.player.pc.InputHandling_TEST;
 import fh.teamproject.game.Slide;
 import fh.teamproject.game.World;
 import fh.teamproject.interfaces.IPlayer;
@@ -65,11 +66,13 @@ public class Player extends CollisionEntity implements IPlayer {
 	public Vector3 totalForce = new Vector3();
 	public Vector3 projectedPointOnSlide = new Vector3();;
 
-	public InputHandling inputHandling;
+	//public InputHandling inputHandling;
+	public InputHandling_TEST inputHandling;
 
 	public Player(World world) {
 		super(world);
-		inputHandling = new InputHandling(this);
+		//inputHandling = new InputHandling(this);
+		inputHandling = new InputHandling_TEST(this);
 		this.ACCELERATION = GameScreen.settings.PLAYER_ACCEL;
 		this.TURN_INTENSITIY = GameScreen.settings.PLAYER_TURN_INTENSITY;
 		this.MAX_SPEED = GameScreen.settings.PLAYER_MAX_SPEED;
@@ -104,32 +107,67 @@ public class Player extends CollisionEntity implements IPlayer {
 
 	@Override
 	public void accelerate(float amount) {
+		Vector3 dir = direction.cpy();
+		dir.scl(ACCELERATION * Gdx.graphics.getDeltaTime());
+		dir.scl(1, 2, 1);
+		getRigidBody().applyCentralForce(dir);
+	}
+	
+	/* alte accelerate methode
+	public void accelerate(float amount) {
 		getRigidBody().applyCentralForce(
 				direction.cpy().scl(ACCELERATION * Gdx.graphics.getDeltaTime()));
 
 	}
+	*/
 
 	@Override
 	public void brake(float amount) {
 		getRigidBody().applyCentralForce(
 				direction.cpy().scl(-1f * ACCELERATION * Gdx.graphics.getDeltaTime()));
-
 	}
-
+	
 	@Override
+	public void slideLeft() {
+		Vector3 dir = new Vector3(0.5f, -0.5f, -1);
+		if(speed > 50){
+			getRigidBody().applyCentralForce(
+					dir.scl((TURN_INTENSITIY * (speed * speed)) * Gdx.graphics.getDeltaTime()));
+		} else {
+			getRigidBody().applyCentralForce(
+					dir.scl((TURN_INTENSITIY * (speed * speed * 2)) * Gdx.graphics.getDeltaTime()));
+		}
+	}
+	
+	/* alte slideLeft methode
 	public void slideLeft() {
 		Vector3 dir = direction.cpy().crs(Vector3.Y).scl(-1f);
 		getRigidBody().applyCentralForce(
 				dir.scl(TURN_INTENSITIY * Gdx.graphics.getDeltaTime()));
 	}
+	*/
 
 	@Override
+	public void slideRight() {
+		Vector3 dir = new Vector3(0.5f, -0.5f, 1);
+		if(speed > 50){
+			getRigidBody().applyCentralForce(
+					dir.scl((TURN_INTENSITIY * (speed * speed)) * Gdx.graphics.getDeltaTime()));
+		} else {
+			getRigidBody().applyCentralForce(
+					dir.scl((TURN_INTENSITIY * (speed * speed * 2)) * Gdx.graphics.getDeltaTime()));
+		}
+		
+	}
+	
+	/* alte slideRight methode
 	public void slideRight() {
 		Vector3 dir = direction.cpy().crs(Vector3.Y);
 		getRigidBody().applyCentralForce(
 				dir.scl(TURN_INTENSITIY * Gdx.graphics.getDeltaTime()));
 	}
-
+	*/
+	
 	@Override
 	public void jump() {
 		getRigidBody().applyCentralForce(new Vector3(0, 1, 0).scl(50000));
