@@ -122,12 +122,11 @@ public class Coins {
 		 */
 		float scale = MathUtils.random(0.1f, 0.9f);
 		for (float i = 0; i < 1; i += splitting) {
-			/* Damit werden die Endstücke kleiner */
-			float t = Interpolation.sine.apply(i);
-			spline.valueAt(interpolatedVertex, span, t);
+
+			spline.valueAt(interpolatedVertex, span, i);
 			// 1. und 2. Ableitung bilden.
 			Vector3 derivation = new Vector3();
-			derivation = spline.derivativeAt(derivation, span, t);
+			derivation = spline.derivativeAt(derivation, span, i);
 			derivation.nor();
 			Vector3 tangent = derivation.cpy();
 			/*
