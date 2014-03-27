@@ -38,6 +38,6 @@ public class Score {
 	 * Speichert den aktuellen Punktestand in die Datenbank.
 	 */
 	public void saveScore() {
-		MonsterSlide.scoreTable.insertScore((int) this.distance);
+		MonsterSlide.scoreTable.insertPoins((int) this.distance, this.coins);
 	}
 }

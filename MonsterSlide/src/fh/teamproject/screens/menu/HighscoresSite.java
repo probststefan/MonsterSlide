@@ -1,6 +1,8 @@
 package fh.teamproject.screens.menu;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -18,7 +20,7 @@ public class HighscoresSite extends AbstractMenuSite {
 	Skin skin = SkinManager.skin;
 	private ButtonListener listener;
 	private Table table;
-	private Label scoreLabel;
+	private Label scoreLabel, coinLabel;
 
 	public HighscoresSite(MenuScreen menu) {
 		// super();
@@ -27,14 +29,22 @@ public class HighscoresSite extends AbstractMenuSite {
 		table = new Table();
 		table.setSize(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
 		table.center();
+		// table.debug();
 
 		// Liste mit den Highscores.
 		DatabaseCursor cursor = MonsterSlide.scoreTable.getScores(10);
 
+		Texture coinTexture = new Texture(Gdx.files.internal("data/hud/coin.png"));
+
 		while (cursor.next()) {
-			scoreLabel = new Label(String.valueOf(cursor.getString(1)) + "",
-					SkinManager.skin);
+			scoreLabel = new Label(String.valueOf(cursor.getString(1)), SkinManager.skin);
 			table.add(scoreLabel);
+
+			table.add(new Image(coinTexture));
+			coinLabel = new Label(String.valueOf(cursor.getString(2)), SkinManager.skin);
+			table.add(coinLabel);
+
+			// table.add();
 			table.row();
 		}
 
@@ -46,7 +56,7 @@ public class HighscoresSite extends AbstractMenuSite {
 		start.setHeight(Gdx.graphics.getHeight());
 		start.addListener(listener);
 		start.center();
-		table.add(start);
+		table.add(start).colspan(3);
 
 		this.add(table);
 	}

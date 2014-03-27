@@ -18,16 +18,24 @@ public class ScoreTable extends DatabaseHandler {
 			+ "("
 			+ COLUMN_ID
 			+ " integer primary key autoincrement, "
-			+ "'score' INTEGER NOT NULL  DEFAULT 0, 'date_input' DATETIME NOT NULL  DEFAULT CURRENT_TIMESTAMP);";
+			+ "'score' INTEGER NOT NULL DEFAULT 0, 'coins' INTEGER NOT NULL DEFAULT 0, 'date_input' DATETIME NOT NULL  DEFAULT CURRENT_TIMESTAMP);";
 
 	public ScoreTable() {
 		super(DATABASE_NAME, DATABASE_VERSION, DATABASE_CREATE);
 	}
 
-	public void insertScore(int score) {
+	/**
+	 * Erstellt einen neuen Eintrag in der Tabelle "Score" mit der gerutschten
+	 * Strecke und der Anzahl an Coins.
+	 * 
+	 * @param distance
+	 * @param coins
+	 */
+	public void insertPoins(int distance, int coins) {
 		try {
 			this.getDbHandler().execSQL(
-					"INSERT INTO score ('score') VALUES ('" + score + "')");
+					"INSERT INTO score ('score', 'coins') VALUES ('" + distance + "', '"
+							+ coins + "')");
 		} catch (SQLiteGdxException e) {
 			e.printStackTrace();
 		}
