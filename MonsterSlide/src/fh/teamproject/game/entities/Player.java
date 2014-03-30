@@ -139,6 +139,7 @@ public class Player extends CollisionEntity implements IPlayer {
 	public void slideRight() {
 		Vector3 dir = direction.cpy().crs(Vector3.Y);
 		// FIXME: Magic number
+		dir.scl(3f, 0f, 1f);
 		if (speed > 50) {
 			getRigidBody().applyCentralForce(
 					dir.scl((TURN_INTENSITIY * (speed * speed))
