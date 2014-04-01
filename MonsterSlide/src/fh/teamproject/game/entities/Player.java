@@ -82,7 +82,6 @@ public class Player extends CollisionEntity implements IPlayer {
 	@Override
 	public void update() {
 		super.update();
-		System.out.println("isGrounded: " + isGrounded);
 		// update() wird aufgerufen, um bei gedrueckt-halten der Keys sich immer
 		// weiter zu bewegen
 		inputHandling.update();
@@ -106,7 +105,6 @@ public class Player extends CollisionEntity implements IPlayer {
 	}
 
 	public void accelerate() {
-		System.out.println("accel");
 		getRigidBody().applyCentralForce(
 				direction.cpy().scl(ACCELERATION * Gdx.graphics.getDeltaTime()));
 
@@ -114,16 +112,12 @@ public class Player extends CollisionEntity implements IPlayer {
 
 	@Override
 	public void brake() {
-		System.out.println("brake");
-
 		getRigidBody().applyCentralForce(
 				direction.cpy().scl(-1.5f * ACCELERATION * Gdx.graphics.getDeltaTime()));
 	}
 
 	@Override
 	public void slideLeft() {
-		System.out.println("left");
-
 		Vector3 dir = direction.cpy().crs(Vector3.Y).scl(-1f);
 		if (speed > 50) {
 			getRigidBody().applyCentralForce(
@@ -139,7 +133,6 @@ public class Player extends CollisionEntity implements IPlayer {
 
 	@Override
 	public void slideRight() {
-		System.out.println("right");
 
 		Vector3 dir = direction.cpy().crs(Vector3.Y);
 		if (speed > 50) {
@@ -159,7 +152,6 @@ public class Player extends CollisionEntity implements IPlayer {
 		if (!isGrounded) {
 			return;
 		}
-		System.out.println("jump");
 		Vector3 dir = direction.cpy().crs(Vector3.Y);
 		dir.crs(direction).nor();
 		getRigidBody().applyCentralForce(dir.scl(jumpAmount));
