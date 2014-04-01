@@ -23,7 +23,7 @@ public class DatabaseHandler {
 	}
 
 	public void openDatabase() {
-		Gdx.app.log("DatabaseTest", "creation started");
+		// Gdx.app.log("DatabaseTest", "creation started");
 		dbHandler = DatabaseFactory.getNewDatabase(name, version, create, null);
 
 		dbHandler.setupDatabase();
@@ -34,7 +34,7 @@ public class DatabaseHandler {
 			e.printStackTrace();
 		}
 
-		Gdx.app.log("DatabaseTest", "created successfully");
+		// Gdx.app.log("DatabaseTest", "created successfully");
 	}
 
 	public Database getDbHandler() {
@@ -49,6 +49,6 @@ public class DatabaseHandler {
 		}
 		dbHandler = null;
 		cursor = null;
-		Gdx.app.log("DatabaseTest", "dispose");
+		// Gdx.app.log("DatabaseTest", "dispose");
 	}
 }

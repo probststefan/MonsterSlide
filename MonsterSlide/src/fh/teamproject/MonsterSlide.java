@@ -21,7 +21,7 @@ public class MonsterSlide extends Game {
 		Bullet.init();
 		MonsterSlide.skinManager = new SkinManager();
 		MonsterSlide.scoreTable = new ScoreTable();
-		Gdx.app.setLogLevel(Gdx.app.LOG_DEBUG);
+		// Gdx.app.setLogLevel(Gdx.app.LOG_DEBUG);
 		setScreen(new MenuScreen(this));
 	}
 

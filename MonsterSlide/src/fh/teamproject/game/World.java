@@ -155,7 +155,7 @@ public class World implements IWorld {
 	}
 
 	public void reset() {
-		Gdx.app.log("World", "resetting");
+		// Gdx.app.log("World", "resetting");
 		gameScreen.game.setScreen(new MenuScreen(gameScreen.game));
 	}
 

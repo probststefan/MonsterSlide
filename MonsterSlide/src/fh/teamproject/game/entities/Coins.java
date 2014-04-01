@@ -123,7 +123,8 @@ public class Coins {
 		// FIXME: Magic number for max collectables on span
 		int maxCollectables = MathUtils.random(1, 5);
 		float splitting = 1f / (float) maxCollectables;
-		Gdx.app.log("Coins", maxCollectables + "collectables on span " + span);
+		// Gdx.app.log("Coins", maxCollectables + "collectables on span " +
+		// span);
 		Vector3 interpolatedVertex = new Vector3();
 		/*
 		 * Used to translate a collectable along the binormal, distributing it
