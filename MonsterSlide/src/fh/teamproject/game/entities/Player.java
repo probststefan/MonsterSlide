@@ -121,7 +121,7 @@ public class Player extends CollisionEntity implements IPlayer {
 		Vector3 dir = direction.cpy().crs(Vector3.Y).scl(-1f);
 		if (speed > 50) {
 			getRigidBody().applyCentralForce(
-					dir.scl((TURN_INTENSITIY * (speed * speed * 3.3f))
+					dir.scl((TURN_INTENSITIY * (speed * speed * 1.3f))
 							* Gdx.graphics.getDeltaTime()));
 		} else {
 			getRigidBody().applyCentralForce(
