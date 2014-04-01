@@ -78,7 +78,7 @@ public class InputHandling_TEST implements InputProcessor {
 		return false;
 	}
 
-	// bewegt man die maus in die jeweiligen bereiche, wird slideLeft() /
+	// bewegt man die maus in die jeweiligen bereiche, wird slideLeft()
 	// slideRight() aufgrufen
 	@Override
 	public boolean mouseMoved(int screenX, int screenY) {
@@ -89,7 +89,6 @@ public class InputHandling_TEST implements InputProcessor {
 
 		if (screenX > (3 * (Gdx.graphics.getWidth() / 4))) {
 			keys.put(RIGHT, RIGHT);
-
 		}
 
 		if ((screenX > (Gdx.graphics.getWidth() / 4))
@@ -115,10 +114,6 @@ public class InputHandling_TEST implements InputProcessor {
 	}
 
 	public void update() {
-		if (keys.containsKey(ACCELERATE)) {
-			player.accelerate();
-		}
-
 		if (keys.containsKey(LEFT)) {
 			player.slideLeft();
 		}
@@ -133,6 +128,9 @@ public class InputHandling_TEST implements InputProcessor {
 
 		if (keys.containsKey(JUMP)) {
 			player.jump();
+		}
+		if(keys.containsKey(BRAKE) == false && keys.containsKey(JUMP) == false && (player.speed <= player.MAX_SPEED - 10)){
+			player.accelerate();
 		}
 	}
 

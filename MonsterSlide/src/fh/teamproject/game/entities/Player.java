@@ -116,33 +116,30 @@ public class Player extends CollisionEntity implements IPlayer {
 	@Override
 	public void brake() {
 		getRigidBody().applyCentralForce(
-				direction.cpy().scl(-1f * ACCELERATION * Gdx.graphics.getDeltaTime()));
+				direction.cpy().scl(-1.5f * ACCELERATION * Gdx.graphics.getDeltaTime()));
 	}
 
 	@Override
 	public void slideLeft() {
 		Vector3 dir = direction.cpy().crs(Vector3.Y).scl(-1f);
-		// FIXME: Magic number
 		if (speed > 50) {
 			getRigidBody().applyCentralForce(
-					dir.scl((TURN_INTENSITIY * (speed * speed))
+					dir.scl((TURN_INTENSITIY * (speed * speed * 1.3f))
 							* Gdx.graphics.getDeltaTime()));
 		} else {
 			getRigidBody().applyCentralForce(
 					dir.scl((TURN_INTENSITIY * (speed * speed * 2))
 							* Gdx.graphics.getDeltaTime()));
 		}
-		Gdx.app.log("Player", "Directionlength " + dir.len());
+		
 	}
 
 	@Override
 	public void slideRight() {
 		Vector3 dir = direction.cpy().crs(Vector3.Y);
-		// FIXME: Magic number
-		dir.scl(3f, 0f, 1f);
 		if (speed > 50) {
 			getRigidBody().applyCentralForce(
-					dir.scl((TURN_INTENSITIY * (speed * speed))
+					dir.scl((TURN_INTENSITIY * (speed * speed * 1.3f))
 							* Gdx.graphics.getDeltaTime()));
 		} else {
 			getRigidBody().applyCentralForce(
