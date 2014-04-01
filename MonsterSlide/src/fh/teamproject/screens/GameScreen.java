@@ -62,9 +62,10 @@ public class GameScreen implements Screen {
 		debugInputMul.addProcessor(DebugInfoPanel.stage);
 		debugInputMul.addProcessor((InputProcessor) GameScreen.camManager
 				.getController(Mode.FREE));
-
-		gameInputMul.addProcessor(new GestureDetector(new SwipeController(world
-				.getPlayer())));
+		/* Android Controller */
+		// gameInputMul.addProcessor(new GestureDetector(new
+		// SwipeController(world
+		// .getPlayer())));
 		gameInputMul.addProcessor(hud.stage);
 		allInputs.addProcessor(debugInputMul);
 		allInputs.addProcessor(gameInputMul);

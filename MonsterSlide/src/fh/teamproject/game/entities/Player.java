@@ -17,8 +17,7 @@ import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.physics.bullet.linearmath.btVector3;
 
 import fh.teamproject.MonsterSlide;
-import fh.teamproject.controller.player.pc.InputHandling;
-import fh.teamproject.controller.player.pc.InputHandling_TEST;
+import fh.teamproject.controller.player.pc.InputHandler;
 import fh.teamproject.game.Slide;
 import fh.teamproject.game.World;
 import fh.teamproject.interfaces.IPlayer;
@@ -62,29 +61,28 @@ public class Player extends CollisionEntity implements IPlayer {
 	public float TURN_INTENSITIY;
 
 	@Debug(name = "Jump Amount", isModifiable = true)
-	private float jumpAmount = 7.0f;
+	public float jumpAmount = 7.0f;
 
 	public Vector3 totalForce = new Vector3();
 	public Vector3 projectedPointOnSlide = new Vector3();;
-
-	// public InputHandling inputHandling;
-	public InputHandling_TEST inputHandling;
+	public InputHandler inputHandling;
 
 	public Player(World world) {
 		super(world);
-		// inputHandling = new InputHandling(this);
-		inputHandling = new InputHandling_TEST(this);
+		inputHandling = new InputHandler(this);
 		GameScreen.allInputs.addProcessor(inputHandling);
 		this.ACCELERATION = GameScreen.settings.PLAYER_ACCEL;
 		this.TURN_INTENSITIY = GameScreen.settings.PLAYER_TURN_INTENSITY;
 		this.MAX_SPEED = GameScreen.settings.PLAYER_MAX_SPEED;
 		initGraphix();
 		initPhysix();
+		getRigidBody().applyCentralImpulse(new Vector3(20000, 0, 0));
 	}
 
 	@Override
 	public void update() {
 		super.update();
+		System.out.println("isGrounded: " + isGrounded);
 		// update() wird aufgerufen, um bei gedrueckt-halten der Keys sich immer
 		// weiter zu bewegen
 		inputHandling.update();
@@ -108,6 +106,7 @@ public class Player extends CollisionEntity implements IPlayer {
 	}
 
 	public void accelerate() {
+		System.out.println("accel");
 		getRigidBody().applyCentralForce(
 				direction.cpy().scl(ACCELERATION * Gdx.graphics.getDeltaTime()));
 
@@ -115,16 +114,20 @@ public class Player extends CollisionEntity implements IPlayer {
 
 	@Override
 	public void brake() {
+		System.out.println("brake");
+
 		getRigidBody().applyCentralForce(
 				direction.cpy().scl(-1.5f * ACCELERATION * Gdx.graphics.getDeltaTime()));
 	}
 
 	@Override
 	public void slideLeft() {
+		System.out.println("left");
+
 		Vector3 dir = direction.cpy().crs(Vector3.Y).scl(-1f);
 		if (speed > 50) {
 			getRigidBody().applyCentralForce(
-					dir.scl((TURN_INTENSITIY * (speed * speed * 1.3f))
+					dir.scl((TURN_INTENSITIY * (speed * speed * 3.3f))
 							* Gdx.graphics.getDeltaTime()));
 		} else {
 			getRigidBody().applyCentralForce(
@@ -136,6 +139,8 @@ public class Player extends CollisionEntity implements IPlayer {
 
 	@Override
 	public void slideRight() {
+		System.out.println("right");
+
 		Vector3 dir = direction.cpy().crs(Vector3.Y);
 		if (speed > 50) {
 			getRigidBody().applyCentralForce(
@@ -151,7 +156,13 @@ public class Player extends CollisionEntity implements IPlayer {
 
 	@Override
 	public void jump() {
-		getRigidBody().applyCentralForce(new Vector3(0, 1, 0).scl(jumpAmount));
+		if (!isGrounded) {
+			return;
+		}
+		System.out.println("jump");
+		Vector3 dir = direction.cpy().crs(Vector3.Y);
+		dir.crs(direction).nor();
+		getRigidBody().applyCentralForce(dir.scl(jumpAmount));
 	}
 
 	@Override

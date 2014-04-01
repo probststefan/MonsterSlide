@@ -8,7 +8,7 @@ import com.badlogic.gdx.utils.IntIntMap;
 
 import fh.teamproject.game.entities.Player;
 
-public class InputHandling_TEST implements InputProcessor {
+public class InputHandler implements InputProcessor {
 
 	private Player player;
 
@@ -23,7 +23,7 @@ public class InputHandling_TEST implements InputProcessor {
 	private int BRAKE = Keys.DOWN;
 	private int JUMP = Keys.SPACE;
 
-	public InputHandling_TEST(Player player) {
+	public InputHandler(Player player) {
 		this.player = player;
 	}
 
@@ -47,27 +47,48 @@ public class InputHandling_TEST implements InputProcessor {
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		if (screenX < 50) {
+		if (screenX < (Gdx.graphics.getWidth() / 4)) {
 			keys.put(LEFT, LEFT);
 		}
 
-		if (screenX > (Gdx.graphics.getWidth() - 50)) {
+		if (screenX > (3 * (Gdx.graphics.getWidth() / 4))) {
 			keys.put(RIGHT, RIGHT);
 
 		}
-
+		if ((screenX > (Gdx.graphics.getWidth() / 4))
+				&& (screenX < (3 * (Gdx.graphics.getWidth() / 4)))
+				&& (screenY > (2 * (Gdx.graphics.getHeight() / 3)))) {
+			keys.put(BRAKE, BRAKE);
+		}
+		if ((screenX > (Gdx.graphics.getWidth() / 4))
+				&& (screenX < (3 * (Gdx.graphics.getWidth() / 4)))
+				&& (screenY > (Gdx.graphics.getHeight() / 3))
+				&& (screenY < (2 * (Gdx.graphics.getHeight() / 3)))) {
+			keys.put(JUMP, JUMP);
+		}
 		return false;
 	}
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		if (screenX < 50) {
+		if (screenX < (Gdx.graphics.getWidth() / 4)) {
 			keys.remove(LEFT, LEFT);
 		}
 
-		if (screenX > (Gdx.graphics.getWidth() - 50)) {
+		if (screenX > (3 * (Gdx.graphics.getWidth() / 4))) {
 			keys.remove(RIGHT, RIGHT);
 
+		}
+		if ((screenX > (Gdx.graphics.getWidth() / 4))
+				&& (screenX < (3 * (Gdx.graphics.getWidth() / 4)))
+				&& (screenY > (2 * (Gdx.graphics.getHeight() / 3)))) {
+			keys.remove(BRAKE, BRAKE);
+		}
+		if ((screenX > (Gdx.graphics.getWidth() / 4))
+				&& (screenX < (3 * (Gdx.graphics.getWidth() / 4)))
+				&& (screenY > (Gdx.graphics.getHeight() / 3))
+				&& (screenY < (2 * (Gdx.graphics.getHeight() / 3)))) {
+			keys.remove(JUMP, JUMP);
 		}
 		return false;
 	}
@@ -78,32 +99,8 @@ public class InputHandling_TEST implements InputProcessor {
 		return false;
 	}
 
-	// bewegt man die maus in die jeweiligen bereiche, wird slideLeft()
-	// slideRight() aufgrufen
 	@Override
 	public boolean mouseMoved(int screenX, int screenY) {
-		// TODO Auto-generated method stub
-		if (screenX < (Gdx.graphics.getWidth() / 4)) {
-			keys.put(LEFT, LEFT);
-		}
-
-		if (screenX > (3 * (Gdx.graphics.getWidth() / 4))) {
-			keys.put(RIGHT, RIGHT);
-		}
-
-		if ((screenX > (Gdx.graphics.getWidth() / 4))
-				&& (screenX < (3 * (Gdx.graphics.getWidth() / 4)))
-				&& (screenY > (2 * (Gdx.graphics.getHeight() / 3)))) {
-			keys.put(BRAKE, BRAKE);
-		}
-
-		if ((screenX > (Gdx.graphics.getWidth() / 4))
-				&& (screenX < (3 * (Gdx.graphics.getWidth() / 4)))
-				&& (screenY > (Gdx.graphics.getHeight() / 3))
-				&& (screenY < (2 * (Gdx.graphics.getHeight() / 3)))) {
-			keys.put(JUMP, JUMP);
-		}
-
 		return false;
 	}
 
@@ -129,7 +126,8 @@ public class InputHandling_TEST implements InputProcessor {
 		if (keys.containsKey(JUMP)) {
 			player.jump();
 		}
-		if(keys.containsKey(BRAKE) == false && keys.containsKey(JUMP) == false && (player.speed <= player.MAX_SPEED - 10)){
+		if (keys.containsKey(BRAKE) == false && keys.containsKey(JUMP) == false
+				&& (player.speed <= player.MAX_SPEED - 10)) {
 			player.accelerate();
 		}
 	}
